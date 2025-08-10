@@ -3,35 +3,93 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Khwaja AI | Home</title>
-  <link rel="stylesheet" href="styles.css" />
+  <title>Khwajai | Home</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #222;
+      color: white;
+      padding: 10px 0;
+      text-align: center;
+    }
+    nav {
+      display: flex;
+      justify-content: center;
+      background-color: #444;
+    }
+    nav a {
+      color: white;
+      padding: 14px 20px;
+      text-decoration: none;
+      text-align: center;
+    }
+    nav a:hover {
+      background-color: #555;
+    }
+    section {
+      display: none;
+      padding: 20px;
+    }
+    section.active {
+      display: block;
+    }
+    footer {
+      text-align: center;
+      padding: 10px;
+      background-color: #222;
+      color: white;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+  </style>
 </head>
 <body>
   <header>
-    <h1>BooMboo - Building the AI-Powered Future</h1>
-    <p>Innovative AI tools, intelligent connections, and next-gen experiences.</p>
-    <nav>
-      <a href="#products">Explore AI Tools</a>
-      <a href="#labs">Join BooMboo Labs</a>
-    </nav>
+    <h1>Welcome to Khwajai</h1>
+    <p>AI-Powered Innovations for the New World</p>
   </header>
 
-  <section id="products">
-    <h2>Our Ecosystem</h2>
-    <ul>
-      <li>ClassLinker AI - Connecting students and teachers intelligently</li>
-      <li>BooMboo Brain - Your AI Knowledge Hub</li>
-      <li>BooMboo AR - Immersive demos and virtual spaces</li>
-    </ul>
+  <nav>
+    <a href="#" onclick="showTab('home')">Home</a>
+    <a href="#" onclick="showTab('projects')">Projects</a>
+    <a href="#" onclick="showTab('about')">About</a>
+    <a href="#" onclick="showTab('contact')">Contact</a>
+  </nav>
+
+  <section id="home" class="active">
+    <h2>Home</h2>
+    <p>This is the home section. Welcome to my AI-powered journey!</p>
   </section>
 
-  <section id="labs">
-    <h2>BooMboo Labs</h2>
-    <p>Explore upcoming AI experiments and join beta tests!</p>
+  <section id="projects">
+    <h2>Projects</h2>
+    <p>Here will be all my innovations, apps, and AI tools.</p>
+  </section>
+
+  <section id="about">
+    <h2>About</h2>
+    <p>My name is Khwaja, and I'm building futuristic AI solutions.</p>
+  </section>
+
+  <section id="contact">
+    <h2>Contact</h2>
+    <p>Email: your-email@example.com</p>
   </section>
 
   <footer>
-    <p>Built with ❤️ by Khwaja | khwajai.co.uk</p>
+    <p>© 2025 Khwajai. All rights reserved.</p>
   </footer>
+
+  <script>
+    function showTab(tabId) {
+      document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
+      document.getElementById(tabId).classList.add("active");
+    }
+  </script>
 </body>
 </html>
