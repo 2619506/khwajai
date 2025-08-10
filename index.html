@@ -3,23 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Khwajai | Home</title>
+  <title>Khwajai | AI Innovations</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
+      background-color: #f5f5f5;
     }
     header {
       background-color: #222;
       color: white;
-      padding: 10px 0;
+      padding: 15px 0;
       text-align: center;
     }
     nav {
       display: flex;
       justify-content: center;
       background-color: #444;
+      flex-wrap: wrap;
     }
     nav a {
       color: white;
@@ -33,6 +35,8 @@
     section {
       display: none;
       padding: 20px;
+      max-width: 1200px;
+      margin: auto;
     }
     section.active {
       display: block;
@@ -42,9 +46,50 @@
       padding: 10px;
       background-color: #222;
       color: white;
-      position: fixed;
-      bottom: 0;
-      width: 100%;
+      margin-top: 20px;
+    }
+    /* Project Cards */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: transform 0.2s ease;
+    }
+    .card:hover {
+      transform: scale(1.05);
+    }
+    .card img {
+      max-width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .card h3 {
+      margin-top: 10px;
+      color: #333;
+    }
+    .card p {
+      font-size: 14px;
+      color: #666;
+    }
+    .card a {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 8px 15px;
+      background-color: #222;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+    .card a:hover {
+      background-color: #444;
     }
   </style>
 </head>
@@ -63,17 +108,36 @@
 
   <section id="home" class="active">
     <h2>Home</h2>
-    <p>This is the home section. Welcome to my AI-powered journey!</p>
+    <p>Welcome to my hub of AI-driven projects and innovations. Explore and connect!</p>
   </section>
 
   <section id="projects">
     <h2>Projects</h2>
-    <p>Here will be all my innovations, apps, and AI tools.</p>
+    <div class="projects-grid">
+      <div class="card">
+        <img src="https://via.placeholder.com/250x150?text=UnitMe" alt="UnitMe">
+        <h3>UnitMe</h3>
+        <p>AI-powered platform to connect students and teachers for better learning collaboration.</p>
+        <a href="#">Learn More</a>
+      </div>
+      <div class="card">
+        <img src="https://via.placeholder.com/250x150?text=Boomla+AI" alt="Boomla AI">
+        <h3>Boomla AI</h3>
+        <p>Innovative AI solutions tailored to modern business and education needs.</p>
+        <a href="#">Learn More</a>
+      </div>
+      <div class="card">
+        <img src="https://via.placeholder.com/250x150?text=Coming+Soon" alt="Coming Soon">
+        <h3>Future Project</h3>
+        <p>Stay tuned for my next groundbreaking AI creation.</p>
+        <a href="#">Learn More</a>
+      </div>
+    </div>
   </section>
 
   <section id="about">
     <h2>About</h2>
-    <p>My name is Khwaja, and I'm building futuristic AI solutions.</p>
+    <p>My name is Khwaja, and I’m building AI tools that connect people and ideas to create meaningful change.</p>
   </section>
 
   <section id="contact">
