@@ -1,48 +1,62 @@
 const fetch = require("node-fetch");
 
 exports.handler = async (event) => {
-  if (event.httpMethod !== "POST") {
-    return { statusCode: 405, body: JSON.stringify({ error: "POST method required" }) };
-  }
-
-  const { message } = JSON.parse(event.body || "{}");
-  if (!message) {
-    return { statusCode: 400, body: JSON.stringify({ error: "No message provided" }) };
-  }
-
-  if (!process.env.OPENROUTER_API_KEY) {
-    return { statusCode: 500, body: JSON.stringify({ error: "Missing API key" }) };
-  }
-
   try {
+    if (event.httpMethod !== "POST") {
+      return {
+        statusCode: 405,
+        body: JSON.stringify({ error: "POST method required" })
+      };
+    }
+
+    const { message } = JSON.parse(event.body || "{}");
+    if (!message) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: "No message provided" })
+      };
+    }
+
+    if (!process.env.OPENROUTER_API_KEY) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: "OpenRouter API key not set in environment variables" })
+      };
+    }
+
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`
       },
       body: JSON.stringify({
-        model: "openchat/openchat-7b",
+        model: "moonshotai/kimi-k2:free", // exact model name for Kimi K2 free
         messages: [{ role: "user", content: message }],
-        max_tokens: 300,
-      }),
+        max_tokens: 300
+      })
     });
 
     if (!response.ok) {
-      let errMsg;
-      try {
-        const errJson = await response.json();
-        errMsg = errJson.error?.message || JSON.stringify(errJson);
-      } catch {
-        errMsg = await response.text();
-      }
-      return { statusCode: response.status, body: JSON.stringify({ error: errMsg }) };
+      const errText = await response.text();
+      return {
+        statusCode: response.status,
+        body: JSON.stringify({ error: errText })
+      };
     }
 
     const data = await response.json();
-    const reply = data.choices?.[0]?.message?.content || "No reply";
-    return { statusCode: 200, body: JSON.stringify({ reply }) };
-  } catch (error) {
-    return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
+    const reply = data.choices?.[0]?.message?.content || "No reply from AI";
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ reply })
+    };
+
+  } catch (err) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: err.message })
+    };
   }
 };
