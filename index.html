@@ -107,6 +107,7 @@
       font-style: italic;
       color: gray;
       display: none;
+      padding: 5px 0;
     }
   </style>
 </head>
@@ -147,7 +148,7 @@
   <section id="assistant">
     <h2>AI Assistant</h2>
     <div id="chat-box"></div>
-    <div id="typing">AI is typing...</div>
+    <div id="typing">AI is typing<span id="dots"></span></div>
     <div id="chat-input">
       <input type="text" id="userMessage" placeholder="Type your message..." />
       <button onclick="sendMessage()">Send</button>
@@ -166,6 +167,25 @@
 
     const chatBox = document.getElementById("chat-box");
     const typingIndicator = document.getElementById("typing");
+    const dots = document.getElementById("dots");
+    const inputField = document.getElementById("userMessage");
+
+    let dotsInterval;
+
+    function startTypingAnimation() {
+      typingIndicator.style.display = "block";
+      let dotCount = 0;
+      dotsInterval = setInterval(() => {
+        dotCount = (dotCount + 1) % 4;
+        dots.textContent = ".".repeat(dotCount);
+      }, 400);
+    }
+
+    function stopTypingAnimation() {
+      clearInterval(dotsInterval);
+      typingIndicator.style.display = "none";
+      dots.textContent = "";
+    }
 
     function addMessage(text, sender) {
       const msg = document.createElement("div");
@@ -176,14 +196,13 @@
     }
 
     async function sendMessage() {
-      const input = document.getElementById("userMessage");
-      const message = input.value.trim();
+      const message = inputField.value.trim();
       if (!message) return;
 
       addMessage(message, "user");
-      input.value = "";
+      inputField.value = "";
 
-      typingIndicator.style.display = "block";
+      startTypingAnimation();
 
       try {
         const res = await fetch("/.netlify/functions/chatgpt", {
@@ -193,13 +212,20 @@
         });
         const data = await res.json();
 
-        typingIndicator.style.display = "none";
+        stopTypingAnimation();
         addMessage(data.reply || "No reply from AI", "ai");
       } catch (err) {
-        typingIndicator.style.display = "none";
+        stopTypingAnimation();
         addMessage("Error: " + err.message, "ai");
       }
     }
+
+    // ENTER key sends the message
+    inputField.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        sendMessage();
+      }
+    });
   </script>
 </body>
 </html>
