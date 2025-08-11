@@ -9,6 +9,7 @@
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
+      background: #f4f4f4;
     }
     header {
       background-color: #222;
@@ -33,6 +34,12 @@
     section {
       display: none;
       padding: 20px;
+      background: white;
+      max-width: 900px;
+      margin: auto;
+      margin-top: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
     section.active {
       display: block;
@@ -46,38 +53,57 @@
       bottom: 0;
       width: 100%;
     }
-
-    /* Chatbot styles */
-    #chat-container {
-      margin-top: 20px;
+    /* Chat styles */
+    #chat-box {
       border: 1px solid #ccc;
       padding: 10px;
-      max-width: 500px;
-      background: #f9f9f9;
-    }
-    #chat-box {
-      height: 200px;
+      height: 300px;
       overflow-y: auto;
-      border: 1px solid #ddd;
-      padding: 5px;
+      background: #fafafa;
       margin-bottom: 10px;
-      background: #fff;
+      border-radius: 6px;
     }
-    .user { color: blue; margin-bottom: 5px; }
-    .ai { color: green; margin-bottom: 5px; }
-    #user-input {
-      width: 80%;
-      padding: 5px;
+    .msg {
+      margin: 5px 0;
+      padding: 8px;
+      border-radius: 6px;
+      max-width: 70%;
     }
-    #send-btn {
-      padding: 5px 10px;
+    .user {
+      background: #d1e7dd;
+      align-self: flex-end;
+    }
+    .ai {
+      background: #e2e3e5;
+      align-self: flex-start;
+    }
+    #chat-input {
+      display: flex;
+      gap: 10px;
+    }
+    #chat-input input {
+      flex: 1;
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    #chat-input button {
+      padding: 8px 16px;
+      border: none;
+      background: #444;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    #chat-input button:hover {
+      background: #333;
     }
   </style>
 </head>
 <body>
   <header>
     <h1>Welcome to Khwajai</h1>
-    <p>AI-Powered projects for the Finance World</p>
+    <p>AI-Powered projects for the Business and Finance World</p>
   </header>
 
   <nav>
@@ -85,29 +111,22 @@
     <a href="#" onclick="showTab('projects')">Projects</a>
     <a href="#" onclick="showTab('about')">About</a>
     <a href="#" onclick="showTab('contact')">Contact</a>
+    <a href="#" onclick="showTab('assistant')">AI Assistant</a>
   </nav>
 
   <section id="home" class="active">
     <h2>Home</h2>
     <p>This is the home section. Welcome to my AI-powered journey!</p>
-
-    <!-- AI Assistant Widget -->
-    <div id="chat-container">
-      <h3>💬 Chat with Khwajai AI</h3>
-      <div id="chat-box"></div>
-      <input type="text" id="user-input" placeholder="Type your message..." />
-      <button id="send-btn">Send</button>
-    </div>
   </section>
 
   <section id="projects">
     <h2>Projects</h2>
-    <p>Here will be all my works, apps, and AI tools.</p>
+    <p>Here will be all my projects, apps, and AI tools.</p>
   </section>
 
   <section id="about">
     <h2>About</h2>
-    <p> I'm building futuristic AI solutions with the help of AI.</p>
+    <p>Hi, and I'm building futuristic AI solutions with use of AI.</p>
   </section>
 
   <section id="contact">
@@ -115,56 +134,14 @@
     <p>Email: your-email@example.com</p>
   </section>
 
+  <section id="assistant">
+    <h2>AI Assistant</h2>
+    <div id="chat-box"></div>
+    <div id="chat-input">
+      <input type="text" id="userMessage" placeholder="Type your message..." />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </section>
+
   <footer>
-    <p>© 2025 Khwajai. All rights reserved.</p>
-  </footer>
-
-  <script>
-    function showTab(tabId) {
-      document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
-      document.getElementById(tabId).classList.add("active");
-    }
-
-    // Chatbot functionality
-    const API_URL = "https://khwajai.netlify.app/.netlify/functions/chatgpt";
-    const chatBox = document.getElementById("chat-box");
-    const userInput = document.getElementById("user-input");
-    const sendBtn = document.getElementById("send-btn");
-
-    function appendMessage(sender, text) {
-      const msg = document.createElement("div");
-      msg.className = sender;
-      msg.textContent = `${sender === 'user' ? 'You' : 'AI'}: ${text}`;
-      chatBox.appendChild(msg);
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
-
-    async function sendMessage() {
-      const text = userInput.value.trim();
-      if (!text) return;
-      appendMessage("user", text);
-      userInput.value = "";
-
-      try {
-        const res = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: text })
-        });
-
-        if (!res.ok) throw new Error(await res.text());
-        const data = await res.json();
-        appendMessage("ai", data.reply || "No response from AI");
-      } catch (err) {
-        appendMessage("ai", "Error: " + err.message);
-      }
-    }
-
-    sendBtn.addEventListener("click", sendMessage);
-    userInput.addEventListener("keypress", e => {
-      if (e.key === "Enter") sendMessage();
-    });
-  </script>
-</body>
-</html>
-
+    <p>© 2025 Khwajai. All rights
