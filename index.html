@@ -27,6 +27,7 @@
       padding: 14px 20px;
       text-decoration: none;
       text-align: center;
+      cursor: pointer;
     }
     nav a:hover {
       background-color: #555;
@@ -49,9 +50,7 @@
       padding: 10px;
       background-color: #222;
       color: white;
-      position: fixed;
-      bottom: 0;
-      width: 100%;
+      margin-top: 40px;
     }
     /* Chat styles */
     #chat-box {
@@ -78,11 +77,6 @@
     }
     .ai {
       background: #e2e3e5;
-      align-self: flex-start;
-    }
-    .error {
-      background: #f8d7da;
-      color: #842029;
       align-self: flex-start;
     }
     #chat-input {
@@ -115,11 +109,11 @@
   </header>
 
   <nav>
-    <a href="#" onclick="showTab('home')">Home</a>
-    <a href="#" onclick="showTab('projects')">Projects</a>
-    <a href="#" onclick="showTab('about')">About</a>
-    <a href="#" onclick="showTab('contact')">Contact</a>
-    <a href="#" onclick="showTab('assistant')">AI Assistant</a>
+    <a onclick="showTab('home')">Home</a>
+    <a onclick="showTab('projects')">Projects</a>
+    <a onclick="showTab('about')">About</a>
+    <a onclick="showTab('contact')">Contact</a>
+    <a onclick="showTab('assistant')">AI Assistant</a>
   </nav>
 
   <section id="home" class="active">
@@ -134,7 +128,7 @@
 
   <section id="about">
     <h2>About</h2>
-    <p>Hi, I’m building futuristic AI solutions using AI.</p>
+    <p>Hi, and I'm building futuristic AI solutions with the use of AI.</p>
   </section>
 
   <section id="contact">
@@ -156,44 +150,46 @@
   </footer>
 
   <script>
+    // Tab switching
     function showTab(tabId) {
       document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
       document.getElementById(tabId).classList.add("active");
     }
 
+    // Chat sending
     async function sendMessage() {
       const input = document.getElementById("userMessage");
-      const msg = input.value.trim();
-      if (!msg) return;
+      const message = input.value.trim();
+      if (!message) return;
 
-      addMessage(msg, "user");
+      addMessage("user", message);
       input.value = "";
 
       try {
         const res = await fetch("/.netlify/functions/chatgpt", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: msg })
+          body: JSON.stringify({ message })
         });
-
         const data = await res.json();
         if (data.error) {
-          addMessage("Error: " + data.error, "error");
+          addMessage("ai", "Error: " + data.error);
         } else {
-          addMessage(data.reply, "ai");
+          addMessage("ai", data.reply);
         }
       } catch (err) {
-        addMessage("Error: " + err.message, "error");
+        addMessage("ai", "Error: " + err.message);
       }
     }
 
-    function addMessage(text, type) {
-      const chatBox = document.getElementById("chat-box");
+    // Add message to chat
+    function addMessage(role, text) {
+      const box = document.getElementById("chat-box");
       const div = document.createElement("div");
-      div.className = "msg " + type;
+      div.classList.add("msg", role);
       div.textContent = text;
-      chatBox.appendChild(div);
-      chatBox.scrollTop = chatBox.scrollHeight;
+      box.appendChild(div);
+      box.scrollTop = box.scrollHeight;
     }
   </script>
 </body>
