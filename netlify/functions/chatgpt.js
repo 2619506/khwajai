@@ -1,53 +1,44 @@
-const fetch = require("node-fetch");
+const fetch = require("node-fetch"); // v2 for Netlify CJS
 
-exports.handler = async function (event) {
+exports.handler = async (event) => {
   try {
-    const { message } = JSON.parse(event.body || "{}");
-
-    if (!message) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: "Message is required" })
-      };
+    if (event.httpMethod !== "POST") {
+      return { statusCode: 405, body: JSON.stringify({ error: "POST method required" }) };
     }
 
-    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    const { message } = JSON.parse(event.body || "{}");
+    if (!message) {
+      return { statusCode: 400, body: JSON.stringify({ error: "No message provided" }) };
+    }
+
+    if (!process.env.OPENROUTER_API_KEY) {
+      return { statusCode: 500, body: JSON.stringify({ error: "Missing OPENROUTER_API_KEY" }) };
+    }
+
+    const apiRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "moonshotai/kimi-k2", // ✅ using Kimi K2
-        messages: [
-          { role: "system", content: "You are a helpful AI assistant." },
-          { role: "user", content: message }
-        ]
+        model: "mistralai/mistral-7b-instruct", // stable free model
+        messages: [{ role: "user", content: message }],
+        max_tokens: 300
       })
     });
 
-    const data = await response.json();
-    console.log("OpenRouter API response:", JSON.stringify(data, null, 2));
+    const data = await apiRes.json();
+    console.log("OpenRouter Response:", data);
 
-    if (!response.ok) {
-      return {
-        statusCode: response.status,
-        body: JSON.stringify({ error: data })
-      };
+    if (!apiRes.ok) {
+      return { statusCode: apiRes.status, body: JSON.stringify({ error: data }) };
     }
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        reply: data.choices?.[0]?.message?.content || "⚠️ API returned no text"
-      })
-    };
+    const reply = data.choices?.[0]?.message?.content || "No reply from AI";
+    return { statusCode: 200, body: JSON.stringify({ reply }) };
 
-  } catch (error) {
-    console.error("Server error:", error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: error.message })
-    };
+  } catch (err) {
+    return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
   }
 };
