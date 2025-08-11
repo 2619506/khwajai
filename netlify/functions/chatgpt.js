@@ -8,7 +8,11 @@ exports.handler = async (event) => {
 
     const { message } = JSON.parse(event.body || "{}");
     if (!message) {
-      return { statusCode: 400, body: JSON.stringify({ error: "No message" }) };
+      return { statusCode: 400, body: JSON.stringify({ error: "No message provided" }) };
+    }
+
+    if (!process.env.OPENROUTER_API_KEY) {
+      return { statusCode: 500, body: JSON.stringify({ error: "Missing API key" }) };
     }
 
     const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -18,7 +22,7 @@ exports.handler = async (event) => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "openchat/openchat-7b",
+        model: "deepseek/deepseek-r1-0528", // ✅ Your chosen model
         messages: [{ role: "user", content: message }],
         max_tokens: 300
       })
