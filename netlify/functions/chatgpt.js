@@ -1,7 +1,10 @@
-const fetch = require("node-fetch");
+// netlify/functions/chatgpt.js
+
+const fetch = require("node-fetch"); // v2 required for Netlify CJS functions
 
 exports.handler = async (event) => {
   try {
+    // ✅ Only accept POST
     if (event.httpMethod !== "POST") {
       return {
         statusCode: 405,
@@ -9,44 +12,58 @@ exports.handler = async (event) => {
       };
     }
 
-    const { message } = JSON.parse(event.body || "{}");
-    if (!message) {
+    // ✅ Parse incoming JSON
+    let body;
+    try {
+      body = JSON.parse(event.body || "{}");
+    } catch (err) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: "Invalid JSON body" })
+      };
+    }
+
+    const { message } = body;
+    if (!message || !message.trim()) {
       return {
         statusCode: 400,
         body: JSON.stringify({ error: "No message provided" })
       };
     }
 
-    if (!process.env.OPENROUTER_API_KEY) {
+    // ✅ Check API key
+    if (!process.env.MOONSHOT_API_KEY) {
       return {
         statusCode: 500,
-        body: JSON.stringify({ error: "OpenRouter API key not set in environment variables" })
+        body: JSON.stringify({ error: "Missing MOONSHOT_API_KEY in environment" })
       };
     }
 
-    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    // ✅ Call Moonshot Kimi API
+    const apiRes = await fetch("https://api.moonshot.cn/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`
+        "Authorization": `Bearer ${process.env.MOONSHOT_API_KEY}`
       },
       body: JSON.stringify({
-        model: "moonshotai/kimi-k2:free", // exact model name for Kimi K2 free
+        model: "kimi-k2", // Your free Moonshot model
         messages: [{ role: "user", content: message }],
+        temperature: 0.7,
         max_tokens: 300
       })
     });
 
-    if (!response.ok) {
-      const errText = await response.text();
+    if (!apiRes.ok) {
+      const errText = await apiRes.text();
       return {
-        statusCode: response.status,
+        statusCode: apiRes.status,
         body: JSON.stringify({ error: errText })
       };
     }
 
-    const data = await response.json();
-    const reply = data.choices?.[0]?.message?.content || "No reply from AI";
+    const data = await apiRes.json();
+    const reply = data?.choices?.[0]?.message?.content || "No reply from AI";
 
     return {
       statusCode: 200,
