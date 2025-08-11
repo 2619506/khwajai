@@ -1,8 +1,8 @@
-const fetch = require("node-fetch"); // Must use v2 for Netlify CJS functions
+// netlify/functions/chatgpt.js
+const fetch = require("node-fetch"); // v2 for Netlify CJS
 
 exports.handler = async (event) => {
   try {
-    // Allow only POST requests
     if (event.httpMethod !== "POST") {
       return {
         statusCode: 405,
@@ -10,7 +10,6 @@ exports.handler = async (event) => {
       };
     }
 
-    // Parse request body
     const { message } = JSON.parse(event.body || "{}");
     if (!message) {
       return {
@@ -19,15 +18,13 @@ exports.handler = async (event) => {
       };
     }
 
-    // Ensure API key is available
     if (!process.env.OPENAI_API_KEY) {
       return {
         statusCode: 500,
-        body: JSON.stringify({ error: "OpenAI API key not set in environment variables" })
+        body: JSON.stringify({ error: "OpenAI API key not set" })
       };
     }
 
-    // Call OpenAI API
     const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -41,20 +38,18 @@ exports.handler = async (event) => {
       })
     });
 
+    const data = await openaiRes.json();
+
     if (!openaiRes.ok) {
-      const errText = await openaiRes.text();
       return {
         statusCode: openaiRes.status,
-        body: JSON.stringify({ error: errText })
+        body: JSON.stringify({ error: data.error?.message || "OpenAI API error" })
       };
     }
 
-    const data = await openaiRes.json();
-    const reply = data.choices?.[0]?.message?.content || "No reply from AI";
-
     return {
       statusCode: 200,
-      body: JSON.stringify({ reply })
+      body: JSON.stringify({ reply: data.choices?.[0]?.message?.content || "No reply" })
     };
 
   } catch (err) {
