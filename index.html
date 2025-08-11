@@ -10,24 +10,6 @@
       margin: 0;
       background: #f4f4f4;
       color: #333;
-      display: flex;
-    }
-    /* Left chatbot panel */
-    .chat-panel {
-      width: 350px;
-      min-width: 300px;
-      height: 100vh;
-      background: white;
-      border-right: 1px solid #ddd;
-      position: sticky;
-      top: 0;
-    }
-    .main-content {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-      height: 100vh;
     }
     header {
       background: linear-gradient(90deg, #0f2027, #203a43, #2c5364);
@@ -79,102 +61,102 @@
       color: white;
       margin-top: 40px;
     }
-    @media (max-width: 900px) {
-      body {
-        flex-direction: column;
-      }
-      .chat-panel {
-        width: 100%;
-        height: 400px;
-        position: relative;
-        border-right: none;
-        border-bottom: 1px solid #ddd;
-      }
-      .main-content {
-        height: auto;
-      }
-    }
   </style>
 </head>
 <body>
-  <!-- Left Side Chat Panel -->
-  <div class="chat-panel">
-    <iframe 
-      src="https://www.chatbase.co/chatbot-iframe/AdEJSgBW3axH4ath4E2E3"
-      width="100%"
-      style="height: 100%; min-height: 100%"
-      frameborder="0"
-    ></iframe>
-  </div>
 
-  <!-- Main Content -->
-  <div class="main-content">
-    <header>
-      <h1>Khwajai AI Solutions</h1>
-      <p>Smart AI tools & automation for the business and finance world</p>
-    </header>
+  <header>
+    <h1>Khwajai AI Solutions</h1>
+    <p>Smart AI tools & automation for the business and finance world</p>
+  </header>
 
-    <nav>
-      <a href="#" onclick="showTab('home')">Home</a>
-      <a href="#" onclick="showTab('products')">Products</a>
-      <a href="#" onclick="showTab('services')">Services</a>
-      <a href="#" onclick="showTab('testimonials')">Testimonials</a>
-      <a href="#" onclick="showTab('faq')">FAQ</a>
-      <a href="#" onclick="showTab('contact')">Contact</a>
-    </nav>
+  <nav>
+    <a href="#" onclick="showTab('home')">Home</a>
+    <a href="#" onclick="showTab('products')">Products</a>
+    <a href="#" onclick="showTab('services')">Services</a>
+    <a href="#" onclick="showTab('testimonials')">Testimonials</a>
+    <a href="#" onclick="showTab('faq')">FAQ</a>
+    <a href="#" onclick="showTab('contact')">Contact</a>
+  </nav>
 
-    <section id="home" class="active">
-      <h2>Welcome to Khwajai</h2>
-      <p>We provide advanced AI-powered tools and solutions that empower businesses to streamline workflows, make data-driven decisions, and maximize efficiency.</p>
-    </section>
+  <section id="home" class="active">
+    <h2>Welcome to Khwajai</h2>
+    <p>We provide advanced AI-powered tools and solutions that empower businesses to streamline workflows, make data-driven decisions, and maximize efficiency.</p>
+  </section>
 
-    <section id="products">
-      <h2>Our Products</h2>
-      <ul>
-        <li><b>Khwajai Analyzer</b> — AI tool for financial data analysis.</li>
-        <li><b>Khwajai CRM+</b> — AI-driven customer relationship management.</li>
-        <li><b>Khwajai MarketPredict</b> — Predictive analytics for stock and market trends.</li>
-      </ul>
-    </section>
+  <section id="products">
+    <h2>Our Products</h2>
+    <ul>
+      <li><b>Khwajai Analyzer</b> — AI tool for financial data analysis.</li>
+      <li><b>Khwajai CRM+</b> — AI-driven customer relationship management.</li>
+      <li><b>Khwajai MarketPredict</b> — Predictive analytics for stock and market trends.</li>
+    </ul>
+  </section>
 
-    <section id="services">
-      <h2>Services</h2>
-      <p>We offer:</p>
-      <ul>
-        <li>Custom AI development</li>
-        <li>Integration of AI into existing business systems</li>
-        <li>AI consulting and training</li>
-      </ul>
-    </section>
+  <section id="services">
+    <h2>Services</h2>
+    <p>We offer:</p>
+    <ul>
+      <li>Custom AI development</li>
+      <li>Integration of AI into existing business systems</li>
+      <li>AI consulting and training</li>
+    </ul>
+  </section>
 
-    <section id="testimonials">
-      <h2>What Our Clients Say</h2>
-      <blockquote>“Khwajai's AI tools transformed our decision-making process. We saved 30% in operational costs.” — Client A</blockquote>
-      <blockquote>“The MarketPredict tool is a game changer for our investment team.” — Client B</blockquote>
-    </section>
+  <section id="testimonials">
+    <h2>What Our Clients Say</h2>
+    <blockquote>“Khwajai's AI tools transformed our decision-making process. We saved 30% in operational costs.” — Client A</blockquote>
+    <blockquote>“The MarketPredict tool is a game changer for our investment team.” — Client B</blockquote>
+  </section>
 
-    <section id="faq">
-      <h2>Frequently Asked Questions</h2>
-      <p><b>Q:</b> How do I get started?<br><b>A:</b> Contact us through the form and our team will set up a consultation.</p>
-      <p><b>Q:</b> Do you offer trials?<br><b>A:</b> Yes, we offer limited free trials for selected products.</p>
-    </section>
+  <section id="faq">
+    <h2>Frequently Asked Questions</h2>
+    <p><b>Q:</b> How do I get started?<br><b>A:</b> Contact us through the form and our team will set up a consultation.</p>
+    <p><b>Q:</b> Do you offer trials?<br><b>A:</b> Yes, we offer limited free trials for selected products.</p>
+  </section>
 
-    <section id="contact">
-      <h2>Contact Us</h2>
-      <p>Email: support@khwajai.com</p>
-      <p>Phone: +123456789</p>
-    </section>
+  <section id="contact">
+    <h2>Contact Us</h2>
+    <p>Email: support@khwajai.com</p>
+    <p>Phone: +123456789</p>
+  </section>
 
-    <footer>
-      <p>© 2025 Khwajai. All rights reserved.</p>
-    </footer>
-  </div>
+  <footer>
+    <p>© 2025 Khwajai. All rights reserved.</p>
+  </footer>
 
   <script>
     function showTab(tabId) {
       document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
       document.getElementById(tabId).classList.add("active");
     }
+  </script>
+
+  <!-- Chatbase Chat Bubble -->
+  <script>
+  (function(){
+    if(!window.chatbase || window.chatbase("getState") !== "initialized") {
+      window.chatbase = (...arguments) => {
+        if(!window.chatbase.q){window.chatbase.q=[]}
+        window.chatbase.q.push(arguments)
+      };
+      window.chatbase = new Proxy(window.chatbase,{
+        get(target,prop){
+          if(prop==="q"){return target.q}
+          return (...args)=>target(prop,...args)
+        }
+      });
+    }
+    const onLoad = function(){
+      const script = document.createElement("script");
+      script.src = "https://www.chatbase.co/embed.min.js";
+      script.id = "AdEJSgBW3axH4ath4E2E3"; // Your bot ID
+      script.domain = "www.chatbase.co";
+      document.body.appendChild(script);
+    };
+    if(document.readyState === "complete"){ onLoad(); }
+    else { window.addEventListener("load", onLoad); }
+  })();
   </script>
 </body>
 </html>
