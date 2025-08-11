@@ -29,7 +29,14 @@ exports.handler = async (event) => {
     });
 
     if (!response.ok) {
-      return { statusCode: response.status, body: await response.text() };
+      let errMsg;
+      try {
+        const errJson = await response.json();
+        errMsg = errJson.error?.message || JSON.stringify(errJson);
+      } catch {
+        errMsg = await response.text();
+      }
+      return { statusCode: response.status, body: JSON.stringify({ error: errMsg }) };
     }
 
     const data = await response.json();
