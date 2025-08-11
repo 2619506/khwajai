@@ -1,39 +1,79 @@
 // netlify/functions/chatgpt.js
-const fetch = require("node-fetch");
+
+const fetch = require("node-fetch"); // v2 required for Netlify CJS functions
 
 exports.handler = async (event) => {
   try {
-    const { message } = JSON.parse(event.body);
+    // ✅ Only accept POST
+    if (event.httpMethod !== "POST") {
+      return {
+        statusCode: 405,
+        body: JSON.stringify({ error: "POST method required" })
+      };
+    }
 
-    const response = await fetch("https://api.moonshot.cn/v1/chat/completions", {
+    // ✅ Parse incoming JSON
+    let body;
+    try {
+      body = JSON.parse(event.body || "{}");
+    } catch (err) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: "Invalid JSON body" })
+      };
+    }
+
+    const { message } = body;
+    if (!message || !message.trim()) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: "No message provided" })
+      };
+    }
+
+    // ✅ Check API key
+    if (!process.env.MOONSHOT_API_KEY) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: "Missing MOONSHOT_API_KEY in environment" })
+      };
+    }
+
+    // ✅ Call Moonshot Kimi API
+    const apiRes = await fetch("https://api.moonshot.cn/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${process.env.MOONSHOT_API_KEY}`
       },
       body: JSON.stringify({
-        model: "moonshot-v1-8k",
+        model: "kimi-k2", // Your free Moonshot model
         messages: [{ role: "user", content: message }],
+        temperature: 0.7,
+        max_tokens: 300
       })
     });
 
-    const data = await response.json();
-
-    if (data.choices && data.choices.length > 0) {
+    if (!apiRes.ok) {
+      const errText = await apiRes.text();
       return {
-        statusCode: 200,
-        body: JSON.stringify({ reply: data.choices[0].message.content })
-      };
-    } else {
-      return {
-        statusCode: 200,
-        body: JSON.stringify({ reply: "No response from AI." })
+        statusCode: apiRes.status,
+        body: JSON.stringify({ error: errText })
       };
     }
-  } catch (error) {
+
+    const data = await apiRes.json();
+    const reply = data?.choices?.[0]?.message?.content || "No reply from AI";
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ reply })
+    };
+
+  } catch (err) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ reply: "Server error: " + error.message })
+      body: JSON.stringify({ error: err.message })
     };
   }
 };
