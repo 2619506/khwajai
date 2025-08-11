@@ -1,9 +1,9 @@
 // netlify/functions/chatgpt.js
-const fetch = require("node-fetch"); // v2.x for Netlify functions
+const fetch = require("node-fetch"); // Must be v2.x for Netlify CJS
 
 exports.handler = async (event) => {
   try {
-    // Allow only POST
+    // Only allow POST
     if (event.httpMethod !== "POST") {
       return {
         statusCode: 405,
@@ -11,7 +11,7 @@ exports.handler = async (event) => {
       };
     }
 
-    // Get message from request
+    // Parse request body
     const { message } = JSON.parse(event.body || "{}");
     if (!message) {
       return {
@@ -21,22 +21,24 @@ exports.handler = async (event) => {
     }
 
     // Ensure API key exists
-    if (!process.env.MOONSHOT_API_KEY) {
+    if (!process.env.OPENROUTER_API_KEY) {
       return {
         statusCode: 500,
-        body: JSON.stringify({ error: "Missing MOONSHOT_API_KEY in environment variables" })
+        body: JSON.stringify({ error: "Missing OPENROUTER_API_KEY in environment variables" })
       };
     }
 
-    // Call Moonshot Kimi API
-    const aiRes = await fetch("https://api.moonshot.cn/v1/chat/completions", {
+    // Call OpenRouter API
+    const aiRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${process.env.MOONSHOT_API_KEY}`
+        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        "HTTP-Referer": "https://your-site.netlify.app", // Replace with your actual site URL
+        "X-Title": "Khwajai AI Assistant"
       },
       body: JSON.stringify({
-        model: "moonshot-v1-8k", // free model
+        model: "openchat/openchat-7b", // You can swap to another model if you want
         messages: [{ role: "user", content: message }],
         max_tokens: 300
       })
