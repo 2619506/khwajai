@@ -33,13 +33,17 @@
       background-color: #555;
     }
     section {
+      display: none;
       padding: 20px;
+      background: white;
       max-width: 900px;
       margin: auto;
       margin-top: 20px;
-      background: white;
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    section.active {
+      display: block;
     }
     footer {
       text-align: center;
@@ -50,32 +54,35 @@
       bottom: 0;
       width: 100%;
     }
-    /* Floating chat styles */
+
+    /* Floating Chat Widget */
     #chat-widget {
       position: fixed;
       bottom: 80px;
       right: 20px;
       width: 300px;
-      max-height: 400px;
+      max-width: 90%;
       background: white;
       border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      display: none;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+      display: flex;
       flex-direction: column;
       overflow: hidden;
-      z-index: 999;
+      font-size: 14px;
     }
     #chat-header {
       background: #444;
       color: white;
       padding: 10px;
+      cursor: pointer;
+      user-select: none;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
     #chat-box {
-      flex: 1;
       padding: 10px;
+      height: 250px;
       overflow-y: auto;
       background: #fafafa;
     }
@@ -96,97 +103,102 @@
     }
     #chat-input {
       display: flex;
-      gap: 5px;
-      padding: 10px;
-      background: #f4f4f4;
+      border-top: 1px solid #ccc;
     }
     #chat-input input {
       flex: 1;
       padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+      border: none;
+      outline: none;
     }
     #chat-input button {
       padding: 8px 12px;
-      background: #444;
-      color: white;
       border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    #chat-toggle {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
       background: #444;
       color: white;
-      padding: 12px 16px;
-      border-radius: 50%;
       cursor: pointer;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-      z-index: 1000;
     }
-    @media (max-width: 500px) {
-      #chat-widget {
-        width: 95%;
-        right: 2.5%;
-        bottom: 70px;
-        max-height: 70%;
-      }
+    #chat-input button:hover {
+      background: #333;
+    }
+    .hidden {
+      display: none;
     }
   </style>
 </head>
 <body>
-
   <header>
     <h1>Welcome to Khwajai</h1>
     <p>AI-Powered projects for the Business and Finance World</p>
   </header>
 
   <nav>
-    <a href="#">Home</a>
-    <a href="#">Projects</a>
-    <a href="#">About</a>
-    <a href="#">Contact</a>
+    <a href="#" onclick="showTab('home')">Home</a>
+    <a href="#" onclick="showTab('projects')">Projects</a>
+    <a href="#" onclick="showTab('about')">About</a>
+    <a href="#" onclick="showTab('contact')">Contact</a>
   </nav>
 
-  <section>
+  <section id="home" class="active">
     <h2>Home</h2>
-    <p>Welcome to my AI-powered journey! Click the chat bubble at the bottom to talk with my AI assistant.</p>
+    <p>This is the home section. Welcome to my AI-powered journey!</p>
   </section>
 
-  <footer>
-    <p>© 2025 Khwajai. All rights reserved.</p>
-  </footer>
+  <section id="projects">
+    <h2>Projects</h2>
+    <p>Here will be all my projects, apps, and AI tools.</p>
+  </section>
+
+  <section id="about">
+    <h2>About</h2>
+    <p>Hi, and I'm building futuristic AI solutions with use of AI.</p>
+  </section>
+
+  <section id="contact">
+    <h2>Contact</h2>
+    <p>Email: your-email@example.com</p>
+  </section>
 
   <!-- Floating Chat Widget -->
   <div id="chat-widget">
     <div id="chat-header">
       <span>AI Assistant</span>
-      <button onclick="toggleChat()" style="background:none;border:none;color:white;cursor:pointer;">✖</button>
+      <span id="toggle-btn">_</span>
     </div>
-    <div id="chat-box"></div>
-    <div id="chat-input">
-      <input type="text" id="userMessage" placeholder="Type a message..." />
-      <button onclick="sendMessage()">Send</button>
+    <div id="chat-content">
+      <div id="chat-box"></div>
+      <div id="chat-input">
+        <input type="text" id="userMessage" placeholder="Type your message..." />
+        <button onclick="sendMessage()">Send</button>
+      </div>
     </div>
   </div>
 
-  <!-- Floating Chat Button -->
-  <div id="chat-toggle" onclick="toggleChat()">💬</div>
+  <footer>
+    <p>© 2025 Khwajai. All rights reserved.</p>
+  </footer>
 
   <script>
-    function toggleChat() {
-      const chatWidget = document.getElementById("chat-widget");
-      chatWidget.style.display = (chatWidget.style.display === "flex") ? "none" : "flex";
+    function showTab(tabId) {
+      document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
+      document.getElementById(tabId).classList.add("active");
     }
 
+    // Toggle Chat Visibility
+    const toggleBtn = document.getElementById("toggle-btn");
+    const chatContent = document.getElementById("chat-content");
+    toggleBtn.addEventListener("click", () => {
+      chatContent.classList.toggle("hidden");
+      toggleBtn.textContent = chatContent.classList.contains("hidden") ? "▢" : "_";
+    });
+
+    // Send message
     async function sendMessage() {
       const input = document.getElementById("userMessage");
       const message = input.value.trim();
       if (!message) return;
 
-      addMessage(message, "user");
+      appendMessage(message, "user");
       input.value = "";
 
       try {
@@ -197,32 +209,32 @@
         });
         const data = await res.json();
         if (data.reply) {
-          addMessage(data.reply, "ai");
+          appendMessage(data.reply, "ai");
         } else {
-          addMessage("Error: " + JSON.stringify(data), "ai");
+          appendMessage("Error: " + (data.error || "No reply"), "ai");
         }
       } catch (err) {
-        addMessage("Error: " + err.message, "ai");
+        appendMessage("Error: " + err.message, "ai");
       }
     }
 
-    function addMessage(text, sender) {
-      const chatBox = document.getElementById("chat-box");
-      const msgDiv = document.createElement("div");
-      msgDiv.className = "msg " + sender;
-      msgDiv.textContent = text;
-      chatBox.appendChild(msgDiv);
-      chatBox.scrollTop = chatBox.scrollHeight;
+    // Append chat message
+    function appendMessage(text, sender) {
+      const box = document.getElementById("chat-box");
+      const msg = document.createElement("div");
+      msg.className = "msg " + sender;
+      msg.textContent = text;
+      box.appendChild(msg);
+      box.scrollTop = box.scrollHeight;
     }
 
     // Allow Enter key to send message
-    document.getElementById("userMessage").addEventListener("keydown", function(e) {
+    document.getElementById("userMessage").addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
         sendMessage();
       }
     });
   </script>
-
 </body>
 </html>
