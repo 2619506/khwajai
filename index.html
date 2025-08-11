@@ -62,12 +62,15 @@
       background: #fafafa;
       margin-bottom: 10px;
       border-radius: 6px;
+      display: flex;
+      flex-direction: column;
     }
     .msg {
       margin: 5px 0;
       padding: 8px;
       border-radius: 6px;
       max-width: 70%;
+      word-wrap: break-word;
     }
     .user {
       background: #d1e7dd;
@@ -75,6 +78,11 @@
     }
     .ai {
       background: #e2e3e5;
+      align-self: flex-start;
+    }
+    .error {
+      background: #f8d7da;
+      color: #842029;
       align-self: flex-start;
     }
     #chat-input {
@@ -126,7 +134,7 @@
 
   <section id="about">
     <h2>About</h2>
-    <p>Hi, I'm Khwaja, and I'm building futuristic AI solutions using the latest technology.</p>
+    <p>Hi, I’m building futuristic AI solutions using AI.</p>
   </section>
 
   <section id="contact">
@@ -148,44 +156,43 @@
   </footer>
 
   <script>
-    // Tab switching
     function showTab(tabId) {
       document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
       document.getElementById(tabId).classList.add("active");
     }
 
-    // AI Chat
     async function sendMessage() {
       const input = document.getElementById("userMessage");
-      const message = input.value.trim();
-      if (!message) return;
+      const msg = input.value.trim();
+      if (!msg) return;
 
-      const chatBox = document.getElementById("chat-box");
-      // Show user message
-      chatBox.innerHTML += `<div class="msg user"><strong>You:</strong> ${message}</div>`;
+      addMessage(msg, "user");
       input.value = "";
-
-      // Scroll down
-      chatBox.scrollTop = chatBox.scrollHeight;
 
       try {
         const res = await fetch("/.netlify/functions/chatgpt", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message })
+          body: JSON.stringify({ message: msg })
         });
 
         const data = await res.json();
-        if (data.reply) {
-          chatBox.innerHTML += `<div class="msg ai"><strong>AI:</strong> ${data.reply}</div>`;
+        if (data.error) {
+          addMessage("Error: " + data.error, "error");
         } else {
-          chatBox.innerHTML += `<div class="msg ai"><strong>AI:</strong> Error: ${data.error || "Unknown error"}</div>`;
+          addMessage(data.reply, "ai");
         }
       } catch (err) {
-        chatBox.innerHTML += `<div class="msg ai"><strong>AI:</strong> Network error</div>`;
+        addMessage("Error: " + err.message, "error");
       }
+    }
 
-      // Scroll down after AI reply
+    function addMessage(text, type) {
+      const chatBox = document.getElementById("chat-box");
+      const div = document.createElement("div");
+      div.className = "msg " + type;
+      div.textContent = text;
+      chatBox.appendChild(div);
       chatBox.scrollTop = chatBox.scrollHeight;
     }
   </script>
