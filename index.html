@@ -5,105 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Khwajai | Home</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f4f4f4;
-    }
-    header {
-      background-color: #222;
-      color: white;
-      padding: 10px 0;
-      text-align: center;
-    }
-    nav {
-      display: flex;
-      justify-content: center;
-      background-color: #444;
-    }
-    nav a {
-      color: white;
-      padding: 14px 20px;
-      text-decoration: none;
-      text-align: center;
-    }
-    nav a:hover {
-      background-color: #555;
-    }
-    section {
-      display: none;
-      padding: 20px;
-      background: white;
-      max-width: 900px;
-      margin: auto;
-      margin-top: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    section.active {
-      display: block;
-    }
-    footer {
-      text-align: center;
-      padding: 10px;
-      background-color: #222;
-      color: white;
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-    }
-    /* Chat styles */
-    #chat-box {
-      border: 1px solid #ccc;
-      padding: 10px;
-      height: 300px;
-      overflow-y: auto;
-      background: #fafafa;
-      margin-bottom: 10px;
-      border-radius: 6px;
-    }
-    .msg {
-      margin: 5px 0;
-      padding: 8px;
-      border-radius: 6px;
-      max-width: 70%;
-    }
-    .user {
-      background: #d1e7dd;
-      align-self: flex-end;
-    }
-    .ai {
-      background: #e2e3e5;
-      align-self: flex-start;
-    }
-    #chat-input {
-      display: flex;
-      gap: 10px;
-    }
-    #chat-input input {
-      flex: 1;
-      padding: 8px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-    }
-    #chat-input button {
-      padding: 8px 16px;
-      border: none;
-      background: #444;
-      color: white;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    #chat-input button:hover {
-      background: #333;
-    }
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    header { background-color: #222; color: white; padding: 10px 0; text-align: center; }
+    nav { display: flex; justify-content: center; background-color: #444; }
+    nav a { color: white; padding: 14px 20px; text-decoration: none; text-align: center; }
+    nav a:hover { background-color: #555; }
+    section { display: none; padding: 20px; }
+    section.active { display: block; }
+    footer { text-align: center; padding: 10px; background-color: #222; color: white; position: fixed; bottom: 0; width: 100%; }
+    /* AI Chat Styling */
+    #chat-container { border: 1px solid #ccc; padding: 10px; max-width: 500px; }
+    #chat-log { border: 1px solid #ddd; padding: 10px; height: 200px; overflow-y: auto; background: #fafafa; margin-bottom: 10px; }
+    .user { color: blue; font-weight: bold; }
+    .ai { color: green; font-weight: bold; }
   </style>
 </head>
 <body>
   <header>
     <h1>Welcome to Khwajai</h1>
-    <p>AI-Powered projects for the Business and Finance World</p>
+    <p>AI-Powered Innovations for the New World</p>
   </header>
 
   <nav>
@@ -111,7 +31,6 @@
     <a href="#" onclick="showTab('projects')">Projects</a>
     <a href="#" onclick="showTab('about')">About</a>
     <a href="#" onclick="showTab('contact')">Contact</a>
-    <a href="#" onclick="showTab('assistant')">AI Assistant</a>
   </nav>
 
   <section id="home" class="active">
@@ -121,12 +40,19 @@
 
   <section id="projects">
     <h2>Projects</h2>
-    <p>Here will be all my projects, apps, and AI tools.</p>
+    <p>Here will be all my innovations, apps, and AI tools.</p>
+
+    <!-- AI Chat Widget -->
+    <div id="chat-container">
+      <div id="chat-log"></div>
+      <input type="text" id="user-input" placeholder="Type your message..." />
+      <button onclick="sendMessage()">Send</button>
+    </div>
   </section>
 
   <section id="about">
     <h2>About</h2>
-    <p>Hi, and I'm building futuristic AI solutions with use of AI.</p>
+    <p>My name is Khwaja, and I'm building futuristic AI solutions.</p>
   </section>
 
   <section id="contact">
@@ -134,14 +60,45 @@
     <p>Email: your-email@example.com</p>
   </section>
 
-  <section id="assistant">
-    <h2>AI Assistant</h2>
-    <div id="chat-box"></div>
-    <div id="chat-input">
-      <input type="text" id="userMessage" placeholder="Type your message..." />
-      <button onclick="sendMessage()">Send</button>
-    </div>
-  </section>
-
   <footer>
-    <p>© 2025 Khwajai. All rights
+    <p>© 2025 Khwajai. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Tab switching
+    function showTab(tabId) {
+      document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
+      document.getElementById(tabId).classList.add("active");
+    }
+
+    // AI Chat Function
+    async function sendMessage() {
+      const input = document.getElementById("user-input");
+      const message = input.value.trim();
+      if (!message) return;
+
+      const log = document.getElementById("chat-log");
+      log.innerHTML += `<div><span class="user">You:</span> ${message}</div>`;
+      input.value = "";
+
+      try {
+        const res = await fetch("/.netlify/functions/chatgpt", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message })
+        });
+
+        const data = await res.json();
+        if (data.reply) {
+          log.innerHTML += `<div><span class="ai">AI:</span> ${data.reply}</div>`;
+        } else {
+          log.innerHTML += `<div><span class="ai">AI:</span> Error: ${data.error || "Unknown error"}</div>`;
+        }
+        log.scrollTop = log.scrollHeight;
+      } catch (err) {
+        log.innerHTML += `<div><span class="ai">AI:</span> Network error</div>`;
+      }
+    }
+  </script>
+</body>
+</html>
