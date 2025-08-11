@@ -193,6 +193,17 @@
       msg.textContent = text;
       chatBox.appendChild(msg);
       chatBox.scrollTop = chatBox.scrollHeight;
+      return msg;
+    }
+
+    async function typeWriterEffect(element, text, speed = 30) {
+      element.textContent = "";
+      const words = text.split(" ");
+      for (let i = 0; i < words.length; i++) {
+        element.textContent += (i === 0 ? "" : " ") + words[i];
+        chatBox.scrollTop = chatBox.scrollHeight;
+        await new Promise(r => setTimeout(r, speed));
+      }
     }
 
     async function sendMessage() {
@@ -213,7 +224,8 @@
         const data = await res.json();
 
         stopTypingAnimation();
-        addMessage(data.reply || "No reply from AI", "ai");
+        const aiMsg = addMessage("", "ai");
+        await typeWriterEffect(aiMsg, data.reply || "No reply from AI");
       } catch (err) {
         stopTypingAnimation();
         addMessage("Error: " + err.message, "ai");
