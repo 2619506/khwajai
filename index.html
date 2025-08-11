@@ -27,7 +27,6 @@
       padding: 14px 20px;
       text-decoration: none;
       text-align: center;
-      cursor: pointer;
     }
     nav a:hover {
       background-color: #555;
@@ -50,7 +49,9 @@
       padding: 10px;
       background-color: #222;
       color: white;
-      margin-top: 40px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
     }
     /* Chat styles */
     #chat-box {
@@ -65,19 +66,21 @@
       flex-direction: column;
     }
     .msg {
-      margin: 5px 0;
-      padding: 8px;
-      border-radius: 6px;
+      margin: 8px;
+      padding: 10px;
+      border-radius: 12px;
       max-width: 70%;
       word-wrap: break-word;
     }
     .user {
       background: #d1e7dd;
-      align-self: flex-end;
+      margin-left: auto;
+      text-align: right;
     }
     .ai {
       background: #e2e3e5;
-      align-self: flex-start;
+      margin-right: auto;
+      text-align: left;
     }
     #chat-input {
       display: flex;
@@ -100,6 +103,11 @@
     #chat-input button:hover {
       background: #333;
     }
+    #typing {
+      font-style: italic;
+      color: gray;
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -109,11 +117,11 @@
   </header>
 
   <nav>
-    <a onclick="showTab('home')">Home</a>
-    <a onclick="showTab('projects')">Projects</a>
-    <a onclick="showTab('about')">About</a>
-    <a onclick="showTab('contact')">Contact</a>
-    <a onclick="showTab('assistant')">AI Assistant</a>
+    <a href="#" onclick="showTab('home')">Home</a>
+    <a href="#" onclick="showTab('projects')">Projects</a>
+    <a href="#" onclick="showTab('about')">About</a>
+    <a href="#" onclick="showTab('contact')">Contact</a>
+    <a href="#" onclick="showTab('assistant')">AI Assistant</a>
   </nav>
 
   <section id="home" class="active">
@@ -128,7 +136,7 @@
 
   <section id="about">
     <h2>About</h2>
-    <p>Hi, and I'm building futuristic AI solutions with the use of AI.</p>
+    <p>Hi, and I'm building futuristic AI solutions with use of AI.</p>
   </section>
 
   <section id="contact">
@@ -139,6 +147,7 @@
   <section id="assistant">
     <h2>AI Assistant</h2>
     <div id="chat-box"></div>
+    <div id="typing">AI is typing...</div>
     <div id="chat-input">
       <input type="text" id="userMessage" placeholder="Type your message..." />
       <button onclick="sendMessage()">Send</button>
@@ -150,20 +159,31 @@
   </footer>
 
   <script>
-    // Tab switching
     function showTab(tabId) {
       document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
       document.getElementById(tabId).classList.add("active");
     }
 
-    // Chat sending
+    const chatBox = document.getElementById("chat-box");
+    const typingIndicator = document.getElementById("typing");
+
+    function addMessage(text, sender) {
+      const msg = document.createElement("div");
+      msg.classList.add("msg", sender);
+      msg.textContent = text;
+      chatBox.appendChild(msg);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
     async function sendMessage() {
       const input = document.getElementById("userMessage");
       const message = input.value.trim();
       if (!message) return;
 
-      addMessage("user", message);
+      addMessage(message, "user");
       input.value = "";
+
+      typingIndicator.style.display = "block";
 
       try {
         const res = await fetch("/.netlify/functions/chatgpt", {
@@ -172,24 +192,13 @@
           body: JSON.stringify({ message })
         });
         const data = await res.json();
-        if (data.error) {
-          addMessage("ai", "Error: " + data.error);
-        } else {
-          addMessage("ai", data.reply);
-        }
-      } catch (err) {
-        addMessage("ai", "Error: " + err.message);
-      }
-    }
 
-    // Add message to chat
-    function addMessage(role, text) {
-      const box = document.getElementById("chat-box");
-      const div = document.createElement("div");
-      div.classList.add("msg", role);
-      div.textContent = text;
-      box.appendChild(div);
-      box.scrollTop = box.scrollHeight;
+        typingIndicator.style.display = "none";
+        addMessage(data.reply || "No reply from AI", "ai");
+      } catch (err) {
+        typingIndicator.style.display = "none";
+        addMessage("Error: " + err.message, "ai");
+      }
     }
   </script>
 </body>
