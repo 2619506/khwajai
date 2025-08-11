@@ -1,158 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Khwajai | AI Innovations</title>
+  <meta charset="UTF-8">
+  <title>Khwajai AI Assistant</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f5f5f5;
-    }
-    header {
-      background-color: #222;
-      color: white;
-      padding: 15px 0;
-      text-align: center;
-    }
-    nav {
-      display: flex;
-      justify-content: center;
-      background-color: #444;
-      flex-wrap: wrap;
-    }
-    nav a {
-      color: white;
-      padding: 14px 20px;
-      text-decoration: none;
-      text-align: center;
-    }
-    nav a:hover {
-      background-color: #555;
-    }
-    section {
-      display: none;
-      padding: 20px;
-      max-width: 1200px;
-      margin: auto;
-    }
-    section.active {
-      display: block;
-    }
-    footer {
-      text-align: center;
-      padding: 10px;
-      background-color: #222;
-      color: white;
-      margin-top: 20px;
-    }
-    /* Project Cards */
-    .projects-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-    }
-    .card {
-      background: white;
-      border-radius: 10px;
-      padding: 15px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      text-align: center;
-      transition: transform 0.2s ease;
-    }
-    .card:hover {
-      transform: scale(1.05);
-    }
-    .card img {
-      max-width: 100%;
-      height: 150px;
-      object-fit: cover;
-      border-radius: 8px;
-    }
-    .card h3 {
-      margin-top: 10px;
-      color: #333;
-    }
-    .card p {
-      font-size: 14px;
-      color: #666;
-    }
-    .card a {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 8px 15px;
-      background-color: #222;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-    }
-    .card a:hover {
-      background-color: #444;
-    }
+    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+    #chat { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
+    .message { margin-bottom: 15px; }
+    .user { font-weight: bold; color: #0077cc; }
+    .bot { color: #444; }
+    input { width: 80%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
+    button { padding: 10px 15px; background: #0077cc; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #005fa3; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Welcome to Khwajai</h1>
-    <p>AI-Powered Innovations for the New World</p>
-  </header>
-
-  <nav>
-    <a href="#" onclick="showTab('home')">Home</a>
-    <a href="#" onclick="showTab('projects')">Projects</a>
-    <a href="#" onclick="showTab('about')">About</a>
-    <a href="#" onclick="showTab('contact')">Contact</a>
-  </nav>
-
-  <section id="home" class="active">
-    <h2>Home</h2>
-    <p>Welcome to my hub of AI-driven projects and innovations. Explore and connect!</p>
-  </section>
-
-  <section id="projects">
-    <h2>Projects</h2>
-    <div class="projects-grid">
-      <div class="card">
-        <img src="https://via.placeholder.com/250x150?text=UnitMe" alt="UnitMe">
-        <h3>UnitMe</h3>
-        <p>AI-powered platform to connect students and teachers for better learning collaboration.</p>
-        <a href="#">Learn More</a>
-      </div>
-      <div class="card">
-        <img src="https://via.placeholder.com/250x150?text=Boomla+AI" alt="Boomla AI">
-        <h3>Boomla AI</h3>
-        <p>Innovative AI solutions tailored to modern business and education needs.</p>
-        <a href="#">Learn More</a>
-      </div>
-      <div class="card">
-        <img src="https://via.placeholder.com/250x150?text=Coming+Soon" alt="Coming Soon">
-        <h3>Future Project</h3>
-        <p>Stay tuned for my next groundbreaking AI creation.</p>
-        <a href="#">Learn More</a>
-      </div>
-    </div>
-  </section>
-
-  <section id="about">
-    <h2>About</h2>
-    <p>My name is Khwaja, and I’m building AI tools that connect people and ideas to create meaningful change.</p>
-  </section>
-
-  <section id="contact">
-    <h2>Contact</h2>
-    <p>Email: your-email@example.com</p>
-  </section>
-
-  <footer>
-    <p>© 2025 Khwajai. All rights reserved.</p>
-  </footer>
+  <div id="chat">
+    <h2>💬 Khwajai AI Assistant</h2>
+    <div id="messages"></div>
+    <input type="text" id="userInput" placeholder="Ask me something..." />
+    <button onclick="sendMessage()">Send</button>
+  </div>
 
   <script>
-    function showTab(tabId) {
-      document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
-      document.getElementById(tabId).classList.add("active");
+    async function sendMessage() {
+      const input = document.getElementById('userInput');
+      const message = input.value.trim();
+      if (!message) return;
+
+      addMessage('You', message);
+      input.value = '';
+
+      const res = await fetch('https://khwajai.netlify.app/.netlify/functions/chatgpt', {
+', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message })
+      });
+
+      const data = await res.json();
+      addMessage('AI', data.reply);
+    }
+
+    function addMessage(sender, text) {
+      const messagesDiv = document.getElementById('messages');
+      const msg = document.createElement('div');
+      msg.className = 'message';
+      msg.innerHTML = `<span class="${sender === 'You' ? 'user' : 'bot'}">${sender}:</span> ${text}`;
+      messagesDiv.appendChild(msg);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
   </script>
 </body>
