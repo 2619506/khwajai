@@ -3,31 +3,31 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Khwaja AI - Financial AI and ML applications</title>
+  <title>Khwaja AI & Analytics Lab</title>
 
-  <!-- Google Font: Orbitron for futuristic style -->
+  <!-- Futuristic font -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 
   <style>
     body {
       margin: 0;
       font-family: 'Orbitron', sans-serif;
-      background: radial-gradient(circle at center, #000 0%, #001a00 100%);
+      background: url('https://www.transparenttextures.com/patterns/stardust.png'), radial-gradient(circle at center, #000 0%, #001a00 100%);
       color: #00ff00;
-      overflow-x: hidden;
       height: 100vh;
+      overflow-x: hidden;
     }
 
-    /* Transparent glass effect for main container */
+    /* Glass effect container */
     main {
-      background: rgba(0, 20, 0, 0.3);
-      backdrop-filter: blur(8px);
+      background: rgba(0, 20, 0, 0.35);
+      backdrop-filter: blur(10px);
       border: 1px solid rgba(0, 255, 0, 0.3);
       padding: 2rem;
       max-width: 900px;
-      margin: 80px auto;
+      margin: 100px auto 50px;
       border-radius: 15px;
-      box-shadow: 0 0 20px rgba(0, 255, 0, 0.4);
+      box-shadow: 0 0 25px rgba(0, 255, 0, 0.4);
       text-align: center;
       animation: flicker 3s infinite;
     }
@@ -41,36 +41,33 @@
       text-shadow: 0 0 8px #00ff00;
     }
 
-    /* Navigation wheel */
+    /* Alien spaceship wheel */
     #navWheel {
       position: fixed;
       top: 50%;
       left: 50%;
       transform-style: preserve-3d;
       transform: translate(-50%, -50%) rotateY(0deg);
-      width: 300px;
-      height: 300px;
-      animation: spin 15s linear infinite;
-    }
-
-    @keyframes spin {
-      from { transform: translate(-50%, -50%) rotateY(0deg); }
-      to { transform: translate(-50%, -50%) rotateY(360deg); }
+      width: 450px;
+      height: 450px;
+      transition: transform 1s;
     }
 
     .navItem {
       position: absolute;
       top: 50%;
       left: 50%;
-      transform-origin: -150px center;
-      padding: 10px 20px;
-      background: rgba(0, 40, 0, 0.4);
-      border: 1px solid rgba(0, 255, 0, 0.5);
+      transform-origin: -225px center;
+      padding: 15px 25px;
+      background: rgba(0, 40, 0, 0.5);
+      border: 2px solid rgba(0, 255, 0, 0.5);
       color: #00ff00;
       text-decoration: none;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 255, 0, 0.6);
-      transition: transform 0.5s, background 0.5s;
+      border-radius: 50% 50% 30% 30% / 50% 50% 50% 50%;
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.6);
+      transition: transform 0.4s, background 0.4s;
+      width: 120px;
+      text-align: center;
     }
 
     .navItem:hover {
@@ -89,37 +86,76 @@
       width: 100%;
       color: #00ff00;
     }
+
+    /* Graph preview container */
+    .graph-preview {
+      margin-top: 2rem;
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+    }
+
+    .graph {
+      background: rgba(0, 40, 0, 0.4);
+      border: 1px solid rgba(0, 255, 0, 0.3);
+      border-radius: 12px;
+      width: 250px;
+      height: 180px;
+      box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0f0;
+      font-size: 0.9rem;
+    }
   </style>
 </head>
 <body>
 
-  <!-- Navigation Wheel -->
+  <!-- Alien spaceship navigation wheel -->
   <div id="navWheel">
-    <a href="#" class="navItem" style="transform: rotateY(0deg) translateZ(150px);">Home</a>
-    <a href="#" class="navItem" style="transform: rotateY(72deg) translateZ(150px);">Products</a>
-    <a href="#" class="navItem" style="transform: rotateY(144deg) translateZ(150px);">About Us</a>
-    <a href="#" class="navItem" style="transform: rotateY(216deg) translateZ(150px);">Contact</a>
-    <a href="#" class="navItem" style="transform: rotateY(288deg) translateZ(150px);">Support</a>
+    <a href="#" class="navItem" style="transform: rotateY(0deg) translateZ(225px);">Home</a>
+    <a href="#" class="navItem" style="transform: rotateY(60deg) translateZ(225px);">AI Finance</a>
+    <a href="#" class="navItem" style="transform: rotateY(120deg) translateZ(225px);">Business Analytics</a>
+    <a href="#" class="navItem" style="transform: rotateY(180deg) translateZ(225px);">Analytical Tools</a>
+    <a href="#" class="navItem" style="transform: rotateY(240deg) translateZ(225px);">CV / Resume</a>
+    <a href="#" class="navItem" style="transform: rotateY(300deg) translateZ(225px);">Contact</a>
   </div>
 
-  <!-- Main Glass Screen -->
+  <!-- Main futuristic content -->
   <main>
-    <h1>Welcome to Khwajai Store</h1>
+    <h1>Khwaja AI & Analytics Lab</h1>
     <p>
-      This is your futuristic AI-powered shopping hub.  
-      We are preparing to launch a unique collection of smart gadgets, home essentials, and fashion trends.  
-      Stay tuned as our AI assistant helps guide you through upcoming innovations.
+      I am a student passionate about leveraging Artificial Intelligence in Financial Applications  
+      and developing innovative Business Analytics tools.  
+      My work focuses on turning complex datasets into actionable insights through next-generation analytical platforms.
     </p>
-    <h2>Coming Soon: The Future of Shopping</h2>
+    <h2>Projects & Research</h2>
     <p>
-      Explore the latest in tech, style, and home design.  
-      Our launch is set for 2025, with exclusive offers for our first customers.
+      From AI-driven trading models to interactive business dashboards,  
+      I build tools that help users make smarter, faster, and more accurate decisions.
     </p>
+
+    <!-- Graph preview -->
+    <div class="graph-preview">
+      <div class="graph">📊 AI Trading Predictions</div>
+      <div class="graph">📈 Sales & Revenue Dashboard</div>
+      <div class="graph">📉 Risk Analysis Models</div>
+    </div>
   </main>
 
   <footer>
-    &copy; 2025 Khwajai Store | Powered by AI
+    &copy; 2025 Khwaja AI & Analytics Lab | Powered by Artificial Intelligence
   </footer>
+
+  <!-- Rotate wheel with cursor movement -->
+  <script>
+    const wheel = document.getElementById('navWheel');
+    document.addEventListener('mousemove', (e) => {
+      let rotation = (e.clientX / window.innerWidth - 0.5) * 360;
+      wheel.style.transform = `translate(-50%, -50%) rotateY(${rotation}deg)`;
+    });
+  </script>
 
   <!-- Chatbase AI Bubble -->
   <script>
@@ -139,7 +175,7 @@
       const onLoad = function(){
         const script = document.createElement("script");
         script.src = "https://www.chatbase.co/embed.min.js";
-        script.id = "AdEJSgBW3axH4ath4E2E3"; // Your Chatbase Bot ID
+        script.id = "AdEJSgBW3axH4ath4E2E3";
         script.domain = "www.chatbase.co";
         document.body.appendChild(script);
       };
@@ -150,4 +186,3 @@
 
 </body>
 </html>
-
