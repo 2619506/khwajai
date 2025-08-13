@@ -6,26 +6,33 @@
   <title>Khwajai Store</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #f5f5f5;
+      background: linear-gradient(180deg, #fdfdfd, #f3f6fa);
       color: #333;
     }
 
     header {
-      background: linear-gradient(90deg, #222, #444);
+      background: linear-gradient(90deg, #0d47a1, #1976d2);
       color: white;
-      padding: 1rem;
+      padding: 2rem 1rem;
       text-align: center;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
     }
 
     header h1 {
       margin: 0;
+      font-size: 2.2rem;
+    }
+
+    header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
     }
 
     nav {
-      background: #333;
+      background: #1565c0;
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
@@ -35,11 +42,12 @@
       color: white;
       padding: 0.8rem 1.2rem;
       text-decoration: none;
-      display: block;
+      font-weight: 500;
+      transition: background 0.3s;
     }
 
     nav a:hover {
-      background: #555;
+      background: rgba(255, 255, 255, 0.15);
     }
 
     main {
@@ -48,47 +56,66 @@
       margin: auto;
     }
 
-    .product-grid {
+    .coming-soon {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .coming-soon h2 {
+      margin-bottom: 0.5rem;
+      color: #0d47a1;
+    }
+
+    .coming-soon p {
+      font-size: 1.1rem;
+      color: #555;
+    }
+
+    .product-teasers {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 1.5rem;
     }
 
-    .product {
+    .teaser {
       background: white;
-      border-radius: 8px;
+      border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      transition: transform 0.2s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      transition: transform 0.3s ease;
     }
 
-    .product:hover {
+    .teaser:hover {
       transform: scale(1.03);
     }
 
-    .product img {
+    .teaser img {
       width: 100%;
       height: 200px;
       object-fit: cover;
     }
 
-    .product-info {
+    .teaser-info {
       padding: 1rem;
     }
 
-    .product-info h3 {
-      margin: 0 0 0.5rem 0;
+    .teaser-info h3 {
+      margin-top: 0;
+      color: #1976d2;
     }
 
     footer {
-      background: #222;
+      background: #0d47a1;
       color: white;
       text-align: center;
       padding: 1rem;
       margin-top: 2rem;
     }
 
-    /* Mobile */
     @media (max-width: 600px) {
       main {
         padding: 1rem;
@@ -100,7 +127,7 @@
 
   <header>
     <h1>Welcome to Khwajai Store</h1>
-    <p>Your trusted place for amazing products</p>
+    <p>Innovative products, trusted quality – your satisfaction is our priority.</p>
   </header>
 
   <nav>
@@ -111,29 +138,34 @@
   </nav>
 
   <main>
-    <h2>Our Featured Products</h2>
-    <div class="product-grid">
-      <div class="product">
-        <img src="https://via.placeholder.com/400x300" alt="Product 1">
-        <div class="product-info">
-          <h3>Product One</h3>
-          <p>High-quality and durable product to meet your needs.</p>
+    <div class="coming-soon">
+      <h2>🚀 Big Launch Coming Soon!</h2>
+      <p>We’re working on something amazing for you. Stay tuned for our exclusive range of high-quality products tailored to your needs.</p>
+    </div>
+
+    <h2 style="color:#0d47a1;">🌟 Sneak Peek of What’s Coming</h2>
+    <div class="product-teasers">
+      <div class="teaser">
+        <img src="https://via.placeholder.com/400x300/1976d2/ffffff?text=Smart+Gadget" alt="Smart Gadget">
+        <div class="teaser-info">
+          <h3>Smart Gadgets</h3>
+          <p>Cutting-edge tech designed to make life easier and more exciting.</p>
         </div>
       </div>
 
-      <div class="product">
-        <img src="https://via.placeholder.com/400x300" alt="Product 2">
-        <div class="product-info">
-          <h3>Product Two</h3>
-          <p>Perfect blend of style and functionality.</p>
+      <div class="teaser">
+        <img src="https://via.placeholder.com/400x300/0d47a1/ffffff?text=Home+Essentials" alt="Home Essentials">
+        <div class="teaser-info">
+          <h3>Home Essentials</h3>
+          <p>Quality, style, and comfort for your home sweet home.</p>
         </div>
       </div>
 
-      <div class="product">
-        <img src="https://via.placeholder.com/400x300" alt="Product 3">
-        <div class="product-info">
-          <h3>Product Three</h3>
-          <p>Exceptional design with unbeatable quality.</p>
+      <div class="teaser">
+        <img src="https://via.placeholder.com/400x300/1565c0/ffffff?text=Fashion+Trends" alt="Fashion Trends">
+        <div class="teaser-info">
+          <h3>Fashion Trends</h3>
+          <p>Stay ahead of the style curve with our trendy and elegant picks.</p>
         </div>
       </div>
     </div>
