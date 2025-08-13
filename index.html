@@ -3,203 +3,149 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Khwajai Store</title>
+  <title>Khwajai Store - AI Glass Interface</title>
+
+  <!-- Google Font: Orbitron for futuristic style -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
   <style>
     body {
-      font-family: 'Segoe UI', Arial, sans-serif;
       margin: 0;
-      padding: 0;
-      background: linear-gradient(180deg, #fdfdfd, #f3f6fa);
-      color: #333;
+      font-family: 'Orbitron', sans-serif;
+      background: radial-gradient(circle at center, #000 0%, #001a00 100%);
+      color: #00ff00;
+      overflow-x: hidden;
+      height: 100vh;
     }
 
-    header {
-      background: linear-gradient(90deg, #0d47a1, #1976d2);
-      color: white;
-      padding: 2rem 1rem;
-      text-align: center;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 2.2rem;
-    }
-
-    header p {
-      font-size: 1.1rem;
-      opacity: 0.9;
-    }
-
-    nav {
-      background: #1565c0;
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    nav a {
-      color: white;
-      padding: 0.8rem 1.2rem;
-      text-decoration: none;
-      font-weight: 500;
-      transition: background 0.3s;
-    }
-
-    nav a:hover {
-      background: rgba(255, 255, 255, 0.15);
-    }
-
+    /* Transparent glass effect for main container */
     main {
+      background: rgba(0, 20, 0, 0.3);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(0, 255, 0, 0.3);
       padding: 2rem;
-      max-width: 1000px;
-      margin: auto;
-    }
-
-    .coming-soon {
-      background: white;
-      border-radius: 12px;
-      padding: 2rem;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      max-width: 900px;
+      margin: 80px auto;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.4);
       text-align: center;
-      margin-bottom: 2rem;
+      animation: flicker 3s infinite;
     }
 
-    .coming-soon h2 {
-      margin-bottom: 0.5rem;
-      color: #0d47a1;
+    @keyframes flicker {
+      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
+      20%, 24%, 55% { opacity: 0.8; }
     }
 
-    .coming-soon p {
-      font-size: 1.1rem;
-      color: #555;
+    h1, h2, p {
+      text-shadow: 0 0 8px #00ff00;
     }
 
-    .product-teasers {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
+    /* Navigation wheel */
+    #navWheel {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform-style: preserve-3d;
+      transform: translate(-50%, -50%) rotateY(0deg);
+      width: 300px;
+      height: 300px;
+      animation: spin 15s linear infinite;
     }
 
-    .teaser {
-      background: white;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      transition: transform 0.3s ease;
+    @keyframes spin {
+      from { transform: translate(-50%, -50%) rotateY(0deg); }
+      to { transform: translate(-50%, -50%) rotateY(360deg); }
     }
 
-    .teaser:hover {
-      transform: scale(1.03);
+    .navItem {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform-origin: -150px center;
+      padding: 10px 20px;
+      background: rgba(0, 40, 0, 0.4);
+      border: 1px solid rgba(0, 255, 0, 0.5);
+      color: #00ff00;
+      text-decoration: none;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 255, 0, 0.6);
+      transition: transform 0.5s, background 0.5s;
     }
 
-    .teaser img {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-    }
-
-    .teaser-info {
-      padding: 1rem;
-    }
-
-    .teaser-info h3 {
-      margin-top: 0;
-      color: #1976d2;
+    .navItem:hover {
+      background: rgba(0, 255, 0, 0.2);
+      transform: scale(1.2) !important;
     }
 
     footer {
-      background: #0d47a1;
-      color: white;
       text-align: center;
       padding: 1rem;
-      margin-top: 2rem;
-    }
-
-    @media (max-width: 600px) {
-      main {
-        padding: 1rem;
-      }
+      font-size: 0.8rem;
+      background: rgba(0, 20, 0, 0.4);
+      border-top: 1px solid rgba(0, 255, 0, 0.3);
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      color: #00ff00;
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <h1>Welcome to Khwajai Store</h1>
-    <p>Innovative products, trusted quality – your satisfaction is our priority.</p>
-  </header>
+  <!-- Navigation Wheel -->
+  <div id="navWheel">
+    <a href="#" class="navItem" style="transform: rotateY(0deg) translateZ(150px);">Home</a>
+    <a href="#" class="navItem" style="transform: rotateY(72deg) translateZ(150px);">Products</a>
+    <a href="#" class="navItem" style="transform: rotateY(144deg) translateZ(150px);">About Us</a>
+    <a href="#" class="navItem" style="transform: rotateY(216deg) translateZ(150px);">Contact</a>
+    <a href="#" class="navItem" style="transform: rotateY(288deg) translateZ(150px);">Support</a>
+  </div>
 
-  <nav>
-    <a href="#">Home</a>
-    <a href="#">Products</a>
-    <a href="#">About Us</a>
-    <a href="#">Contact</a>
-  </nav>
-
+  <!-- Main Glass Screen -->
   <main>
-    <div class="coming-soon">
-      <h2>🚀 Big Launch Coming Soon!</h2>
-      <p>We’re working on something amazing for you. Stay tuned for our exclusive range of high-quality products tailored to your needs.</p>
-    </div>
-
-    <h2 style="color:#0d47a1;">🌟 Sneak Peek of What’s Coming</h2>
-    <div class="product-teasers">
-      <div class="teaser">
-        <img src="https://via.placeholder.com/400x300/1976d2/ffffff?text=Smart+Gadget" alt="Smart Gadget">
-        <div class="teaser-info">
-          <h3>Smart Gadgets</h3>
-          <p>Cutting-edge tech designed to make life easier and more exciting.</p>
-        </div>
-      </div>
-
-      <div class="teaser">
-        <img src="https://via.placeholder.com/400x300/0d47a1/ffffff?text=Home+Essentials" alt="Home Essentials">
-        <div class="teaser-info">
-          <h3>Home Essentials</h3>
-          <p>Quality, style, and comfort for your home sweet home.</p>
-        </div>
-      </div>
-
-      <div class="teaser">
-        <img src="https://via.placeholder.com/400x300/1565c0/ffffff?text=Fashion+Trends" alt="Fashion Trends">
-        <div class="teaser-info">
-          <h3>Fashion Trends</h3>
-          <p>Stay ahead of the style curve with our trendy and elegant picks.</p>
-        </div>
-      </div>
-    </div>
+    <h1>Welcome to Khwajai Store</h1>
+    <p>
+      This is your futuristic AI-powered shopping hub.  
+      We are preparing to launch a unique collection of smart gadgets, home essentials, and fashion trends.  
+      Stay tuned as our AI assistant helps guide you through upcoming innovations.
+    </p>
+    <h2>Coming Soon: The Future of Shopping</h2>
+    <p>
+      Explore the latest in tech, style, and home design.  
+      Our launch is set for 2025, with exclusive offers for our first customers.
+    </p>
   </main>
 
   <footer>
-    <p>&copy; 2025 Khwajai Store. All rights reserved.</p>
+    &copy; 2025 Khwajai Store | Powered by AI
   </footer>
 
   <!-- Chatbase AI Bubble -->
   <script>
-  (function(){
-    if(!window.chatbase || window.chatbase("getState") !== "initialized"){
-      window.chatbase = (...arguments) => {
-        if(!window.chatbase.q){ window.chatbase.q = [] }
-        window.chatbase.q.push(arguments)
+    (function(){
+      if(!window.chatbase || window.chatbase("getState") !== "initialized"){
+        window.chatbase = (...arguments) => {
+          if(!window.chatbase.q){ window.chatbase.q = [] }
+          window.chatbase.q.push(arguments)
+        };
+        window.chatbase = new Proxy(window.chatbase, {
+          get(target, prop){
+            if(prop === "q"){ return target.q }
+            return (...args) => target(prop, ...args)
+          }
+        });
+      }
+      const onLoad = function(){
+        const script = document.createElement("script");
+        script.src = "https://www.chatbase.co/embed.min.js";
+        script.id = "AdEJSgBW3axH4ath4E2E3"; // Your Chatbase Bot ID
+        script.domain = "www.chatbase.co";
+        document.body.appendChild(script);
       };
-      window.chatbase = new Proxy(window.chatbase, {
-        get(target, prop){
-          if(prop === "q"){ return target.q }
-          return (...args) => target(prop, ...args)
-        }
-      });
-    }
-    const onLoad = function(){
-      const script = document.createElement("script");
-      script.src = "https://www.chatbase.co/embed.min.js";
-      script.id = "AdEJSgBW3axH4ath4E2E3"; // Your Chatbase Bot ID
-      script.domain = "www.chatbase.co";
-      document.body.appendChild(script);
-    };
-    if(document.readyState === "complete"){ onLoad() }
-    else { window.addEventListener("load", onLoad) }
-  })();
+      if(document.readyState === "complete"){ onLoad() }
+      else { window.addEventListener("load", onLoad) }
+    })();
   </script>
 
 </body>
