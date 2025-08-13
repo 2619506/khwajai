@@ -3,186 +3,231 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Khwaja AI & Analytics Lab</title>
+  <title>Khwaja AI</title>
 
-  <!-- Futuristic font -->
+  <!-- Orbitron font for sci-fi look -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 
   <style>
     body {
       margin: 0;
-      font-family: 'Orbitron', sans-serif;
-      background: url('https://www.transparenttextures.com/patterns/stardust.png'), radial-gradient(circle at center, #000 0%, #001a00 100%);
+      padding: 0;
+      background: radial-gradient(ellipse at center, #001100 0%, #000000 100%);
       color: #00ff00;
-      height: 100vh;
+      font-family: 'Orbitron', sans-serif;
       overflow-x: hidden;
     }
 
-    /* Glass effect container */
-    main {
-      background: rgba(0, 20, 0, 0.35);
+    header {
+      text-align: center;
+      padding: 2rem 1rem;
+      background: rgba(0, 50, 0, 0.6);
+      border-bottom: 1px solid rgba(0, 255, 0, 0.4);
       backdrop-filter: blur(10px);
-      border: 1px solid rgba(0, 255, 0, 0.3);
-      padding: 2rem;
-      max-width: 900px;
-      margin: 100px auto 50px;
-      border-radius: 15px;
-      box-shadow: 0 0 25px rgba(0, 255, 0, 0.4);
-      text-align: center;
-      animation: flicker 3s infinite;
     }
 
-    @keyframes flicker {
-      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
-      20%, 24%, 55% { opacity: 0.8; }
+    header h1 {
+      font-size: 2.5rem;
+      text-shadow: 0 0 10px #00ff00;
     }
 
-    h1, h2, p {
-      text-shadow: 0 0 8px #00ff00;
+    header p {
+      font-size: 1.2rem;
+      color: #66ff66;
     }
 
-    /* Alien spaceship wheel */
-    #navWheel {
-      position: fixed;
-      top: 50%;
-      left: 50%;
+    /* Alien spaceship wheel nav */
+    .wheel-nav {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      margin: 3rem auto;
+      border-radius: 50%;
+      border: 2px solid rgba(0, 255, 0, 0.4);
+      box-shadow: 0 0 30px rgba(0, 255, 0, 0.4);
+      animation: spin 20s linear infinite;
       transform-style: preserve-3d;
-      transform: translate(-50%, -50%) rotateY(0deg);
-      width: 450px;
-      height: 450px;
-      transition: transform 1s;
     }
 
-    .navItem {
+    .wheel-nav:hover {
+      animation-play-state: paused;
+    }
+
+    .wheel-item {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform-origin: -225px center;
-      padding: 15px 25px;
-      background: rgba(0, 40, 0, 0.5);
-      border: 2px solid rgba(0, 255, 0, 0.5);
-      color: #00ff00;
-      text-decoration: none;
-      border-radius: 50% 50% 30% 30% / 50% 50% 50% 50%;
-      box-shadow: 0 0 20px rgba(0, 255, 0, 0.6);
-      transition: transform 0.4s, background 0.4s;
-      width: 120px;
+      width: 100px;
       text-align: center;
+      color: #00ff00;
+      text-shadow: 0 0 5px #00ff00;
+      cursor: pointer;
+      font-size: 0.9rem;
     }
 
-    .navItem:hover {
-      background: rgba(0, 255, 0, 0.2);
-      transform: scale(1.2) !important;
+    .wheel-item:hover {
+      color: #66ff66;
+      text-shadow: 0 0 10px #66ff66;
+    }
+
+    /* Position nav items like alien spaceship pods */
+    .wheel-item:nth-child(1) { top: 0; left: 100px; }
+    .wheel-item:nth-child(2) { top: 50px; right: 0; }
+    .wheel-item:nth-child(3) { bottom: 50px; right: 0; }
+    .wheel-item:nth-child(4) { bottom: 0; left: 100px; }
+    .wheel-item:nth-child(5) { bottom: 50px; left: 0; }
+    .wheel-item:nth-child(6) { top: 50px; left: 0; }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    main {
+      max-width: 900px;
+      margin: auto;
+      padding: 2rem;
+      background: rgba(0, 20, 0, 0.5);
+      border: 1px solid rgba(0, 255, 0, 0.3);
+      border-radius: 10px;
+      box-shadow: 0 0 30px rgba(0, 255, 0, 0.2);
+      backdrop-filter: blur(10px);
+    }
+
+    section {
+      margin-bottom: 2rem;
+    }
+
+    section h2 {
+      border-bottom: 1px solid rgba(0, 255, 0, 0.3);
+      padding-bottom: 0.5rem;
     }
 
     footer {
       text-align: center;
       padding: 1rem;
-      font-size: 0.8rem;
-      background: rgba(0, 20, 0, 0.4);
-      border-top: 1px solid rgba(0, 255, 0, 0.3);
+      background: rgba(0, 50, 0, 0.6);
+      border-top: 1px solid rgba(0, 255, 0, 0.4);
+      color: #66ff66;
+    }
+
+    /* Floating Robot Assistant */
+    #botContainer {
       position: fixed;
-      bottom: 0;
-      width: 100%;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(0, 30, 0, 0.6);
+      border: 1px solid rgba(0, 255, 0, 0.4);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      width: 400px;
+      height: 600px;
+      box-shadow: 0 0 25px rgba(0, 255, 0, 0.4);
+      display: none;
+      flex-direction: column;
+      z-index: 9999;
+    }
+    #botHeader {
+      background: rgba(0, 50, 0, 0.7);
+      padding: 10px;
+      font-size: 1rem;
       color: #00ff00;
-    }
-
-    /* Graph preview container */
-    .graph-preview {
-      margin-top: 2rem;
-      display: flex;
-      justify-content: space-around;
-      flex-wrap: wrap;
-    }
-
-    .graph {
-      background: rgba(0, 40, 0, 0.4);
-      border: 1px solid rgba(0, 255, 0, 0.3);
-      border-radius: 12px;
-      width: 250px;
-      height: 180px;
-      box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
       display: flex;
       align-items: center;
-      justify-content: center;
-      color: #0f0;
-      font-size: 0.9rem;
+      gap: 10px;
+      border-bottom: 1px solid rgba(0, 255, 0, 0.4);
+    }
+    #botHeader img {
+      width: 30px;
+      height: 30px;
+    }
+    #botFrame {
+      flex: 1;
+      border: none;
+    }
+    #botToggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(0, 50, 0, 0.6);
+      border-radius: 50%;
+      padding: 15px;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+      z-index: 10000;
+    }
+    #botToggle img {
+      width: 40px;
+      height: 40px;
     }
   </style>
 </head>
 <body>
 
-  <!-- Alien spaceship navigation wheel -->
-  <div id="navWheel">
-    <a href="#" class="navItem" style="transform: rotateY(0deg) translateZ(225px);">Home</a>
-    <a href="#" class="navItem" style="transform: rotateY(60deg) translateZ(225px);">AI Finance</a>
-    <a href="#" class="navItem" style="transform: rotateY(120deg) translateZ(225px);">Business Analytics</a>
-    <a href="#" class="navItem" style="transform: rotateY(180deg) translateZ(225px);">Analytical Tools</a>
-    <a href="#" class="navItem" style="transform: rotateY(240deg) translateZ(225px);">CV / Resume</a>
-    <a href="#" class="navItem" style="transform: rotateY(300deg) translateZ(225px);">Contact</a>
+<header>
+  <h1>Khwaja AI</h1>
+  <p>AI-Driven Financial Applications | Business Analytics | Advanced Analytical Tools</p>
+</header>
+
+<!-- Alien spaceship wheel navigation -->
+<div class="wheel-nav">
+  <div class="wheel-item">Home</div>
+  <div class="wheel-item">Projects</div>
+  <div class="wheel-item">Analytics Tools</div>
+  <div class="wheel-item">Research</div>
+  <div class="wheel-item">Contact</div>
+  <div class="wheel-item">CV</div>
+</div>
+
+<main>
+  <section>
+    <h2>About Khwaja AI</h2>
+    <p>
+      Khwaja AI is a futuristic student-led AI lab focused on developing cutting-edge solutions
+      in Financial Applications, Business Analytics, and intelligent data visualization tools.
+      This platform showcases projects, research, and interactive tools designed to make analytics
+      accessible, insightful, and futuristic.
+    </p>
+  </section>
+
+  <section>
+    <h2>Upcoming Projects</h2>
+    <ul>
+      <li>AI-powered investment risk analysis dashboard</li>
+      <li>Predictive analytics tool for business decision-making</li>
+      <li>Next-gen interactive data visualization for market trends</li>
+    </ul>
+  </section>
+</main>
+
+<footer>
+  &copy; 2025 Khwaja AI. All rights reserved.
+</footer>
+
+<!-- Floating Robot AI Assistant -->
+<div id="botContainer">
+  <div id="botHeader">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Robot-icon.svg" alt="Bot">
+    Khwaja AI Assistant
   </div>
+  <iframe 
+    id="botFrame"
+    src="https://www.chatbase.co/chatbot-iframe/AdEJSgBW3axH4ath4E2E3"
+    style="width:100%; height:100%; background:transparent; color:#00ff00;"
+  ></iframe>
+</div>
 
-  <!-- Main futuristic content -->
-  <main>
-    <h1>Khwaja AI & Analytics Lab</h1>
-    <p>
-      I am a student passionate about leveraging Artificial Intelligence in Financial Applications  
-      and developing innovative Business Analytics tools.  
-      My work focuses on turning complex datasets into actionable insights through next-generation analytical platforms.
-    </p>
-    <h2>Projects & Research</h2>
-    <p>
-      From AI-driven trading models to interactive business dashboards,  
-      I build tools that help users make smarter, faster, and more accurate decisions.
-    </p>
+<div id="botToggle">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Robot-icon.svg" alt="Bot">
+</div>
 
-    <!-- Graph preview -->
-    <div class="graph-preview">
-      <div class="graph">📊 AI Trading Predictions</div>
-      <div class="graph">📈 Sales & Revenue Dashboard</div>
-      <div class="graph">📉 Risk Analysis Models</div>
-    </div>
-  </main>
-
-  <footer>
-    &copy; 2025 Khwaja AI & Analytics Lab | Powered by Artificial Intelligence
-  </footer>
-
-  <!-- Rotate wheel with cursor movement -->
-  <script>
-    const wheel = document.getElementById('navWheel');
-    document.addEventListener('mousemove', (e) => {
-      let rotation = (e.clientX / window.innerWidth - 0.5) * 360;
-      wheel.style.transform = `translate(-50%, -50%) rotateY(${rotation}deg)`;
-    });
-  </script>
-
-  <!-- Chatbase AI Bubble -->
-  <script>
-    (function(){
-      if(!window.chatbase || window.chatbase("getState") !== "initialized"){
-        window.chatbase = (...arguments) => {
-          if(!window.chatbase.q){ window.chatbase.q = [] }
-          window.chatbase.q.push(arguments)
-        };
-        window.chatbase = new Proxy(window.chatbase, {
-          get(target, prop){
-            if(prop === "q"){ return target.q }
-            return (...args) => target(prop, ...args)
-          }
-        });
-      }
-      const onLoad = function(){
-        const script = document.createElement("script");
-        script.src = "https://www.chatbase.co/embed.min.js";
-        script.id = "AdEJSgBW3axH4ath4E2E3";
-        script.domain = "www.chatbase.co";
-        document.body.appendChild(script);
-      };
-      if(document.readyState === "complete"){ onLoad() }
-      else { window.addEventListener("load", onLoad) }
-    })();
-  </script>
+<script>
+  const botToggle = document.getElementById('botToggle');
+  const botContainer = document.getElementById('botContainer');
+  let botVisible = false;
+  botToggle.onclick = () => {
+    botVisible = !botVisible;
+    botContainer.style.display = botVisible ? 'flex' : 'none';
+  };
+</script>
 
 </body>
 </html>
