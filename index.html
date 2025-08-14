@@ -15,249 +15,181 @@
     font-family: 'Share Tech Mono', monospace;
     letter-spacing: 1px;
   }
+  canvas#stars { position: fixed; top: 0; left: 0; z-index: -2; }
+  h1, p, a { text-shadow: 0 0 8px #00ffcc, 0 0 20px #00ffcc, 0 0 40px #00ffcc; }
 
-  canvas#stars {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: -2;
-  }
-
-  /* Alien glow text */
-  h1, p, a {
-    text-shadow: 0 0 8px #00ffcc, 0 0 20px #00ffcc, 0 0 40px #00ffcc;
-  }
-
-  /* Spaceship Wheel */
   .wheel {
-    position: absolute;
-    top: 50%;
-    left: 50%;
+    position: absolute; top: 50%; left: 50%;
     transform: translate(-50%, -50%) rotate(0deg);
-    width: 420px;
-    height: 420px;
-    border-radius: 50%;
+    width: 420px; height: 420px; border-radius: 50%;
     background: radial-gradient(circle, rgba(0,0,0,0.95) 70%, transparent 100%);
     border: 2px solid rgba(0,255,204,0.6);
     box-shadow: 0 0 50px rgba(0,255,204,0.8), inset 0 0 40px rgba(0,255,204,0.4);
     transition: transform 0.2s ease-out;
     z-index: 1;
   }
-
-  /* Orbiting Alien Tabs */
   .tab {
-    position: absolute;
-    background: rgba(0,255,204,0.1);
+    position: absolute; background: rgba(0,255,204,0.1);
     border: 1px solid rgba(0,255,204,0.5);
-    padding: 8px 16px;
-    border-radius: 50px 10px 50px 10px;
-    color: #00ffcc;
-    text-decoration: none;
-    font-weight: bold;
+    padding: 8px 16px; border-radius: 50px 10px 50px 10px;
+    color: #00ffcc; text-decoration: none; font-weight: bold;
     text-transform: uppercase;
     transition: background 0.3s, transform 0.3s;
+    cursor: pointer;
   }
-  .tab:hover {
-    background: rgba(0,255,204,0.3);
-    transform: scale(1.1);
-  }
+  .tab:hover { background: rgba(0,255,204,0.3); transform: scale(1.1); }
   .tab1 { top: -40px; left: 50%; transform: translateX(-50%); }
   .tab2 { top: 50%; right: -120px; transform: translateY(-50%); }
   .tab3 { bottom: -40px; left: 50%; transform: translateX(-50%); }
   .tab4 { top: 50%; left: -120px; transform: translateY(-50%); }
   .tab5 { bottom: -100px; left: 50%; transform: translateX(-50%); }
 
-  /* Inside globe content */
   .center-content {
-    position: absolute;
-    top: 50%;
-    left: 50%;
+    position: absolute; top: 50%; left: 50%;
     transform: translate(-50%, -50%);
-    width: 300px;
-    height: 300px;
-    background: rgba(0,0,0,0.88);
-    border-radius: 50%;
-    padding: 20px;
-    text-align: center;
-    overflow-y: auto;
+    width: 300px; height: 300px;
+    background: rgba(0,0,0,0.88); border-radius: 50%;
+    padding: 20px; text-align: center; overflow-y: auto;
     box-shadow: inset 0 0 30px rgba(0,255,204,0.4);
   }
-  .center-content h1 {
-    font-size: 1.3em;
-    margin-bottom: 12px;
-    color: #00ffcc;
-  }
-  .center-content p {
-    font-size: 0.9em;
-    line-height: 1.4em;
-    color: #aaffee;
-  }
+  .center-content h1 { font-size: 1.3em; margin-bottom: 12px; }
+  .center-content p { font-size: 0.9em; line-height: 1.4em; color: #aaffee; }
 
-  /* Chatbot left fixed */
-  .chatbot-container {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  /* Analyzer styles */
+  #analyzer {
+    display: none; text-align: left; font-size: 0.85em;
   }
-  .robot-icon {
-    width: 80px;
-    height: 80px;
-    background: rgba(0,255,204,0.1);
-    border: 2px solid #00ffcc;
-    border-radius: 50%;
-    box-shadow: 0 0 25px #00ffcc;
-    background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Robot_icon.svg/2048px-Robot_icon.svg.png');
-    background-size: cover;
-    margin-bottom: 10px;
+  #analyzer input, #analyzer select, #analyzer button {
+    margin: 5px 0; background: black; border: 1px solid #00ffcc;
+    color: #00ffcc; padding: 5px; border-radius: 4px;
   }
+  canvas { background: rgba(0,0,0,0.7); border: 1px solid #00ffcc; margin-top: 8px; }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.1/papaparse.min.js"></script>
 </head>
 <body>
 
 <canvas id="stars"></canvas>
 
-<!-- Wheel -->
 <div class="wheel" id="wheel">
-  <a href="#business-analytics" class="tab tab1">Analytics</a>
-  <a href="#finance" class="tab tab2">Finance</a>
-  <a href="#ai-ml" class="tab tab3">AI & ML</a>
-  <a href="#tools" class="tab tab4">Tools</a>
-  <a href="#cv" class="tab tab5">CV</a>
+  <div class="tab tab1" onclick="showSection('default')">Analytics</div>
+  <div class="tab tab2" onclick="showSection('finance')">Finance</div>
+  <div class="tab tab3" onclick="showSection('ai')">AI & ML</div>
+  <div class="tab tab4" onclick="showSection('tools')">Tools</div>
+  <div class="tab tab5" onclick="showSection('cv')">CV</div>
 
-  <!-- Central Globe -->
-  <div class="center-content">
-    <h1> Khwaja AI </h1>
-    <p>Intergalactic expertise in <b>Business Analytics</b>, <b>Finance</b>, and <b>Artificial Intelligence</b>.  
-    Pilot projects that use machine learning for predictive business insights and deploy futuristic analytical tools for real-time data visualisation.  
-    Navigate the alien control tabs to access projects, resources, and my CV.</p>
+  <div class="center-content" id="centerContent">
+    <div id="defaultSection">
+      <h1>Khwaja AI</h1>
+      <p>Intergalactic expertise in <b>Business Analytics</b>, <b>Finance</b>, and <b>Artificial Intelligence</b>. Pilot projects that use machine learning for predictive business insights and deploy futuristic analytical tools for real-time data visualisation. Navigate the alien control tabs to access projects, resources, and my CV.</p>
+    </div>
+    <div id="toolsSection" style="display:none;">
+      <h1>Khwaja AI Analyzer</h1>
+      <div id="analyzer">
+        <input type="file" id="fileInput" accept=".csv,.xlsx">
+        <select id="chartType">
+          <option value="bar">Bar</option>
+          <option value="line">Line</option>
+          <option value="pie">Pie</option>
+          <option value="doughnut">Doughnut</option>
+          <option value="radar">Radar</option>
+        </select>
+        <button onclick="generateChart()">Generate Chart</button>
+        <button onclick="downloadChart()">Download Chart</button>
+        <canvas id="chartCanvas" width="250" height="200"></canvas>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- Chatbot -->
 <div class="chatbot-container">
   <div class="robot-icon"></div>
 </div>
 
-<!-- Chatbase Embed -->
 <script>
-(function(){
-  if(!window.chatbase || window.chatbase("getState")!=="initialized"){
-    window.chatbase=(...arguments)=>{
-      if(!window.chatbase.q){window.chatbase.q=[]}
-      window.chatbase.q.push(arguments)
-    };
-    window.chatbase=new Proxy(window.chatbase,{
-      get(target,prop){
-        if(prop==="q"){return target.q}
-        return(...args)=>target(prop,...args)
-      }
-    });
+function showSection(section) {
+  document.getElementById("defaultSection").style.display = section === 'default' ? 'block' : 'none';
+  document.getElementById("toolsSection").style.display = section === 'tools' ? 'block' : 'none';
+  if (section === 'tools') {
+    document.getElementById("analyzer").style.display = 'block';
   }
-  const onLoad=function(){
-    const script=document.createElement("script");
-    script.src="https://www.chatbase.co/embed.min.js";
-    script.id="85-fKKKuG65obFx8ejTz3";
-    script.domain="www.chatbase.co";
-    document.body.appendChild(script);
-  };
-  if(document.readyState==="complete"){onLoad()}
-  else{window.addEventListener("load",onLoad)}
-})();
+}
+
+let chartInstance;
+function generateChart() {
+  const file = document.getElementById('fileInput').files[0];
+  const type = document.getElementById('chartType').value;
+  if (!file) return alert('Please upload a file first.');
+
+  Papa.parse(file, {
+    header: true,
+    dynamicTyping: true,
+    complete: function(results) {
+      const labels = Object.keys(results.data[0]);
+      const data = Object.values(results.data[0]);
+      const ctx = document.getElementById('chartCanvas').getContext('2d');
+      if (chartInstance) chartInstance.destroy();
+      chartInstance = new Chart(ctx, {
+        type: type,
+        data: { labels: labels, datasets: [{ label: 'Data', data: data, borderWidth: 1 }] },
+        options: { responsive: false }
+      });
+    }
+  });
+}
+function downloadChart() {
+  if (!chartInstance) return alert('Generate a chart first.');
+  const a = document.createElement('a');
+  a.href = chartInstance.toBase64Image();
+  a.download = 'chart.png';
+  a.click();
+}
 </script>
 
-<!-- Stars + Meteors Animation -->
+<!-- Stars animation -->
 <script>
 const canvas = document.getElementById('stars');
 const ctx = canvas.getContext('2d');
-let stars = [];
-let meteors = [];
-
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
-
+let stars = [], meteors = [];
+function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+resizeCanvas(); window.addEventListener('resize', resizeCanvas);
 function createStars(count) {
   stars = [];
-  for(let i=0; i<count; i++){
-    stars.push({
-      x: Math.random()*canvas.width,
-      y: Math.random()*canvas.height,
-      speed: Math.random()*0.5+0.2,
-      size: Math.random()*2
-    });
-  }
+  for (let i = 0; i < count; i++) stars.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, speed: Math.random()*0.5+0.2, size: Math.random()*2 });
 }
 function createMeteors(count) {
   meteors = [];
-  for(let i=0; i<count; i++){
-    meteors.push({
-      x: Math.random()*canvas.width,
-      y: Math.random()*canvas.height,
-      speedX: -(Math.random()*4+2),
-      speedY: Math.random()*2+1,
-      length: Math.random()*50+30
-    });
-  }
+  for (let i=0;i<count;i++) meteors.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, speedX: -(Math.random()*4+2), speedY: Math.random()*2+1, length: Math.random()*50+30 });
 }
-
 function drawStars() {
   ctx.clearRect(0,0,canvas.width,canvas.height);
   ctx.fillStyle = '#00ffcc';
-  for(let star of stars){
-    ctx.beginPath();
-    ctx.arc(star.x, star.y, star.size, 0, Math.PI*2);
-    ctx.fill();
-    star.y += star.speed;
-    if(star.y > canvas.height) {
-      star.y = 0;
-      star.x = Math.random()*canvas.width;
-    }
+  for (let s of stars) {
+    ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); ctx.fill();
+    s.y += s.speed; if (s.y > canvas.height) { s.y = 0; s.x = Math.random()*canvas.width; }
   }
-  // Meteors
-  ctx.strokeStyle = '#00ffcc';
-  ctx.lineWidth = 1.5;
-  for(let m of meteors){
-    ctx.beginPath();
-    ctx.moveTo(m.x, m.y);
-    ctx.lineTo(m.x + m.length*m.speedX/10, m.y + m.length*m.speedY/10);
-    ctx.stroke();
-    m.x += m.speedX;
-    m.y += m.speedY;
-    if(m.x < -100 || m.y > canvas.height+100) {
-      m.x = canvas.width + Math.random()*200;
-      m.y = Math.random()*canvas.height/2;
-    }
+  ctx.strokeStyle = '#00ffcc'; ctx.lineWidth = 1.5;
+  for (let m of meteors) {
+    ctx.beginPath(); ctx.moveTo(m.x, m.y); ctx.lineTo(m.x + m.length*m.speedX/10, m.y + m.length*m.speedY/10); ctx.stroke();
+    m.x += m.speedX; m.y += m.speedY;
+    if (m.x < -100 || m.y > canvas.height+100) { m.x = canvas.width + Math.random()*200; m.y = Math.random()*canvas.height/2; }
   }
 }
-
-createStars(200);
-createMeteors(5);
-
-function animate() {
-  drawStars();
-  requestAnimationFrame(animate);
-}
-animate();
+createStars(200); createMeteors(5);
+(function animate() { drawStars(); requestAnimationFrame(animate); })();
 </script>
 
-<!-- Wheel rotation by mouse -->
+<!-- Wheel rotation -->
 <script>
 const wheel = document.getElementById('wheel');
 document.addEventListener('mousemove', e => {
   const centerX = window.innerWidth / 2;
   const offsetX = e.clientX - centerX;
-  const rotation = offsetX / 20; // adjust sensitivity
+  const rotation = offsetX / 20;
   wheel.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
 });
 </script>
 
 </body>
 </html>
-
