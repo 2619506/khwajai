@@ -1,267 +1,220 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Khwaja AI</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Khwaja AI - Financial & Business Analytics</title>
+<style>
+  /* Basic Reset */
+  * {margin:0; padding:0; box-sizing: border-box;}
+  body {
+    background: black;
+    color: #00ff99;
+    font-family: 'Courier New', monospace;
+    overflow-x: hidden;
+    height: 100vh;
+  }
 
-  <!-- Orbitron font for sci-fi look -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  /* Stars background */
+  canvas#stars {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+  }
 
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: black;
-      color: #00ff00;
-      font-family: 'Orbitron', sans-serif;
-      overflow-x: hidden;
-      position: relative;
-    }
+  /* Header */
+  header {
+    text-align: center;
+    padding: 2rem;
+    font-size: 2rem;
+    text-shadow: 0 0 10px #00ff99;
+  }
 
-    /* Star field background */
-    .stars, .falling-stars {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      display: block;
-      z-index: -2;
-    }
+  /* Rotating navigation wheel */
+  .nav-wheel {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    margin: 2rem auto;
+    border-radius: 50%;
+    border: 2px solid rgba(0,255,153,0.4);
+    box-shadow: 0 0 30px rgba(0,255,153,0.5);
+    transform-style: preserve-3d;
+    animation: spin 20s linear infinite;
+  }
+  .nav-wheel a {
+    position: absolute;
+    color: #00ff99;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1rem;
+    text-shadow: 0 0 5px #00ff99;
+    transition: transform 0.3s, color 0.3s;
+  }
+  .nav-wheel a:hover {
+    color: #fff;
+    text-shadow: 0 0 15px #00ff99;
+    transform: scale(1.2);
+  }
+  @keyframes spin {
+    from {transform: rotate(0deg);}
+    to {transform: rotate(360deg);}
+  }
+  /* Position links around the wheel */
+  .nav-wheel a:nth-child(1) {top: 0; left: 50%; transform: translate(-50%, 0);}
+  .nav-wheel a:nth-child(2) {top: 20%; left: 90%; transform: translate(-50%, -50%);}
+  .nav-wheel a:nth-child(3) {top: 50%; left: 100%; transform: translate(-50%, -50%);}
+  .nav-wheel a:nth-child(4) {top: 80%; left: 90%; transform: translate(-50%, -50%);}
+  .nav-wheel a:nth-child(5) {bottom: 0; left: 50%; transform: translate(-50%, 0);}
+  .nav-wheel a:nth-child(6) {top: 80%; left: 10%; transform: translate(-50%, -50%);}
+  .nav-wheel a:nth-child(7) {top: 50%; left: 0; transform: translate(-50%, -50%);}
+  .nav-wheel a:nth-child(8) {top: 20%; left: 10%; transform: translate(-50%, -50%);}
 
-    .stars {
-      background: transparent url('https://www.script-tutorials.com/demos/360/images/stars.png') repeat top center;
-      animation: moveStars 200s linear infinite;
-    }
+  /* Main content */
+  main {
+    max-width: 900px;
+    margin: auto;
+    padding: 2rem;
+    background: rgba(0,0,0,0.6);
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,255,153,0.4);
+  }
+  h2 {
+    margin-bottom: 1rem;
+    text-shadow: 0 0 8px #00ff99;
+  }
+  p {
+    line-height: 1.6;
+  }
 
-    .falling-stars {
-      background: transparent url('https://www.script-tutorials.com/demos/360/images/starfield.png') repeat top center;
-      animation: moveFalling 20s linear infinite;
-    }
-
-    @keyframes moveStars {
-      from {background-position: 0 0;}
-      to {background-position: -10000px 5000px;}
-    }
-
-    @keyframes moveFalling {
-      from {background-position: 0 0;}
-      to {background-position: 1000px 2000px;}
-    }
-
-    header {
-      text-align: center;
-      padding: 2rem 1rem;
-      background: rgba(0, 50, 0, 0.6);
-      border-bottom: 1px solid rgba(0, 255, 0, 0.4);
-      backdrop-filter: blur(10px);
-    }
-
-    header h1 {
-      font-size: 2.5rem;
-      text-shadow: 0 0 10px #00ff00;
-    }
-
-    header p {
-      font-size: 1.2rem;
-      color: #66ff66;
-    }
-
-    /* Alien spaceship wheel nav */
-    .wheel-nav {
-      position: relative;
-      width: 300px;
-      height: 300px;
-      margin: 3rem auto;
-      border-radius: 50%;
-      border: 2px solid rgba(0, 255, 0, 0.4);
-      box-shadow: 0 0 30px rgba(0, 255, 0, 0.4);
-      animation: spin 20s linear infinite;
-      transform-style: preserve-3d;
-    }
-
-    .wheel-nav:hover { animation-play-state: paused; }
-
-    .wheel-item {
-      position: absolute;
-      width: 100px;
-      text-align: center;
-      color: #00ff00;
-      text-shadow: 0 0 5px #00ff00;
-      cursor: pointer;
-      font-size: 0.9rem;
-    }
-
-    .wheel-item:hover {
-      color: #66ff66;
-      text-shadow: 0 0 10px #66ff66;
-    }
-
-    /* Position nav items like alien spaceship pods */
-    .wheel-item:nth-child(1) { top: 0; left: 100px; }
-    .wheel-item:nth-child(2) { top: 50px; right: 0; }
-    .wheel-item:nth-child(3) { bottom: 50px; right: 0; }
-    .wheel-item:nth-child(4) { bottom: 0; left: 100px; }
-    .wheel-item:nth-child(5) { bottom: 50px; left: 0; }
-    .wheel-item:nth-child(6) { top: 50px; left: 0; }
-
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    main {
-      max-width: 900px;
-      margin: auto;
-      padding: 2rem;
-      background: rgba(0, 20, 0, 0.5);
-      border: 1px solid rgba(0, 255, 0, 0.3);
-      border-radius: 10px;
-      box-shadow: 0 0 30px rgba(0, 255, 0, 0.2);
-      backdrop-filter: blur(10px);
-    }
-
-    section { margin-bottom: 2rem; }
-
-    section h2 {
-      border-bottom: 1px solid rgba(0, 255, 0, 0.3);
-      padding-bottom: 0.5rem;
-    }
-
-    footer {
-      text-align: center;
-      padding: 1rem;
-      background: rgba(0, 50, 0, 0.6);
-      border-top: 1px solid rgba(0, 255, 0, 0.4);
-      color: #66ff66;
-    }
-
-    /* Floating Robot Assistant on left */
-    #botContainer {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      background: rgba(0, 30, 0, 0.6);
-      border: 1px solid rgba(0, 255, 0, 0.4);
-      border-radius: 20px;
-      backdrop-filter: blur(10px);
-      width: 400px;
-      height: 600px;
-      box-shadow: 0 0 25px rgba(0, 255, 0, 0.4);
-      display: none;
-      flex-direction: column;
-      z-index: 9999;
-    }
-    #botHeader {
-      background: rgba(0, 50, 0, 0.7);
-      padding: 10px;
-      font-size: 1rem;
-      color: #00ff00;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      border-bottom: 1px solid rgba(0, 255, 0, 0.4);
-    }
-    #botHeader img {
-      width: 30px;
-      height: 30px;
-      filter: drop-shadow(0 0 5px #00ff00);
-      opacity: 0.8;
-    }
-    #botFrame {
-      flex: 1;
-      border: none;
-    }
-    #botToggle {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      background: rgba(0, 50, 0, 0.2);
-      border-radius: 50%;
-      padding: 15px;
-      cursor: pointer;
-      box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
-      z-index: 10000;
-    }
-    #botToggle img {
-      width: 40px;
-      height: 40px;
-      filter: drop-shadow(0 0 8px #00ff00);
-      opacity: 0.9;
-    }
-  </style>
+  /* Chatbot icon */
+  .bot-icon {
+    position: fixed;
+    left: 20px;
+    bottom: 20px;
+    width: 60px;
+    height: 60px;
+    background: rgba(0,255,153,0.2);
+    border: 2px solid #00ff99;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 20px #00ff99;
+    cursor: pointer;
+    z-index: 9999;
+  }
+  .bot-icon img {
+    width: 40px;
+    height: 40px;
+    filter: drop-shadow(0 0 5px #00ff99);
+  }
+</style>
 </head>
 <body>
 
-<!-- Starry background -->
-<div class="stars"></div>
-<div class="falling-stars"></div>
+<canvas id="stars"></canvas>
 
 <header>
-  <h1>Khwaja AI</h1>
-  <p>AI-Driven Financial Applications | Business Analytics | Advanced Analytical Tools</p>
+  🚀 Khwaja AI  
+  <div style="font-size:1rem;">AI-Powered Business Analytics & Financial Insights</div>
 </header>
 
-<!-- Alien spaceship wheel navigation -->
-<div class="wheel-nav">
-  <div class="wheel-item">Home</div>
-  <div class="wheel-item">Projects</div>
-  <div class="wheel-item">Analytics Tools</div>
-  <div class="wheel-item">Research</div>
-  <div class="wheel-item">Contact</div>
-  <div class="wheel-item">CV</div>
+<div class="nav-wheel">
+  <a href="#">Home</a>
+  <a href="#">Projects</a>
+  <a href="#">Analytics Tools</a>
+  <a href="#">Finance</a>
+  <a href="#">AI & ML</a>
+  <a href="#">Business Analysis</a>
+  <a href="#">Contact</a>
+  <a href="#">CV</a>
 </div>
 
 <main>
-  <section>
-    <h2>About Khwaja AI</h2>
-    <p>
-      Khwaja AI is a futuristic student-led AI lab focused on developing cutting-edge solutions
-      in Financial Applications, Business Analytics, and intelligent data visualization tools.
-      This platform showcases projects, research, and interactive tools designed to make analytics
-      accessible, insightful, and futuristic.
-    </p>
-  </section>
-
-  <section>
-    <h2>Upcoming Projects</h2>
-    <ul>
-      <li>AI-powered investment risk analysis dashboard</li>
-      <li>Predictive analytics tool for business decision-making</li>
-      <li>Next-gen interactive data visualization for market trends</li>
-    </ul>
-  </section>
+  <h2>About Khwaja AI</h2>
+  <p>
+    Khwaja AI is a futuristic AI-powered platform focused on Financial Applications,
+    Business Analytics, AI and Machine Learning. From predictive modeling to advanced
+    visualization, Khwaja AI helps businesses harness data for smarter decisions.
+  </p>
+  <p>
+    Specialties include: Forecasting, Risk Analysis, NLP-driven Business Reports,
+    AI-powered Decision Support, and Automated Insights.
+  </p>
 </main>
 
-<footer>
-  &copy; 2025 Khwaja AI. All rights reserved.
-</footer>
-
-<!-- Floating Robot AI Assistant -->
-<div id="botContainer">
-  <div id="botHeader">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Robot-icon.svg" alt="Bot">
-    Khwaja AI Assistant
-  </div>
-  <iframe 
-    id="botFrame"
-    src="https://www.chatbase.co/chatbot-iframe/AdEJSgBW3axH4ath4E2E3"
-    style="width:100%; height:100%; background:transparent; color:#00ff00;"
-  ></iframe>
+<!-- Chatbot Icon -->
+<div class="bot-icon" onclick="window.chatbase && window.chatbase('openChat')">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Robot_icon.svg/1024px-Robot_icon.svg.png" alt="AI Bot">
 </div>
 
-<div id="botToggle">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Robot-icon.svg" alt="Bot">
-</div>
-
+<!-- Chatbase AI Bubble -->
 <script>
-  const botToggle = document.getElementById('botToggle');
-  const botContainer = document.getElementById('botContainer');
-  let botVisible = false;
-  botToggle.onclick = () => {
-    botVisible = !botVisible;
-    botContainer.style.display = botVisible ? 'flex' : 'none';
+(function(){
+  if(!window.chatbase || window.chatbase("getState") !== "initialized"){
+    window.chatbase = (...arguments) => {
+      if(!window.chatbase.q){ window.chatbase.q = [] }
+      window.chatbase.q.push(arguments)
+    };
+    window.chatbase = new Proxy(window.chatbase, {
+      get(target, prop){
+        if(prop === "q"){ return target.q }
+        return (...args) => target(prop, ...args)
+      }
+    });
+  }
+  const onLoad = function(){
+    const script = document.createElement("script");
+    script.src = "https://www.chatbase.co/embed.min.js";
+    script.id = "7KxpsUaoEybQTEaUnWCMm"; // Your Chatbase Bot ID
+    script.domain = "www.chatbase.co";
+    document.body.appendChild(script);
   };
+  if(document.readyState === "complete"){ onLoad() }
+  else { window.addEventListener("load", onLoad) }
+})();
+</script>
+
+<!-- Falling Stars Script -->
+<script>
+const canvas = document.getElementById('stars');
+const ctx = canvas.getContext('2d');
+let stars = [];
+let w,h;
+
+function init(){
+  w = canvas.width = window.innerWidth;
+  h = canvas.height = window.innerHeight;
+  stars = [];
+  for(let i=0; i<200; i++){
+    stars.push({
+      x: Math.random()*w,
+      y: Math.random()*h,
+      speed: Math.random()*3+0.5,
+      radius: Math.random()*2
+    });
+  }
+}
+function animate(){
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle = "#00ff99";
+  stars.forEach(star=>{
+    ctx.beginPath();
+    ctx.arc(star.x, star.y, star.radius, 0, Math.PI*2);
+    ctx.fill();
+    star.y += star.speed;
+    if(star.y > h) {
+      star.y = 0;
+      star.x = Math.random()*w;
+    }
+  });
+  requestAnimationFrame(animate);
+}
+window.addEventListener('resize', init);
+init();
+animate();
 </script>
 
 </body>
