@@ -3,113 +3,81 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Khwaja AI - Financial & Business Analytics</title>
+<title>Khwaja AI - AI & Business Analytics</title>
 <style>
-  /* Basic Reset */
-  * {margin:0; padding:0; box-sizing: border-box;}
-  body {
-    background: black;
-    color: #00ff99;
-    font-family: 'Courier New', monospace;
-    overflow-x: hidden;
-    height: 100vh;
-  }
-
-  /* Stars background */
-  canvas#stars {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: -1;
-  }
-
-  /* Header */
-  header {
-    text-align: center;
-    padding: 2rem;
-    font-size: 2rem;
-    text-shadow: 0 0 10px #00ff99;
-  }
-
-  /* Rotating navigation wheel */
-  .nav-wheel {
-    position: relative;
-    width: 300px;
-    height: 300px;
-    margin: 2rem auto;
-    border-radius: 50%;
-    border: 2px solid rgba(0,255,153,0.4);
-    box-shadow: 0 0 30px rgba(0,255,153,0.5);
-    transform-style: preserve-3d;
-    animation: spin 20s linear infinite;
-  }
-  .nav-wheel a {
-    position: absolute;
-    color: #00ff99;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 1.1rem;
-    text-shadow: 0 0 5px #00ff99;
-    transition: transform 0.3s, color 0.3s;
-  }
-  .nav-wheel a:hover {
-    color: #fff;
-    text-shadow: 0 0 15px #00ff99;
-    transform: scale(1.2);
-  }
-  @keyframes spin {
-    from {transform: rotate(0deg);}
-    to {transform: rotate(360deg);}
-  }
-  /* Position links around the wheel */
-  .nav-wheel a:nth-child(1) {top: 0; left: 50%; transform: translate(-50%, 0);}
-  .nav-wheel a:nth-child(2) {top: 20%; left: 90%; transform: translate(-50%, -50%);}
-  .nav-wheel a:nth-child(3) {top: 50%; left: 100%; transform: translate(-50%, -50%);}
-  .nav-wheel a:nth-child(4) {top: 80%; left: 90%; transform: translate(-50%, -50%);}
-  .nav-wheel a:nth-child(5) {bottom: 0; left: 50%; transform: translate(-50%, 0);}
-  .nav-wheel a:nth-child(6) {top: 80%; left: 10%; transform: translate(-50%, -50%);}
-  .nav-wheel a:nth-child(7) {top: 50%; left: 0; transform: translate(-50%, -50%);}
-  .nav-wheel a:nth-child(8) {top: 20%; left: 10%; transform: translate(-50%, -50%);}
-
-  /* Main content */
-  main {
-    max-width: 900px;
-    margin: auto;
-    padding: 2rem;
-    background: rgba(0,0,0,0.6);
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0,255,153,0.4);
-  }
-  h2 {
-    margin-bottom: 1rem;
-    text-shadow: 0 0 8px #00ff99;
-  }
-  p {
-    line-height: 1.6;
-  }
-
-  /* Chatbot icon */
-  .bot-icon {
-    position: fixed;
-    left: 20px;
-    bottom: 20px;
-    width: 60px;
-    height: 60px;
-    background: rgba(0,255,153,0.2);
-    border: 2px solid #00ff99;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 0 20px #00ff99;
-    cursor: pointer;
-    z-index: 9999;
-  }
-  .bot-icon img {
-    width: 40px;
-    height: 40px;
-    filter: drop-shadow(0 0 5px #00ff99);
-  }
+    body {
+        margin: 0;
+        font-family: 'Courier New', monospace;
+        background: black;
+        color: #00ff88;
+        overflow-x: hidden;
+    }
+    canvas#stars {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: -1;
+    }
+    header {
+        text-align: center;
+        padding: 2rem;
+        font-size: 2.5rem;
+        color: #00ff88;
+        text-shadow: 0 0 10px #00ff88;
+    }
+    .wheel {
+        width: 300px;
+        height: 300px;
+        margin: auto;
+        border-radius: 50%;
+        border: 2px solid rgba(0,255,136,0.5);
+        position: relative;
+        animation: rotate 20s linear infinite;
+        box-shadow: 0 0 20px rgba(0,255,136,0.5);
+    }
+    .wheel a {
+        position: absolute;
+        color: #00ff88;
+        text-decoration: none;
+        font-weight: bold;
+        background: rgba(0,255,136,0.1);
+        padding: 0.5rem;
+        border-radius: 10px;
+        transition: transform 0.3s;
+    }
+    .wheel a:hover {
+        background: rgba(0,255,136,0.4);
+        transform: scale(1.2);
+    }
+    .wheel a:nth-child(1) { top: -20px; left: 120px; }
+    .wheel a:nth-child(2) { top: 60px; right: -50px; }
+    .wheel a:nth-child(3) { bottom: 60px; right: -50px; }
+    .wheel a:nth-child(4) { bottom: -20px; left: 120px; }
+    .wheel a:nth-child(5) { bottom: 60px; left: -50px; }
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    main {
+        max-width: 900px;
+        margin: auto;
+        padding: 2rem;
+        background: rgba(0,0,0,0.5);
+        border-radius: 15px;
+    }
+    section {
+        margin-bottom: 2rem;
+    }
+    h2 {
+        border-bottom: 1px solid rgba(0,255,136,0.4);
+        padding-bottom: 0.5rem;
+    }
+    footer {
+        text-align: center;
+        padding: 1rem;
+        font-size: 0.9rem;
+        color: rgba(0,255,136,0.7);
+    }
 </style>
 </head>
 <body>
@@ -117,104 +85,117 @@
 <canvas id="stars"></canvas>
 
 <header>
-  🚀 Khwaja AI  
-  <div style="font-size:1rem;">AI-Powered Business Analytics & Financial Insights</div>
+    🚀 Khwaja AI - Business Analytics & AI Solutions
 </header>
 
-<div class="nav-wheel">
-  <a href="#">Home</a>
-  <a href="#">Projects</a>
-  <a href="#">Analytics Tools</a>
-  <a href="#">Finance</a>
-  <a href="#">AI & ML</a>
-  <a href="#">Business Analysis</a>
-  <a href="#">Contact</a>
-  <a href="#">CV</a>
+<div class="wheel">
+    <a href="#home">Home</a>
+    <a href="#finance">Finance</a>
+    <a href="#analytics">Analytics</a>
+    <a href="#ai">AI/ML</a>
+    <a href="#cv">CV</a>
 </div>
 
 <main>
-  <h2>About Khwaja AI</h2>
-  <p>
-    Khwaja AI is a futuristic AI-powered platform focused on Financial Applications,
-    Business Analytics, AI and Machine Learning. From predictive modeling to advanced
-    visualization, Khwaja AI helps businesses harness data for smarter decisions.
-  </p>
-  <p>
-    Specialties include: Forecasting, Risk Analysis, NLP-driven Business Reports,
-    AI-powered Decision Support, and Automated Insights.
-  </p>
+    <section id="home">
+        <h2>Welcome</h2>
+        <p>Khwaja AI is a next-generation platform blending AI, Business Analytics, and Financial Intelligence. Our mission is to deliver advanced tools, intelligent forecasts, and actionable insights for professionals and businesses.</p>
+    </section>
+
+    <section id="finance">
+        <h2>Finance Solutions</h2>
+        <p>Offering AI-driven portfolio management, market forecasting, risk analysis, and predictive modeling for financial decision-making.</p>
+    </section>
+
+    <section id="analytics">
+        <h2>Business Analytics</h2>
+        <p>Visualize and analyze data with cutting-edge tools, turning complex datasets into clear business strategies.</p>
+    </section>
+
+    <section id="ai">
+        <h2>AI & Machine Learning</h2>
+        <p>Leveraging deep learning, NLP, and generative AI for real-world applications in finance, marketing, and strategic planning.</p>
+    </section>
+
+    <section id="cv">
+        <h2>My CV</h2>
+        <p>Coming soon — my professional experience, projects, and achievements for employers.</p>
+    </section>
 </main>
 
-<!-- Chatbot Icon -->
-<div class="bot-icon" onclick="window.chatbase && window.chatbase('openChat')">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Robot_icon.svg/1024px-Robot_icon.svg.png" alt="AI Bot">
-</div>
+<footer>
+    &copy; 2025 Khwaja AI. All Rights Reserved.
+</footer>
 
-<!-- Chatbase AI Bubble -->
+<!-- Chatbase Bot Embed -->
 <script>
 (function(){
-  if(!window.chatbase || window.chatbase("getState") !== "initialized"){
-    window.chatbase = (...arguments) => {
-      if(!window.chatbase.q){ window.chatbase.q = [] }
-      window.chatbase.q.push(arguments)
+    if(!window.chatbase || window.chatbase("getState") !== "initialized"){
+        window.chatbase = (...arguments) => {
+            if(!window.chatbase.q){ window.chatbase.q = [] }
+            window.chatbase.q.push(arguments)
+        };
+        window.chatbase = new Proxy(window.chatbase, {
+            get(target, prop){
+                if(prop === "q"){ return target.q }
+                return (...args) => target(prop, ...args)
+            }
+        });
+    }
+    const onLoad = function(){
+        const script = document.createElement("script");
+        script.src = "https://www.chatbase.co/embed.min.js";
+        script.id = "85-fKKKuG65obFx8ejTz3";
+        script.domain = "www.chatbase.co";
+        document.body.appendChild(script);
     };
-    window.chatbase = new Proxy(window.chatbase, {
-      get(target, prop){
-        if(prop === "q"){ return target.q }
-        return (...args) => target(prop, ...args)
-      }
-    });
-  }
-  const onLoad = function(){
-    const script = document.createElement("script");
-    script.src = "https://www.chatbase.co/embed.min.js";
-    script.id = "7KxpsUaoEybQTEaUnWCMm"; // Your Chatbase Bot ID
-    script.domain = "www.chatbase.co";
-    document.body.appendChild(script);
-  };
-  if(document.readyState === "complete"){ onLoad() }
-  else { window.addEventListener("load", onLoad) }
+    if(document.readyState === "complete"){ onLoad() }
+    else { window.addEventListener("load", onLoad) }
 })();
 </script>
 
-<!-- Falling Stars Script -->
+<!-- Moving Stars Animation -->
 <script>
 const canvas = document.getElementById('stars');
 const ctx = canvas.getContext('2d');
 let stars = [];
-let w,h;
 
-function init(){
-  w = canvas.width = window.innerWidth;
-  h = canvas.height = window.innerHeight;
-  stars = [];
-  for(let i=0; i<200; i++){
-    stars.push({
-      x: Math.random()*w,
-      y: Math.random()*h,
-      speed: Math.random()*3+0.5,
-      radius: Math.random()*2
-    });
-  }
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 }
-function animate(){
-  ctx.clearRect(0,0,w,h);
-  ctx.fillStyle = "#00ff99";
-  stars.forEach(star=>{
-    ctx.beginPath();
-    ctx.arc(star.x, star.y, star.radius, 0, Math.PI*2);
-    ctx.fill();
-    star.y += star.speed;
-    if(star.y > h) {
-      star.y = 0;
-      star.x = Math.random()*w;
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+function createStars(count) {
+    stars = [];
+    for (let i = 0; i < count; i++) {
+        stars.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            speed: Math.random() * 2 + 1,
+            size: Math.random() * 2
+        });
     }
-  });
-  requestAnimationFrame(animate);
 }
-window.addEventListener('resize', init);
-init();
-animate();
+createStars(150);
+
+function animateStars() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#fff';
+    for (let star of stars) {
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+        ctx.fill();
+        star.y += star.speed;
+        if (star.y > canvas.height) {
+            star.y = 0;
+            star.x = Math.random() * canvas.width;
+        }
+    }
+    requestAnimationFrame(animateStars);
+}
+animateStars();
 </script>
 
 </body>
