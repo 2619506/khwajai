@@ -3,68 +3,97 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Khwaja AI - Sci-Fi Business Analytics Hub</title>
+<title>Khwaja AI - Alien Analytics Command</title>
 <style>
-  /* Background: Deep Space */
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
   body {
     margin: 0;
     overflow: hidden;
     background: black;
-    color: #00ff99;
-    font-family: 'Courier New', monospace;
+    color: #00ffcc;
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: 1px;
   }
 
   canvas#stars {
     position: fixed;
     top: 0;
     left: 0;
-    z-index: -1;
+    z-index: -2;
   }
 
-  /* Centered Wheel Menu */
+  /* Alien glow text */
+  h1, p, a {
+    text-shadow: 0 0 8px #00ffcc, 0 0 20px #00ffcc, 0 0 40px #00ffcc;
+  }
+
+  /* Spaceship Wheel */
   .wheel {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) rotate(0deg);
-    width: 350px;
-    height: 350px;
+    width: 420px;
+    height: 420px;
     border-radius: 50%;
-    border: 2px solid rgba(0,255,153,0.6);
-    box-shadow: 0 0 40px rgba(0,255,153,0.8), inset 0 0 30px rgba(0,255,153,0.4);
-    animation: spin 25s linear infinite;
+    background: radial-gradient(circle, rgba(0,0,0,0.95) 70%, transparent 100%);
+    border: 2px solid rgba(0,255,204,0.6);
+    box-shadow: 0 0 50px rgba(0,255,204,0.8), inset 0 0 40px rgba(0,255,204,0.4);
+    transition: transform 0.2s ease-out;
+    z-index: 1;
   }
 
-  @keyframes spin {
-    0% { transform: translate(-50%, -50%) rotate(0deg); }
-    100% { transform: translate(-50%, -50%) rotate(360deg); }
-  }
-
-  /* Tabs Orbiting Around Wheel */
+  /* Orbiting Alien Tabs */
   .tab {
     position: absolute;
-    background: rgba(0,255,153,0.1);
-    border: 1px solid rgba(0,255,153,0.5);
-    padding: 10px 20px;
-    border-radius: 20px;
-    color: #00ff99;
+    background: rgba(0,255,204,0.1);
+    border: 1px solid rgba(0,255,204,0.5);
+    padding: 8px 16px;
+    border-radius: 50px 10px 50px 10px;
+    color: #00ffcc;
     text-decoration: none;
     font-weight: bold;
-    transition: background 0.3s;
+    text-transform: uppercase;
+    transition: background 0.3s, transform 0.3s;
   }
-
   .tab:hover {
-    background: rgba(0,255,153,0.3);
+    background: rgba(0,255,204,0.3);
+    transform: scale(1.1);
+  }
+  .tab1 { top: -40px; left: 50%; transform: translateX(-50%); }
+  .tab2 { top: 50%; right: -120px; transform: translateY(-50%); }
+  .tab3 { bottom: -40px; left: 50%; transform: translateX(-50%); }
+  .tab4 { top: 50%; left: -120px; transform: translateY(-50%); }
+  .tab5 { bottom: -100px; left: 50%; transform: translateX(-50%); }
+
+  /* Inside globe content */
+  .center-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 300px;
+    background: rgba(0,0,0,0.88);
+    border-radius: 50%;
+    padding: 20px;
+    text-align: center;
+    overflow-y: auto;
+    box-shadow: inset 0 0 30px rgba(0,255,204,0.4);
+  }
+  .center-content h1 {
+    font-size: 1.3em;
+    margin-bottom: 12px;
+    color: #00ffcc;
+  }
+  .center-content p {
+    font-size: 0.9em;
+    line-height: 1.4em;
+    color: #aaffee;
   }
 
-  /* Positions for each tab */
-  .tab1 { top: -50px; left: 50%; transform: translateX(-50%); }
-  .tab2 { top: 50%; right: -120px; transform: translateY(-50%); }
-  .tab3 { bottom: -50px; left: 50%; transform: translateX(-50%); }
-  .tab4 { top: 50%; left: -120px; transform: translateY(-50%); }
-  .tab5 { bottom: -120px; left: 50%; transform: translateX(-50%); }
-
-  /* Chatbot position */
+  /* Chatbot left fixed */
   .chatbot-container {
     position: fixed;
     bottom: 20px;
@@ -74,35 +103,41 @@
     flex-direction: column;
     align-items: center;
   }
-
   .robot-icon {
-    width: 70px;
-    height: 70px;
-    background: rgba(0,255,153,0.1);
-    border: 2px solid #00ff99;
+    width: 80px;
+    height: 80px;
+    background: rgba(0,255,204,0.1);
+    border: 2px solid #00ffcc;
     border-radius: 50%;
-    box-shadow: 0 0 20px #00ff99;
+    box-shadow: 0 0 25px #00ffcc;
     background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Robot_icon.svg/2048px-Robot_icon.svg.png');
     background-size: cover;
     margin-bottom: 10px;
   }
-
 </style>
 </head>
 <body>
 
 <canvas id="stars"></canvas>
 
-<!-- Spaceship Menu -->
-<div class="wheel">
-  <a href="#business-analytics" class="tab tab1">Business Analytics</a>
+<!-- Wheel -->
+<div class="wheel" id="wheel">
+  <a href="#business-analytics" class="tab tab1">Analytics</a>
   <a href="#finance" class="tab tab2">Finance</a>
   <a href="#ai-ml" class="tab tab3">AI & ML</a>
-  <a href="#tools" class="tab tab4">Analytical Tools</a>
-  <a href="#cv" class="tab tab5">My CV</a>
+  <a href="#tools" class="tab tab4">Tools</a>
+  <a href="#cv" class="tab tab5">CV</a>
+
+  <!-- Central Globe -->
+  <div class="center-content">
+    <h1>👽 Khwaja AI Command</h1>
+    <p>Intergalactic expertise in <b>Business Analytics</b>, <b>Finance</b>, and <b>Artificial Intelligence</b>.  
+    Pilot projects that use machine learning for predictive business insights and deploy futuristic analytical tools for real-time data visualisation.  
+    Navigate the alien control tabs to access projects, resources, and my CV.</p>
+  </div>
 </div>
 
-<!-- Chatbot with Robot Icon -->
+<!-- Chatbot -->
 <div class="chatbot-container">
   <div class="robot-icon"></div>
 </div>
@@ -134,11 +169,12 @@
 })();
 </script>
 
-<!-- Stars Animation -->
+<!-- Stars + Meteors Animation -->
 <script>
 const canvas = document.getElementById('stars');
 const ctx = canvas.getContext('2d');
 let stars = [];
+let meteors = [];
 
 function resizeCanvas() {
   canvas.width = window.innerWidth;
@@ -158,10 +194,22 @@ function createStars(count) {
     });
   }
 }
+function createMeteors(count) {
+  meteors = [];
+  for(let i=0; i<count; i++){
+    meteors.push({
+      x: Math.random()*canvas.width,
+      y: Math.random()*canvas.height,
+      speedX: -(Math.random()*4+2),
+      speedY: Math.random()*2+1,
+      length: Math.random()*50+30
+    });
+  }
+}
 
 function drawStars() {
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.fillStyle = '#00ff99';
+  ctx.fillStyle = '#00ffcc';
   for(let star of stars){
     ctx.beginPath();
     ctx.arc(star.x, star.y, star.size, 0, Math.PI*2);
@@ -172,14 +220,42 @@ function drawStars() {
       star.x = Math.random()*canvas.width;
     }
   }
+  // Meteors
+  ctx.strokeStyle = '#00ffcc';
+  ctx.lineWidth = 1.5;
+  for(let m of meteors){
+    ctx.beginPath();
+    ctx.moveTo(m.x, m.y);
+    ctx.lineTo(m.x + m.length*m.speedX/10, m.y + m.length*m.speedY/10);
+    ctx.stroke();
+    m.x += m.speedX;
+    m.y += m.speedY;
+    if(m.x < -100 || m.y > canvas.height+100) {
+      m.x = canvas.width + Math.random()*200;
+      m.y = Math.random()*canvas.height/2;
+    }
+  }
 }
 
 createStars(200);
+createMeteors(5);
+
 function animate() {
   drawStars();
   requestAnimationFrame(animate);
 }
 animate();
+</script>
+
+<!-- Wheel rotation by mouse -->
+<script>
+const wheel = document.getElementById('wheel');
+document.addEventListener('mousemove', e => {
+  const centerX = window.innerWidth / 2;
+  const offsetX = e.clientX - centerX;
+  const rotation = offsetX / 20; // adjust sensitivity
+  wheel.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
+});
 </script>
 
 </body>
