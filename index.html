@@ -17,7 +17,7 @@
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
   :root{
-    --neon:#00ffcc;          /* MAIN NEON GREEN-CYAN */
+    --neon:#00ffcc;          /* MAIN NEON CYAN COLOR */
     --neon-soft:rgba(0,255,204,0.6);
     --glass:rgba(0,10,10,0.55);
     --glass-strong:rgba(0,20,20,0.75);
@@ -96,7 +96,7 @@
     width:310px; height:310px; border-radius:50%;
     padding:22px; text-align:center;
     display:flex; flex-direction:column; justify-content:center; align-items:center;
-    z-index:2; pointer-events:none; /* moon is interactive-free zone */
+    z-index:2; pointer-events:none; /* moon area is not clickable */
   }
   .center-content h1{font-size:clamp(1rem,2.4vh,1.35rem); margin:6px 0 8px}
   .center-content p{font-size:clamp(0.72rem,1.9vh,0.95rem); line-height:1.35; margin:0; color:#b7ffee}
@@ -231,7 +231,7 @@
 <div class="chatbot-container"><div class="robot-icon"></div></div>
 
 <!-- ============================= -->
-<!-- ALIEN OVERLAY: KHWAJA ANALYZER -->
+<!-- ALIEN OVERLAY: KHWAJA AI ANALYZER -->
 <!-- ============================= -->
 <div id="analyzerOverlay" class="overlay" aria-hidden="true">
   <div class="panel" role="dialog" aria-modal="true" aria-labelledby="panelTitle">
