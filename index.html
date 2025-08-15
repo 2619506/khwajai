@@ -3,21 +3,23 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Khwaja AI </title>
+<title>Khwaja AI</title>
 
-<!-- Libraries for the Analyzer -->
+<!-- Libraries -->
 <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
   :root{
-    --neon:#00ffcc;          /* MAIN GREEN-CYAN COLOR */
+    --neon:#00ffcc;                 /* MAIN GREEN-CYAN COLOR */
     --neon-soft:rgba(0,255,204,0.6);
     --glass:rgba(0,10,10,0.55);
     --glass-strong:rgba(0,20,20,0.75);
+    --ink:#b7ffee;
   }
 
   *{box-sizing:border-box}
@@ -28,7 +30,7 @@
   }
 
   /* Starfield canvas */
-  canvas#stars{position:fixed; inset:0; z-index:-2}
+  canvas#stars{position:fixed; inset:0; z-index:-3}
 
   /* Global glow */
   h1,h2,h3,p,a,label,button,select,input{ text-shadow:0 0 8px var(--neon), 0 0 20px var(--neon-soft); }
@@ -66,7 +68,7 @@
     display:flex; flex-direction:column; justify-content:center; align-items:center;
   }
   .center-content h1{margin:6px 0 8px}
-  .center-content p{margin:0; color:#b7ffee}
+  .center-content p{margin:0; color:var(--ink)}
   /* Dynamic text sizes (will be adjusted by JS too) */
   .center-content h1{font-size:clamp(1rem,2.4vh,1.35rem)}
   .center-content p{font-size:clamp(0.72rem,1.9vh,0.95rem); line-height:1.35}
@@ -118,7 +120,7 @@
   }
   .card h3{ margin:4px 0 10px; font-size:0.95rem; letter-spacing:1.5px }
 
-  label{display:block; font-size:0.8rem; margin:8px 0 4px; color:#b7ffee}
+  label{display:block; font-size:0.8rem; margin:8px 0 4px; color:var(--ink)}
   input[type="file"], select, button{
     width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(0,255,204,0.35);
     background:rgba(0,0,0,0.6); color:var(--neon);
@@ -133,7 +135,25 @@
 
   /* Chart Area */
   .chart-wrap{ position:relative; height:100%; border:1px solid rgba(0,255,204,0.25); border-radius:16px; padding:8px; background:rgba(0,10,10,0.45) }
-  #chart{ width:100%; height:100%; border-radius:12px; }
+  #chart{ width:100%; height:100%; border-radius:12px; position:relative; z-index:1; }
+
+  /* Holographic sphere (Three.js canvas behind Plotly) */
+  #sphereWrap{ position:absolute; inset:8px; border-radius:12px; overflow:hidden; z-index:0; }
+  canvas#sphere{ width:100%; height:100%; display:block; filter: drop-shadow(0 0 20px var(--neon)) blur(0.2px); opacity:0.55; }
+
+  /* Insights */
+  .insights{
+    position:absolute; left:16px; right:16px; bottom:16px; z-index:2;
+    background:rgba(0,0,0,0.55); border:1px solid rgba(0,255,204,0.25);
+    border-radius:12px; padding:10px 12px; color:var(--ink); font-size:0.85rem;
+    box-shadow:0 0 16px rgba(0,255,204,0.15), inset 0 0 12px rgba(0,255,204,0.1);
+    backdrop-filter: blur(6px);
+    animation:pulse 3s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100% { box-shadow:0 0 16px rgba(0,255,204,0.15), inset 0 0 12px rgba(0,255,204,0.1) }
+    50% { box-shadow:0 0 28px rgba(0,255,204,0.35), inset 0 0 18px rgba(0,255,204,0.18) }
+  }
 
   .footer-actions{ display:flex; gap:10px; justify-content:flex-end; padding-top:8px }
   .pill{ display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:999px; border:1px solid rgba(0,255,204,0.35) }
@@ -142,6 +162,8 @@
   @media (max-width: 980px){
     .panel-body{ grid-template-columns: 1fr; height:auto }
     .chart-wrap{ height:56vh }
+    .insights{ position:static; margin-top:10px }
+    #sphereWrap{ position:static; height:220px; margin-bottom:8px }
   }
 </style>
 </head>
@@ -192,7 +214,7 @@
           <input id="file1" type="file" accept=".csv,.xlsx,.xls" />
           <label>Dataset 2</label>
           <input id="file2" type="file" accept=".csv,.xlsx,.xls" />
-          <div style="margin-top:8px;font-size:.8rem;color:#b7ffee">Tip: First rows should have headers.</div>
+          <div style="margin-top:8px;font-size:.8rem;color:var(--ink)">Tip: First rows should have headers.</div>
         </div>
 
         <div class="card">
@@ -235,7 +257,7 @@
               <label for="mode">Compare Mode</label>
               <select id="mode" disabled>
                 <option value="overlay">Overlay</option>
-                <option value="side">Side‑by‑Side (Bars)</option>
+                <option value="side">Side-by-Side (Bars)</option>
               </select>
             </div>
           </div>
@@ -259,7 +281,11 @@
 
       <!-- Chart Area -->
       <div class="chart-wrap">
+        <!-- Holographic sphere backdrop -->
+        <div id="sphereWrap"><canvas id="sphere"></canvas></div>
+
         <div id="chart"></div>
+        <div id="insights" class="insights" style="display:none;"></div>
       </div>
     </div>
   </div>
@@ -297,14 +323,14 @@ const wheel = document.getElementById('wheel');
 document.addEventListener('mousemove', e=>{ const centerX = innerWidth/2; const offsetX = e.clientX - centerX; const rotation = offsetX/20; wheel.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`; });
 </script>
 
-<!-- Overlay logic + Analyzer code + Center text fitting -->
+<!-- Overlay logic + Analyzer code + Center text fitting + Sphere -->
 <script>
 // ===== Center text auto-fit (no scrollbar) =====
 function fitCenterText(){
   const cc = document.getElementById('centerContent');
-  const h1 = document.getElementById('ccTitle');
-  const p = document.getElementById('ccText');
-  // Start from current and shrink until content fits
+  const h1 = cc.querySelector('h1');
+  const p = cc.querySelector('p');
+  if(!h1 || !p) return;
   let hSize = parseFloat(getComputedStyle(h1).fontSize);
   let pSize = parseFloat(getComputedStyle(p).fontSize);
   let guard=0;
@@ -322,13 +348,13 @@ window.addEventListener('resize', ()=>{ setTimeout(fitCenterText, 100); });
 // ===== Overlay controls =====
 function showHome(){
   const cc = document.getElementById('centerContent');
-  cc.innerHTML = `<h1 id="ccTitle">Khwaja AI</h1><p id=\"ccText\">Intergalactic expertise in <b>Business Analytics</b>, <b>Finance</b>, and <b>Artificial Intelligence</b>.<br/>Pilot projects that use machine learning for predictive insights and deploy futuristic tools for real-time visualisation. Click <b>Tools</b> to launch the analyzer.</p>`;
+  cc.innerHTML = `<h1>Khwaja AI</h1><p>Intergalactic expertise in <b>Business Analytics</b>, <b>Finance</b>, and <b>Artificial Intelligence</b>.<br/>Pilot projects that use machine learning for predictive insights and deploy futuristic tools for real-time visualisation. Click <b>Tools</b> to launch the analyzer.</p>`;
   fitCenterText();
 }
-function showMessage(msg){ const cc = document.getElementById('centerContent'); cc.innerHTML = `<h1 id="ccTitle">Console</h1><p id=\"ccText\">${msg}</p>`; fitCenterText(); }
+function showMessage(msg){ const cc = document.getElementById('centerContent'); cc.innerHTML = `<h1>Console</h1><p>${msg}</p>`; fitCenterText(); }
 
-function openOverlay(){ document.getElementById('analyzerOverlay').style.display = 'grid'; setStatus('Overlay online. Load data to begin…'); }
-function closeOverlay(){ document.getElementById('analyzerOverlay').style.display = 'none'; }
+function openOverlay(){ document.getElementById('analyzerOverlay').style.display = 'grid'; setStatus('Overlay online. Load data to begin…'); startSphere(); onResizeSphere(); }
+function closeOverlay(){ document.getElementById('analyzerOverlay').style.display = 'none'; stopSphere(); }
 
 // ===== Analyzer state =====
 let dataset1 = [], dataset2 = [];
@@ -342,7 +368,6 @@ function setControlsEnabled(enabled){
     const e = el(id); if(e){ e.disabled = !enabled; }
   });
 }
-
 // Initially disabled
 setControlsEnabled(false);
 
@@ -389,8 +414,7 @@ function assignData(data, index, label){
 function populateDropdowns(){
   const sample1 = dataset1[0] || {}; const sample2 = dataset2[0] || {};
   const keys1 = Object.keys(sample1); const keys2 = Object.keys(sample2);
-  // union of keys so user can still pick even if slightly different headers
-  const keys = Array.from(new Set([...keys1, ...keys2]));
+  const keys = Array.from(new Set([...keys1, ...keys2])); // union
 
   const numeric1 = keys.filter(k=> isNumericColumn(dataset1, k));
   const numeric2 = keys.filter(k=> isNumericColumn(dataset2, k));
@@ -410,12 +434,12 @@ function fillSelect(selectEl, items){
 }
 
 function isNumericColumn(ds, key){
-  const vals = ds.slice(0,40).map(r=> r? r[key] : undefined).filter(v=> v!==null && v!=='' && v!==undefined);
+  const vals = ds.slice(0,60).map(r=> r? r[key] : undefined).filter(v=> v!==null && v!=='' && v!==undefined);
   if(!vals.length) return false;
   return vals.every(v=> typeof v === 'number' || (!isNaN(parseFloat(v)) && isFinite(v)));
 }
 
-function val(v){ return (typeof v === 'number')? v : parseFloat(v); }
+function toNum(v){ return (typeof v === 'number')? v : parseFloat(v); }
 
 function plotData(){
   if(!dataset1.length || !dataset2.length){ alert('Upload both datasets first.'); return; }
@@ -436,16 +460,21 @@ function plotData(){
   if(chartType === 'bar' && mode === 'side'){ layout.barmode = 'group'; }
   if(chartType === 'bar' && mode === 'overlay'){ layout.barmode = 'overlay'; trace1.opacity=0.85; trace2.opacity=0.65; }
 
-  Plotly.newPlot('chart', data, layout, {responsive:true, displaylogo:false}).then(()=>{
+  // Smooth transition
+  const plotDiv = document.getElementById('chart');
+  const firstTime = !plotDiv.data;
+  const plot = firstTime ? Plotly.newPlot(plotDiv, data, layout, {responsive:true, displaylogo:false})
+                         : Plotly.react(plotDiv, data, layout, {responsive:true, displaylogo:false});
+  plot.then(()=>{
     setStatus('Visualization rendered.');
-    // enable downloads after a successful render
     ['dlPng','dlJpg','dlSvg'].forEach(id=> el(id).disabled=false);
+    updateInsights(dataset1, dataset2, y1, y2, x1, x2);
   });
 }
 
 function buildTrace(ds, xKey, yKey, type, name){
   const x = ds.map(r=> r[xKey]);
-  const y = ds.map(r=> r[yKey]).map(val);
+  const y = ds.map(r=> r[yKey]).map(toNum);
 
   if(type === 'heatmap'){
     // Build frequency heatmap
@@ -491,15 +520,128 @@ function baseLayout(type, mode){
     yaxis:{gridcolor:'rgba(0,255,204,0.15)', zerolinecolor:'rgba(0,255,204,0.25)'},
     margin:{t:50,r:20,b:45,l:55},
     legend:{bgcolor:'rgba(0,0,0,0.35)', bordercolor:'rgba(0,255,204,0.2)', borderwidth:1, orientation:'h'},
-    shapes:[{ type:'rect', xref:'paper', yref:'paper', x0:0, y0:0, x1:1, y1:1, line:{width:1, color:'rgba(0,255,204,0.25)'}, fillcolor:'rgba(0,255,204,0.04)'}]
+    shapes:[{ type:'rect', xref:'paper', yref:'paper', x0:0, y0:0, x1:1, y1:1, line:{width:1, color:'rgba(0,255,204,0.25)'}, fillcolor:'rgba(0,255,204,0.04)'}],
+    transition:{duration:500, easing:'cubic-in-out'}
   };
 }
 
 function downloadChart(fmt='png'){
   Plotly.downloadImage('chart', {format:fmt, filename:`khwaja_ai_chart_${Date.now()}`});
 }
+
+/* ---------- AI-Style Insights ---------- */
+function updateInsights(ds1, ds2, yKey1, yKey2, xKey1, xKey2){
+  const box = document.getElementById('insights');
+  const y1 = ds1.map(r=> toNum(r[yKey1])).filter(n=> !isNaN(n));
+  const y2 = ds2.map(r=> toNum(r[yKey2])).filter(n=> !isNaN(n));
+  if(!y1.length || !y2.length){ box.style.display='none'; return; }
+
+  const paired = pairArrays(y1, y2);
+  const corr = pearson(paired.a, paired.b);
+  const trend1 = slope(ds1.map(r=> toNum(r[yKey1])));
+  const trend2 = slope(ds2.map(r=> toNum(r[yKey2])));
+
+  const msg = [
+    `<b>Alien Insight</b> —`,
+    `Correlation (Y₁:${yKey1} vs Y₂:${yKey2}): <b>${isFinite(corr)?corr.toFixed(2):'n/a'}</b>`,
+    `Trend Y₁: <b>${trend1>0?'↗︎ up':'↘︎ down'}</b> (slope ${prettyNum(trend1)})`,
+    `Trend Y₂: <b>${trend2>0?'↗︎ up':'↘︎ down'}</b> (slope ${prettyNum(trend2)})`,
+    anomalyNote(y1,y2)
+  ].join(' · ');
+
+  box.innerHTML = msg;
+  box.style.display='block';
+}
+
+function pairArrays(a,b){
+  const n = Math.min(a.length,b.length);
+  return {a:a.slice(0,n), b:b.slice(0,n)};
+}
+function mean(arr){ return arr.reduce((s,v)=>s+v,0)/arr.length }
+function pearson(a,b){
+  const n=Math.min(a.length,b.length); if(n<3) return NaN;
+  const ma=mean(a.slice(0,n)), mb=mean(b.slice(0,n));
+  let num=0, da=0, db=0;
+  for(let i=0;i<n;i++){ const xa=a[i]-ma, yb=b[i]-mb; num+=xa*yb; da+=xa*xa; db+=yb*yb; }
+  return num/Math.sqrt(da*db||1);
+}
+function slope(arr){
+  const n=arr.length; if(n<2) return 0;
+  const x=Array.from({length:n},(_,i)=>i+1);
+  const mx=mean(x), my=mean(arr);
+  let num=0, den=0;
+  for(let i=0;i<n;i++){ num += (x[i]-mx)*(arr[i]-my); den += (x[i]-mx)*(x[i]-mx); }
+  return num/(den||1);
+}
+function std(arr){
+  const m=mean(arr); const v=mean(arr.map(v=>(v-m)*(v-m)));
+  return Math.sqrt(v);
+}
+function anomalyNote(a,b){
+  const s1 = std(a), s2 = std(b);
+  const note = (s1>0 && s2>0 && (s1>2*s2 || s2>2*s1)) ? 'Volatility mismatch detected' : 'No major volatility mismatch';
+  return `<i>${note}</i>`;
+}
+function prettyNum(n){ return (Math.abs(n)<1? n.toFixed(3) : n.toFixed(2)) }
+
+/* ---------- Three.js Holographic Sphere ---------- */
+let sphereScene, sphereCamera, sphereRenderer, sphereMesh, sphereReq;
+function startSphere(){
+  const wrap = document.getElementById('sphereWrap');
+  const canvas = document.getElementById('sphere');
+  sphereScene = new THREE.Scene();
+  const w = wrap.clientWidth, h = wrap.clientHeight;
+  sphereCamera = new THREE.PerspectiveCamera(35, w/h, 0.1, 1000);
+  sphereCamera.position.z = 6;
+
+  sphereRenderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+  sphereRenderer.setSize(w,h,false);
+  sphereRenderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+
+  const geo = new THREE.SphereGeometry(2.2, 48, 48);
+  const mat = new THREE.MeshPhongMaterial({
+    color: 0x00ffcc,
+    emissive: 0x00221a,
+    shininess: 80,
+    transparent:true,
+    opacity:0.4,
+    wireframe:true
+  });
+  sphereMesh = new THREE.Mesh(geo, mat);
+  sphereScene.add(sphereMesh);
+
+  const glow = new THREE.PointLight(0x00ffcc, 1.2, 50);
+  glow.position.set(4,4,6);
+  sphereScene.add(glow);
+
+  const rim = new THREE.AmbientLight(0x00ffc6, 0.25);
+  sphereScene.add(rim);
+
+  const animate = ()=>{
+    sphereMesh.rotation.y += 0.0025;
+    sphereMesh.rotation.x += 0.0008;
+    sphereRenderer.render(sphereScene, sphereCamera);
+    sphereReq = requestAnimationFrame(animate);
+  };
+  animate();
+}
+function stopSphere(){ if(sphereReq) cancelAnimationFrame(sphereReq); }
+function onResizeSphere(){
+  const wrap = document.getElementById('sphereWrap');
+  if(!sphereRenderer || !wrap) return;
+  const w = wrap.clientWidth, h = wrap.clientHeight;
+  sphereCamera.aspect = w/h; sphereCamera.updateProjectionMatrix();
+  sphereRenderer.setSize(w,h,false);
+}
+addEventListener('resize', onResizeSphere);
+
+/* ---------- Utility ---------- */
+function fillSelect(selectEl, items){
+  selectEl.innerHTML = '';
+  items.forEach(k=>{ const o=document.createElement('option'); o.value=o.textContent=k; selectEl.appendChild(o); });
+  selectEl.disabled = items.length === 0;
+}
 </script>
 
 </body>
 </html>
-
