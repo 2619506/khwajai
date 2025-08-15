@@ -11,87 +11,137 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
-  :root {
-    --neon: #00ffcc;          /* MAIN GREEN-CYAN COLOR */
-    --neon-soft: rgba(0,255,204,0.6);
-    --glass: rgba(0,10,10,0.55);
-    --glass-strong: rgba(0,20,20,0.75);
-  }
+:root {
+  --neon: #00ffcc;
+  --neon-soft: rgba(0, 255, 204, 0.6);
+  --glass: rgba(0, 10, 10, 0.55);
+  --glass-strong: rgba(0, 20, 20, 0.75);
+}
 
-  * { box-sizing: border-box; }
-  html, body { height: 100%; }
-  body {
-    margin: 0; overflow: hidden; background: black; color: var(--neon);
-    font-family: 'Share Tech Mono', monospace; letter-spacing: 0.6px;
-  }
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  overflow: hidden;
+  background: black;
+  color: var(--neon);
+  font-family: 'Share Tech Mono', monospace;
+  letter-spacing: 0.6px;
+}
 
-  /* Starfield canvas */
-  canvas#stars { position: fixed; inset: 0; z-index: -2; }
+canvas#stars { position: fixed; inset: 0; z-index: -2; }
+h1, h2, h3, p, a, label, button, select, input {
+  text-shadow: 0 0 8px var(--neon), 0 0 20px var(--neon-soft);
+}
 
-  /* Global glow */
-  h1,h2,h3,p,a,label,button,select,input { text-shadow: 0 0 8px var(--neon), 0 0 20px var(--neon-soft); }
+/* Wheel holding orb + tabs */
+.wheel {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(0deg);
+  width: 440px;
+  height: 440px;
+  border-radius: 50%;
+  background: transparent;
+  z-index: 1;
+}
 
-  /* Spaceship Wheel */
-  .wheel {
-    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(0deg);
-    width: 440px; height: 440px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(0,0,0,0.96) 68%, transparent 100%);
-    border: 2px solid var(--neon-soft);
-    box-shadow: 0 0 50px var(--neon), inset 0 0 40px rgba(0,255,204,0.35);
-    transition: transform 0.2s ease-out; z-index: 1;
-  }
+/* Orbiting Tabs */
+.tab {
+  position: absolute;
+  background: rgba(0, 255, 204, 0.08);
+  border: 1px solid var(--neon-soft);
+  padding: 9px 18px;
+  border-radius: 50px 10px 50px 10px;
+  color: var(--neon);
+  text-decoration: none;
+  font-weight: bold;
+  text-transform: uppercase;
+  transition: background 0.3s, transform 0.3s;
+  cursor: pointer;
+  backdrop-filter: blur(3px);
+  box-shadow: 0 0 16px rgba(0, 255, 204, 0.35);
+}
+.tab:hover {
+  background: rgba(0, 255, 204, 0.28);
+  transform: scale(1.08);
+}
+.tab1 { top: -42px; left: 50%; transform: translateX(-50%); }
+.tab2 { top: 50%; right: -130px; transform: translateY(-50%); }
+.tab3 { bottom: -42px; left: 50%; transform: translateX(-50%); }
+.tab4 { top: 50%; left: -130px; transform: translateY(-50%); }
+.tab5 { bottom: -105px; left: 50%; transform: translateX(-50%); }
 
-  /* Orbiting Alien Tabs */
-  .tab {
-    position: absolute; background: rgba(0,255,204,0.08); border: 1px solid var(--neon-soft);
-    padding: 9px 18px; border-radius: 50px 10px 50px 10px; color: var(--neon);
-    text-decoration: none; font-weight: bold; text-transform: uppercase;
-    transition: background 0.3s, transform 0.3s; cursor: pointer; backdrop-filter: blur(3px);
-    box-shadow: 0 0 16px rgba(0,255,204,0.35);
-  }
-  .tab:hover { background: rgba(0,255,204,0.28); transform: scale(1.08); }
-  .tab1 { top: -42px; left: 50%; transform: translateX(-50%); }
-  .tab2 { top: 50%; right: -130px; transform: translateY(-50%); }
-  .tab3 { bottom: -42px; left: 50%; transform: translateX(-50%); }
-  .tab4 { top: 50%; left: -130px; transform: translateY(-50%); }
-  .tab5 { bottom: -105px; left: 50%; transform: translateX(-50%); }
+/* Central Spheroid Orb */
+.center-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 310px;
+  height: 310px;
+  border-radius: 50%;
+  padding: 22px;
+  text-align: center;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(circle at 30% 30%, rgba(0,255,204,0.3), rgba(0,0,0,0.85) 70%),
+              radial-gradient(circle at 70% 70%, rgba(0,255,204,0.15), rgba(0,0,0,0.9) 80%);
+  box-shadow: inset 0 0 40px rgba(0,255,204,0.4),
+              0 0 60px rgba(0,255,204,0.4),
+              0 0 120px rgba(0,255,204,0.2);
+  animation: rotateOrb 20s infinite linear, glowPulse 6s infinite ease-in-out;
+}
 
-  /* Cylindrical Center Content */
-  .center-content {
-    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    width: 260px; height: 340px; /* taller for cylinder look */
-    background: linear-gradient(to bottom, rgba(0,255,204,0.15) 0%, rgba(0,0,0,0.88) 50%, rgba(0,255,204,0.15) 100%);
-    border-radius: 50% / 20%; /* ellipse top/bottom for cylinder effect */
-    border-top: 3px solid var(--neon-soft);
-    border-bottom: 3px solid var(--neon-soft);
-    padding: 22px; text-align: center; overflow: hidden;
-    box-shadow: inset 0 0 40px rgba(0,255,204,0.4), 0 0 25px rgba(0,255,204,0.25);
-    display: flex; flex-direction: column; justify-content: center; align-items: center;
-    animation: cylinderGlow 4s ease-in-out infinite alternate;
-  }
-  .center-content h1 { margin: 6px 0 8px; font-size: clamp(1rem, 2.4vh, 1.35rem); }
-  .center-content p { margin: 0; color: #b7ffee; font-size: clamp(0.72rem, 1.9vh, 0.95rem); line-height: 1.35; }
+@keyframes rotateOrb {
+  0% { transform: translate(-50%, -50%) rotateY(0deg); }
+  100% { transform: translate(-50%, -50%) rotateY(360deg); }
+}
+@keyframes glowPulse {
+  0%, 100% { box-shadow: inset 0 0 40px rgba(0,255,204,0.4), 0 0 60px rgba(0,255,204,0.4), 0 0 120px rgba(0,255,204,0.2); }
+  50% { box-shadow: inset 0 0 50px rgba(0,255,204,0.6), 0 0 80px rgba(0,255,204,0.6), 0 0 150px rgba(0,255,204,0.4); }
+}
 
-  @keyframes cylinderGlow {
-    from { box-shadow: inset 0 0 40px rgba(0,255,204,0.4), 0 0 25px rgba(0,255,204,0.25); }
-    to   { box-shadow: inset 0 0 60px rgba(0,255,204,0.7), 0 0 40px rgba(0,255,204,0.5); }
-  }
+.center-content h1 { font-size: clamp(1rem, 2.4vh, 1.35rem); margin: 6px 0 8px; }
+.center-content p { font-size: clamp(0.72rem, 1.9vh, 0.95rem); line-height: 1.35; margin: 0; color: #b7ffee; }
 
-  /* Chatbot left fixed */
-  .chatbot-container { position: fixed; bottom: 20px; left: 20px; z-index: 10; display: flex; flex-direction: column; align-items: center; }
-  .robot-icon { width: 80px; height: 80px; background: rgba(0,255,204,0.08); border: 2px solid var(--neon); border-radius: 50%; box-shadow: 0 0 25px var(--neon);
-    background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Robot_icon.svg/2048px-Robot_icon.svg.png'); background-size: cover; margin-bottom: 10px; }
+/* Chatbot */
+.chatbot-container {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.robot-icon {
+  width: 80px;
+  height: 80px;
+  background: rgba(0, 255, 204, 0.08);
+  border: 2px solid var(--neon);
+  border-radius: 50%;
+  box-shadow: 0 0 25px var(--neon);
+  background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Robot_icon.svg/2048px-Robot_icon.svg.png');
+  background-size: cover;
+  margin-bottom: 10px;
+}
 
-  /* Analyzer overlay and controls remain unchanged from your working version */
+/* The Analyzer Overlay Panel (unchanged from your working version) */
+/* ... keep your analyzer CSS here exactly as in your current file ... */
+
 </style>
 </head>
 <body>
 
 <canvas id="stars"></canvas>
 
-<!-- Wheel -->
 <div class="wheel" id="wheel">
   <div class="tab tab1" onclick="showHome()">Analytics</div>
   <div class="tab tab2" onclick="showMessage('Finance panel docking soon…')">Finance</div>
@@ -115,10 +165,21 @@
   <div class="robot-icon"></div>
 </div>
 
-<!-- Khwaja AI Analyzer Overlay -->
-<!-- (Insert your existing working analyzer overlay code here, unchanged) -->
+<!-- Analyzer Overlay (keep your working analyzer HTML here) -->
 
-<!-- Stars + Meteors Animation -->
+<!-- Chatbase Script -->
+<script>
+(function(){
+  if(!window.chatbase || window.chatbase("getState")!=="initialized"){
+    window.chatbase=(...arguments)=>{ if(!window.chatbase.q){window.chatbase.q=[]} window.chatbase.q.push(arguments) };
+    window.chatbase=new Proxy(window.chatbase,{ get(target,prop){ if(prop==="q"){return target.q} return(...args)=>target(prop,...args) } });
+  }
+  const onLoad=function(){ const script=document.createElement("script"); script.src="https://www.chatbase.co/embed.min.js"; script.id="85-fKKKuG65obFx8ejTz3"; script.domain="www.chatbase.co"; document.body.appendChild(script); };
+  if(document.readyState==="complete"){onLoad()} else { window.addEventListener("load", onLoad) }
+})();
+</script>
+
+<!-- Stars + Meteors -->
 <script>
 const canvas = document.getElementById('stars');
 const ctx = canvas.getContext('2d');
@@ -135,13 +196,10 @@ createStars(220); createMeteors(6);
 <!-- Wheel rotation -->
 <script>
 const wheel = document.getElementById('wheel');
-document.addEventListener('mousemove', e => {
-  const centerX = innerWidth / 2;
-  const offsetX = e.clientX - centerX;
-  const rotation = offsetX / 20;
-  wheel.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
-});
+document.addEventListener('mousemove', e=>{ const centerX = innerWidth/2; const offsetX = e.clientX - centerX; const rotation = offsetX/20; wheel.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`; });
 </script>
+
+<!-- Your Analyzer JS here (unchanged) -->
 
 </body>
 </html>
