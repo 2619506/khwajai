@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Khwaja AI - Alien Analytics Command</title>
+
+<!-- Libraries for the Analyzer -->
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+  :root{
+    --neon:#00ffcc;          /* MAIN GREEN-CYAN COLOR */
+    --neon-soft:rgba(0,255,204,0.6);
+    --glass:rgba(0,10,10,0.55);
+    --glass-strong:rgba(0,20,20,0.75);
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; overflow:hidden; background:black; color:var(--neon);
+    font-family:'Share Tech Mono', monospace; letter-spacing:0.6px;
+  }
+
+  /* Starfield canvas */
+  canvas#stars{position:fixed; inset:0; z-index:-2}
+
+  /* Global glow */
+  h1,h2,h3,p,a,label,button,select,input{ text-shadow:0 0 8px var(--neon), 0 0 20px var(--neon-soft); }
+
+  /* Spaceship Wheel */
+  .wheel{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) rotate(0deg);
+    width:440px; height:440px; border-radius:50%;
+    background:radial-gradient(circle, rgba(0,0,0,0.96) 68%, transparent 100%);
+    border:2px solid var(--neon-soft);
+    box-shadow:0 0 50px var(--neon), inset 0 0 40px rgba(0,255,204,0.35);
+    transition:transform 0.2s ease-out; z-index:1;
+  }
+
+  /* Orbiting Alien Tabs */
+  .tab{position:absolute; background:rgba(0,255,204,0.08); border:1px solid var(--neon-soft);
+    padding:9px 18px; border-radius:50px 10px 50px 10px; color:var(--neon);
+    text-decoration:none; font-weight:bold; text-transform:uppercase;
+    transition:background 0.3s, transform 0.3s; cursor:pointer; backdrop-filter:blur(3px);
+    box-shadow:0 0 16px rgba(0,255,204,0.35);
+  }
+  .tab:hover{ background:rgba(0,255,204,0.28); transform:scale(1.08); }
+  .tab1{ top:-42px; left:50%; transform:translateX(-50%); }
+  .tab2{ top:50%; right:-130px; transform:translateY(-50%); }
+  .tab3{ bottom:-42px; left:50%; transform:translateX(-50%); }
+  .tab4{ top:50%; left:-130px; transform:translateY(-50%); }
+  .tab5{ bottom:-105px; left:50%; transform:translateX(-50%); }
+
+  /* Central Globe */
+  .center-content{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:310px; height:310px; background:rgba(0,0,0,0.9); border-radius:50%;
+    padding:22px; text-align:center; overflow:hidden; /* no scrollbar */
+    box-shadow:inset 0 0 30px rgba(0,255,204,0.4);
+    display:flex; flex-direction:column; justify-content:center; align-items:center;
+  }
+  .center-content h1{margin:6px 0 8px}
+  .center-content p{margin:0; color:#b7ffee}
+  /* Dynamic text sizes (will be adjusted by JS too) */
+  .center-content h1{font-size:clamp(1rem,2.4vh,1.35rem)}
+  .center-content p{font-size:clamp(0.72rem,1.9vh,0.95rem); line-height:1.35}
+
+  /* Chatbot left fixed */
+  .chatbot-container{position:fixed; bottom:20px; left:20px; z-index:10; display:flex; flex-direction:column; align-items:center}
+  .robot-icon{width:80px; height:80px; background:rgba(0,255,204,0.08); border:2px solid var(--neon); border-radius:50%; box-shadow:0 0 25px var(--neon);
+    background-image:url('https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Robot_icon.svg/2048px-Robot_icon.svg.png'); background-size:cover; margin-bottom:10px}
+
+  /* ========================= */
+  /* Alien Holographic OVERLAY */
+  /* ========================= */
+  .overlay{
+    position:fixed; inset:0; display:none; place-items:center; z-index:5;
+    background:radial-gradient(ellipse at center, rgba(0,10,10,0.25) 0%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0.95) 100%);
+    animation:fadeIn 300ms ease-out;
+  }
+  @keyframes fadeIn{from{opacity:0} to{opacity:1}}
+
+  .panel{
+    width:min(1200px,92vw); height:min(78vh,820px); border:1px solid var(--neon-soft);
+    background:linear-gradient(180deg, var(--glass), var(--glass-strong));
+    border-radius:24px; box-shadow:0 0 60px rgba(0,255,204,0.35), inset 0 0 40px rgba(0,255,204,0.15);
+    backdrop-filter: blur(10px) saturate(140%);
+    position:relative; overflow:hidden;
+  }
+  .panel::before{content:""; position:absolute; inset:0; background:repeating-linear-gradient( to bottom, rgba(0,255,204,0.04) 0, rgba(0,255,204,0.04) 2px, transparent 2px, transparent 4px ); pointer-events:none}
+  .panel::after{content:""; position:absolute; inset:0; box-shadow:inset 0 0 140px rgba(0,0,0,0.6); pointer-events:none}
+
+  .panel-header{
+    display:flex; align-items:center; justify-content:space-between; padding:14px 18px; border-bottom:1px solid rgba(0,255,204,0.25);
+    background:linear-gradient(180deg, rgba(0,255,204,0.08), rgba(0,255,204,0.02));
+  }
+  .panel-title{font-size:1.05rem; letter-spacing:2px}
+  .close-btn{
+    width:36px; height:36px; border-radius:50%; border:1px solid var(--neon);
+    background:transparent; color:var(--neon); cursor:pointer;
+    box-shadow:0 0 16px rgba(0,255,204,0.5), inset 0 0 12px rgba(0,255,204,0.2);
+  }
+  .close-btn:hover{ background:rgba(0,255,204,0.12); transform:scale(1.06) }
+
+  .panel-body{ display:grid; grid-template-columns: 320px 1fr; gap:16px; height:calc(100% - 62px); padding:16px; }
+
+  /* Controls column */
+  .controls{ overflow:auto; padding-right:6px }
+  .card{
+    border:1px solid rgba(0,255,204,0.25); border-radius:16px; padding:12px; margin-bottom:12px;
+    background:rgba(0,15,15,0.55); box-shadow:0 0 22px rgba(0,255,204,0.12);
+  }
+  .card h3{ margin:4px 0 10px; font-size:0.95rem; letter-spacing:1.5px }
+
+  label{display:block; font-size:0.8rem; margin:8px 0 4px; color:#b7ffee}
+  input[type="file"], select, button{
+    width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(0,255,204,0.35);
+    background:rgba(0,0,0,0.6); color:var(--neon);
+    box-shadow:inset 0 0 16px rgba(0,255,204,0.15), 0 0 12px rgba(0,255,204,0.1);
+  }
+  select{ cursor:pointer }
+  .btn{ cursor:pointer; text-transform:uppercase; letter-spacing:1.6px; font-weight:700 }
+  .btn:hover{ background:rgba(0,255,204,0.18) }
+  .btn:disabled{ opacity:0.4; cursor:not-allowed }
+
+  .row{ display:grid; grid-template-columns: 1fr 1fr; gap:10px }
+
+  /* Chart Area */
+  .chart-wrap{ position:relative; height:100%; border:1px solid rgba(0,255,204,0.25); border-radius:16px; padding:8px; background:rgba(0,10,10,0.45) }
+  #chart{ width:100%; height:100%; border-radius:12px; }
+
+  .footer-actions{ display:flex; gap:10px; justify-content:flex-end; padding-top:8px }
+  .pill{ display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:999px; border:1px solid rgba(0,255,204,0.35) }
+
+  /* Responsive */
+  @media (max-width: 980px){
+    .panel-body{ grid-template-columns: 1fr; height:auto }
+    .chart-wrap{ height:56vh }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<!-- Wheel -->
+<div class="wheel" id="wheel">
+  <div class="tab tab1" onclick="showHome()">Analytics</div>
+  <div class="tab tab2" onclick="showMessage('Finance panel docking soon…')">Finance</div>
+  <div class="tab tab3" onclick="showMessage('AI & ML bay warming up…')">AI & ML</div>
+  <div class="tab tab4" onclick="openOverlay()">Tools</div>
+  <div class="tab tab5" onclick="showMessage('Transmitting CV…')">CV</div>
+
+  <div class="center-content" id="centerContent">
+    <h1 id="ccTitle">Khwaja AI</h1>
+    <p id="ccText">
+      Intergalactic expertise in <b>Business Analytics</b>, <b>Finance</b>, and <b>Artificial Intelligence</b>.<br/>
+      Pilot projects that use machine learning for predictive insights and deploy
+      futuristic tools for real-time data visualisation. Engage the orbiting tabs
+      to access modules and launch the analyzer.
+    </p>
+  </div>
+</div>
+
+<!-- Chatbot -->
+<div class="chatbot-container">
+  <div class="robot-icon"></div>
+</div>
+
+<!-- ============================= -->
+<!-- ALIEN OVERLAY: KHWAJA ANALYZER -->
+<!-- ============================= -->
+<div id="analyzerOverlay" class="overlay" aria-hidden="true">
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="panelTitle">
+    <div class="panel-header">
+      <div class="pill"><span>🛸</span><span id="panelTitle">Khwaja AI Analyzer</span></div>
+      <button class="close-btn" title="Close" onclick="closeOverlay()">✕</button>
+    </div>
+
+    <div class="panel-body">
+      <!-- Controls -->
+      <div class="controls">
+        <div class="card">
+          <h3>1) Upload Datasets (CSV / Excel)</h3>
+          <label>Dataset 1</label>
+          <input id="file1" type="file" accept=".csv,.xlsx,.xls" />
+          <label>Dataset 2</label>
+          <input id="file2" type="file" accept=".csv,.xlsx,.xls" />
+          <div style="margin-top:8px;font-size:.8rem;color:#b7ffee">Tip: First rows should have headers.</div>
+        </div>
+
+        <div class="card">
+          <h3>2) Select Columns</h3>
+          <div class="row">
+            <div>
+              <label for="x1">X (Dataset 1)</label>
+              <select id="x1" disabled></select>
+            </div>
+            <div>
+              <label for="y1">Y (Dataset 1)</label>
+              <select id="y1" disabled></select>
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label for="x2">X (Dataset 2)</label>
+              <select id="x2" disabled></select>
+            </div>
+            <div>
+              <label for="y2">Y (Dataset 2)</label>
+              <select id="y2" disabled></select>
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <label for="chartType">Chart Type</label>
+              <select id="chartType" disabled>
+                <option value="scatter">Scatter</option>
+                <option value="line">Line</option>
+                <option value="bar">Bar</option>
+                <option value="area">Area</option>
+                <option value="histogram">Histogram</option>
+                <option value="box">Box</option>
+                <option value="pie">Pie</option>
+                <option value="heatmap">Heatmap</option>
+              </select>
+            </div>
+            <div>
+              <label for="mode">Compare Mode</label>
+              <select id="mode" disabled>
+                <option value="overlay">Overlay</option>
+                <option value="side">Side‑by‑Side (Bars)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>3) Render</h3>
+          <button id="vizBtn" class="btn" onclick="plotData()" disabled>Visualize ▶</button>
+          <div class="footer-actions" style="margin-top:10px">
+            <button class="btn" onclick="downloadChart('png')" disabled id="dlPng">Download PNG</button>
+            <button class="btn" onclick="downloadChart('jpeg')" disabled id="dlJpg">Download JPEG</button>
+            <button class="btn" onclick="downloadChart('svg')" disabled id="dlSvg">Download SVG</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Status</h3>
+          <div id="status">Awaiting input…</div>
+        </div>
+      </div>
+
+      <!-- Chart Area -->
+      <div class="chart-wrap">
+        <div id="chart"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Chatbase Embed (unchanged) -->
+<script>
+(function(){
+  if(!window.chatbase || window.chatbase("getState")!=="initialized"){
+    window.chatbase=(...arguments)=>{ if(!window.chatbase.q){window.chatbase.q=[]} window.chatbase.q.push(arguments) };
+    window.chatbase=new Proxy(window.chatbase,{ get(target,prop){ if(prop==="q"){return target.q} return(...args)=>target(prop,...args) } });
+  }
+  const onLoad=function(){ const script=document.createElement("script"); script.src="https://www.chatbase.co/embed.min.js"; script.id="85-fKKKuG65obFx8ejTz3"; script.domain="www.chatbase.co"; document.body.appendChild(script); };
+  if(document.readyState==="complete"){onLoad()} else { window.addEventListener("load", onLoad) }
+})();
+</script>
+
+<!-- Stars + Meteors Animation -->
+<script>
+const canvas = document.getElementById('stars');
+const ctx = canvas.getContext('2d');
+let stars = [], meteors = [];
+function resizeCanvas(){ canvas.width = innerWidth; canvas.height = innerHeight; }
+resizeCanvas(); addEventListener('resize', resizeCanvas);
+function createStars(count){ stars = []; for(let i=0;i<count;i++){ stars.push({ x:Math.random()*canvas.width, y:Math.random()*canvas.height, speed:Math.random()*0.5+0.2, size:Math.random()*2 }); } }
+function createMeteors(count){ meteors = []; for(let i=0;i<count;i++){ meteors.push({ x:Math.random()*canvas.width, y:Math.random()*canvas.height, speedX:-(Math.random()*4+2), speedY:Math.random()*2+1, length:Math.random()*50+30 }); } }
+function drawStars(){ ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = '#00ffcc'; for(const s of stars){ ctx.beginPath(); ctx.arc(s.x,s.y,s.size,0,Math.PI*2); ctx.fill(); s.y += s.speed; if(s.y>canvas.height){ s.y=0; s.x=Math.random()*canvas.width; } } ctx.strokeStyle = '#00ffcc'; ctx.lineWidth = 1.5; for(const m of meteors){ ctx.beginPath(); ctx.moveTo(m.x,m.y); ctx.lineTo(m.x + m.length*m.speedX/10, m.y + m.length*m.speedY/10); ctx.stroke(); m.x += m.speedX; m.y += m.speedY; if(m.x < -100 || m.y > canvas.height+100){ m.x = canvas.width + Math.random()*200; m.y = Math.random()*canvas.height/2; } } }
+createStars(220); createMeteors(6);
+(function animate(){ drawStars(); requestAnimationFrame(animate); })();
+</script>
+
+<!-- Wheel rotation by mouse -->
+<script>
+const wheel = document.getElementById('wheel');
+document.addEventListener('mousemove', e=>{ const centerX = innerWidth/2; const offsetX = e.clientX - centerX; const rotation = offsetX/20; wheel.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`; });
+</script>
+
+<!-- Overlay logic + Analyzer code + Center text fitting -->
+<script>
+// ===== Center text auto-fit (no scrollbar) =====
+function fitCenterText(){
+  const cc = document.getElementById('centerContent');
+  const h1 = document.getElementById('ccTitle');
+  const p = document.getElementById('ccText');
+  // Start from current and shrink until content fits
+  let hSize = parseFloat(getComputedStyle(h1).fontSize);
+  let pSize = parseFloat(getComputedStyle(p).fontSize);
+  let guard=0;
+  while((cc.scrollHeight > cc.clientHeight) && guard<60){
+    hSize = Math.max(12, hSize - 0.5);
+    pSize = Math.max(10, pSize - 0.5);
+    h1.style.fontSize = hSize + 'px';
+    p.style.fontSize = pSize + 'px';
+    guard++;
+  }
+}
+window.addEventListener('load', fitCenterText);
+window.addEventListener('resize', ()=>{ setTimeout(fitCenterText, 100); });
+
+// ===== Overlay controls =====
+function showHome(){
+  const cc = document.getElementById('centerContent');
+  cc.innerHTML = `<h1 id="ccTitle">Khwaja AI</h1><p id=\"ccText\">Intergalactic expertise in <b>Business Analytics</b>, <b>Finance</b>, and <b>Artificial Intelligence</b>.<br/>Pilot projects that use machine learning for predictive insights and deploy futuristic tools for real-time visualisation. Click <b>Tools</b> to launch the analyzer.</p>`;
+  fitCenterText();
+}
+function showMessage(msg){ const cc = document.getElementById('centerContent'); cc.innerHTML = `<h1 id="ccTitle">Console</h1><p id=\"ccText\">${msg}</p>`; fitCenterText(); }
+
+function openOverlay(){ document.getElementById('analyzerOverlay').style.display = 'grid'; setStatus('Overlay online. Load data to begin…'); }
+function closeOverlay(){ document.getElementById('analyzerOverlay').style.display = 'none'; }
+
+// ===== Analyzer state =====
+let dataset1 = [], dataset2 = [];
+let ds1Label = 'Dataset 1', ds2Label = 'Dataset 2';
+const el = id => document.getElementById(id);
+const setStatus = msg => el('status').textContent = msg;
+
+// Enable/disable controls based on readiness
+function setControlsEnabled(enabled){
+  ['x1','y1','x2','y2','chartType','mode','vizBtn','dlPng','dlJpg','dlSvg'].forEach(id=>{
+    const e = el(id); if(e){ e.disabled = !enabled; }
+  });
+}
+
+// Initially disabled
+setControlsEnabled(false);
+
+// Hook up file inputs
+function wireFileInputs(){
+  el('file1').addEventListener('change', e=> loadFile(e.target.files[0], 1));
+  el('file2').addEventListener('change', e=> loadFile(e.target.files[0], 2));
+}
+wireFileInputs();
+
+function loadFile(file, index){
+  if(!file){ return; }
+  const name = file.name || `dataset${index}`;
+  const ext = name.split('.').pop().toLowerCase();
+  setStatus(`Loading ${name} …`);
+
+  const assign = data => assignData(data, index, name);
+
+  if(ext === 'csv'){
+    Papa.parse(file, { header:true, dynamicTyping:true, skipEmptyLines:true, complete: res => assign(res.data) });
+  } else if(ext === 'xlsx' || ext === 'xls'){
+    const reader = new FileReader();
+    reader.onload = e=>{
+      const wb = XLSX.read(new Uint8Array(e.target.result), {type:'array'});
+      const sheet = wb.SheetNames[0];
+      const json = XLSX.utils.sheet_to_json(wb.Sheets[sheet], {defval:null});
+      assign(json);
+    };
+    reader.readAsArrayBuffer(file);
+  } else {
+    alert('Unsupported file type. Please upload CSV or Excel.');
+    setStatus('Unsupported file type.');
+  }
+}
+
+function assignData(data, index, label){
+  // Clean empty rows
+  const cleaned = (data||[]).filter(row => Object.values(row).some(v => v!==null && v!=='' && v!==undefined));
+  if(index===1){ dataset1 = cleaned; ds1Label = label; } else { dataset2 = cleaned; ds2Label = label; }
+  setStatus(`${label} loaded (${cleaned.length} rows).`);
+  if(dataset1.length && dataset2.length){ populateDropdowns(); setControlsEnabled(true); }
+}
+
+function populateDropdowns(){
+  const sample1 = dataset1[0] || {}; const sample2 = dataset2[0] || {};
+  const keys1 = Object.keys(sample1); const keys2 = Object.keys(sample2);
+  // union of keys so user can still pick even if slightly different headers
+  const keys = Array.from(new Set([...keys1, ...keys2]));
+
+  const numeric1 = keys.filter(k=> isNumericColumn(dataset1, k));
+  const numeric2 = keys.filter(k=> isNumericColumn(dataset2, k));
+
+  fillSelect(el('x1'), keys1.length?keys1:keys);
+  fillSelect(el('y1'), numeric1.length?numeric1:keys1.length?keys1:keys);
+  fillSelect(el('x2'), keys2.length?keys2:keys);
+  fillSelect(el('y2'), numeric2.length?numeric2:keys2.length?keys2:keys);
+
+  setStatus('Columns ready. Choose X/Y and chart type.');
+}
+
+function fillSelect(selectEl, items){
+  selectEl.innerHTML = '';
+  items.forEach(k=>{ const o=document.createElement('option'); o.value=o.textContent=k; selectEl.appendChild(o); });
+  selectEl.disabled = items.length === 0;
+}
+
+function isNumericColumn(ds, key){
+  const vals = ds.slice(0,40).map(r=> r? r[key] : undefined).filter(v=> v!==null && v!=='' && v!==undefined);
+  if(!vals.length) return false;
+  return vals.every(v=> typeof v === 'number' || (!isNaN(parseFloat(v)) && isFinite(v)));
+}
+
+function val(v){ return (typeof v === 'number')? v : parseFloat(v); }
+
+function plotData(){
+  if(!dataset1.length || !dataset2.length){ alert('Upload both datasets first.'); return; }
+  const x1 = el('x1').value; const y1 = el('y1').value;
+  const x2 = el('x2').value; const y2 = el('y2').value;
+  const chartType = el('chartType').value; const mode = el('mode').value;
+
+  const trace1 = buildTrace(dataset1, x1, y1, chartType, ds1Label);
+  const trace2 = buildTrace(dataset2, x2, y2, chartType, ds2Label);
+
+  let data = [trace1, trace2];
+  let layout = baseLayout(chartType, mode);
+
+  if(chartType === 'pie'){
+    data = [ {...trace1, domain:{row:0,column:0}}, {...trace2, domain:{row:0,column:1}} ];
+    layout.grid = {rows:1, columns:2};
+  }
+  if(chartType === 'bar' && mode === 'side'){ layout.barmode = 'group'; }
+  if(chartType === 'bar' && mode === 'overlay'){ layout.barmode = 'overlay'; trace1.opacity=0.85; trace2.opacity=0.65; }
+
+  Plotly.newPlot('chart', data, layout, {responsive:true, displaylogo:false}).then(()=>{
+    setStatus('Visualization rendered.');
+    // enable downloads after a successful render
+    ['dlPng','dlJpg','dlSvg'].forEach(id=> el(id).disabled=false);
+  });
+}
+
+function buildTrace(ds, xKey, yKey, type, name){
+  const x = ds.map(r=> r[xKey]);
+  const y = ds.map(r=> r[yKey]).map(val);
+
+  if(type === 'heatmap'){
+    // Build frequency heatmap
+    const bins = 20;
+    const xVals = x.map(Number).filter(n=>!isNaN(n));
+    const yVals = y.map(Number).filter(n=>!isNaN(n));
+    const xMin = Math.min(...xVals), xMax=Math.max(...xVals);
+    const yMin = Math.min(...yVals), yMax=Math.max(...yVals);
+    const z = Array.from({length:bins},()=>Array(bins).fill(0));
+    for(let i=0;i<Math.min(xVals.length,yVals.length);i++){
+      const xi = Math.min(bins-1, Math.max(0, Math.floor((xVals[i]-xMin)/(xMax-xMin||1)*bins)));
+      const yi = Math.min(bins-1, Math.max(0, Math.floor((yVals[i]-yMin)/(yMax-yMin||1)*bins)));
+      z[yi][xi]++;
+    }
+    return { type:'heatmap', z, name, colorscale:'Viridis' };
+  }
+
+  if(type === 'pie'){
+    return { type:'pie', labels:x, values:y, name, hole:0.25 };
+  }
+
+  if(type === 'box'){
+    return { type:'box', y, name, boxmean:true };
+  }
+  if(type === 'histogram'){
+    return { type:'histogram', x:y, name, opacity:0.75 };
+  }
+  if(type === 'bar'){
+    return { type:'bar', x, y, name };
+  }
+
+  const mode = (type==='line' || type==='area') ? 'lines' : 'markers';
+  const fill = (type==='area') ? 'tozeroy' : undefined;
+  return { type:'scatter', mode, x, y, name, fill };
+}
+
+function baseLayout(type, mode){
+  return {
+    title:{ text:`Khwaja AI Analyzer — ${type.toUpperCase()}`, font:{family:'Share Tech Mono', size:18, color:'#a6ffee'} },
+    paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0.55)',
+    font:{color:'#a6ffee'},
+    xaxis:{gridcolor:'rgba(0,255,204,0.15)', zerolinecolor:'rgba(0,255,204,0.25)'},
+    yaxis:{gridcolor:'rgba(0,255,204,0.15)', zerolinecolor:'rgba(0,255,204,0.25)'},
+    margin:{t:50,r:20,b:45,l:55},
+    legend:{bgcolor:'rgba(0,0,0,0.35)', bordercolor:'rgba(0,255,204,0.2)', borderwidth:1, orientation:'h'},
+    shapes:[{ type:'rect', xref:'paper', yref:'paper', x0:0, y0:0, x1:1, y1:1, line:{width:1, color:'rgba(0,255,204,0.25)'}, fillcolor:'rgba(0,255,204,0.04)'}]
+  };
+}
+
+function downloadChart(fmt='png'){
+  Plotly.downloadImage('chart', {format:fmt, filename:`khwaja_ai_chart_${Date.now()}`});
+}
+</script>
+
+</body>
+</html>
