@@ -718,8 +718,8 @@ function fillSelect(selectEl, items){
 
     // Make sure it sits on top of the hole, centered
     bubble.style.position = 'fixed';
-    bubble.style.left     = cx + 'px';
-    bubble.style.top      = cy + 'px';
+    bubble.style.left     = (cx + 2) + 'px';
+    bubble.style.top      = (cy - 3) + 'px';
     bubble.style.right    = 'auto';
     bubble.style.bottom   = 'auto';
     bubble.style.transform= `translate(-50%,-50%) scale(${scale})`;
@@ -752,11 +752,3 @@ function fillSelect(selectEl, items){
 
 </body>
 </html>
-
-
-
-
-
-
-
-
