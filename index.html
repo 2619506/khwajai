@@ -689,69 +689,10 @@ function fillSelect(selectEl, items){
   selectEl.disabled = items.length === 0;
 }
 </script>
-<script>
-(function(){
-  const HOLE_SEL = '.assistant-hole';
-
-  function getChatbaseBubble(){
-    // Try common selectors Chatbase uses
-    const byId   = document.querySelector('#chatbase-bubble');
-    const byIframe = document.querySelector('iframe[src*="chatbase"]');
-    // Prefer a containing element (div) if present
-    if (byId) return byId;
-    if (byIframe && byIframe.parentElement) return byIframe.parentElement;
-    return byIframe || null;
-  }
-
-  function centerBubble(){
-    const hole = document.querySelector(HOLE_SEL);
-    const bubble = getChatbaseBubble();
-    if(!hole || !bubble) return;
-
-    const r = hole.getBoundingClientRect();
-    const cx = r.left + r.width/2;
-    const cy = r.top  + r.height/2;
-
-    // Estimated default bubble size ~ 88px; scale to fit the hole
-    const target = Math.min(r.width, r.height);
-    const scale  = target / 88;
-
-    // Make sure it sits on top of the hole, centered
-    bubble.style.position = 'fixed';
-    bubble.style.left     = (cx + 2) + 'px';
-    bubble.style.top      = (cy - 3) + 'px';
-    bubble.style.right    = 'auto';
-    bubble.style.bottom   = 'auto';
-    bubble.style.transform= `translate(-50%,-50%) scale(${scale})`;
-    bubble.style.transformOrigin = 'center center';
-    bubble.style.zIndex   = '10000';
-  }
-
-  function startPinning(){
-    // Initial attempts while Chatbase finishes mounting
-    let tries = 0;
-    const maxTries = 60; // ~18s
-    const t = setInterval(()=>{
-      centerBubble();
-      if (++tries > maxTries) clearInterval(t);
-    }, 300);
-
-    // Keep centered on layout changes
-    window.addEventListener('resize', centerBubble);
-    window.addEventListener('scroll', centerBubble);
-
-    // Watch DOM for Chatbase reinsertions
-    const mo = new MutationObserver(()=> centerBubble());
-    mo.observe(document.body, {childList:true, subtree:true});
-  }
-
-  // Ensure Chatbase has started loading, then pin
-  window.addEventListener('load', () => setTimeout(startPinning, 1200));
-})();
-</script>
 
 </body>
 </html>
+
 
 
 
