@@ -84,23 +84,32 @@
     z-index: 9998; /* under the chat bubble we’ll overlay */
     pointer-events: none; /* the hole itself doesn’t catch clicks */
   }
-  .assistant-hole{
-    position: absolute; inset: 0; border-radius: 50%;
-    background:
-      radial-gradient(circle at 35% 35%, rgba(255,255,255,0.12), rgba(255,255,255,0) 45%),
-      radial-gradient(circle at 65% 70%, rgba(0,255,204,0.12), rgba(0,255,204,0) 55%),
-      radial-gradient(circle at 50% 50%, rgba(0,0,0,0.7), rgba(0,0,0,0.1) 70%);
-    border: 2px solid rgba(0,255,204,0.7);
-    box-shadow:
-      0 0 26px rgba(0,255,204,0.6),
-      inset 0 0 20px rgba(0,255,204,0.35),
-      0 0 80px rgba(0,255,204,0.25);
-    backdrop-filter: blur(2px);
-  }
+  /* The actual glowing circle */
+.assistant-wrap::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  background: radial-gradient(circle at center,
+    rgba(0,255,204,0.8) 0%,   /* strong neon core */
+    rgba(0,255,204,0.35) 40%, /* soft glow mid */
+    rgba(0,255,204,0.05) 75%, /* fading out */
+    transparent 100%);        /* full fade */
+  box-shadow:
+    0 0 18px rgba(0,255,204,0.7),
+    0 0 36px rgba(0,255,204,0.5),
+    0 0 64px rgba(0,255,204,0.4);
+  filter: blur(2px);  /* soft edges */
+  animation: assistantGlow 4s ease-in-out infinite alternate;
+  z-index:-1;
+  pointer-events:none;
+}
 
-  /* (Optional) remove your old robot bubble if you had it) */
-  .chatbot-container{ display:none !important; }
-
+/* Gentle breathing animation */
+@keyframes assistantGlow {
+  from { opacity: 0.65; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1.05); }
+}
   /* ========================= */
   /* Alien Holographic OVERLAY */
   /* ========================= */
@@ -692,6 +701,7 @@ function fillSelect(selectEl, items){
 
 </body>
 </html>
+
 
 
 
