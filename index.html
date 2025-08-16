@@ -348,6 +348,22 @@
   
 </script>
 
+<script>
+window.addEventListener("load", function(){
+  setTimeout(()=>{
+    const bubble = document.querySelector("#chatbase-bubble, iframe[src*='chatbase']");
+    if(bubble){
+      bubble.style.position = "absolute";
+      bubble.style.bottom = "50%";
+      bubble.style.left = "50%";
+      bubble.style.transform = "translate(-50%, 50%) scale(0.9)";
+      bubble.style.zIndex = "12";
+      document.querySelector(".assistant-wrap").appendChild(bubble);
+    }
+  }, 1500); // wait for chatbase to render
+});
+</script>
+
 <!-- Stars + Meteors Animation -->
 <script>
 const canvas = document.getElementById('stars');
@@ -690,6 +706,7 @@ function fillSelect(selectEl, items){
 
 </body>
 </html>
+
 
 
 
