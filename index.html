@@ -38,7 +38,7 @@
   /* Spaceship Wheel */
  .wheel{
     position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) rotate(0deg);
-    width:500px; height:500px; border-radius:50%;
+    width: min(80vw, 500px); height: min(80vw, 500px); border-radius:50%;
     background:radial-gradient(circle at center, #000 60%, #111 100%);
     border:2px solid var(--neon-soft);
     box-shadow:inset 0 0 50px var(--neon);
@@ -64,11 +64,11 @@
   box-shadow: 0 0 16px rgba(0, 255, 204, 0.35), inset 0 0 12px rgba(0,255,204,0.25);
 
   }
-.tab1 { top: -42px; left: 50%; transform: translateX(-50%); }
-.tab2 { top: 50%; right: -130px; transform: translateY(-50%); }
-.tab3 { bottom: -42px; left: 50%; transform: translateX(-50%); }
-.tab4 { top: 50%; left: -130px; transform: translateY(-50%); }
-.tab5 { bottom: -105px; left: 50%; transform: translateX(-50%); }
+.tab1 { top: -8%; left: 50%; transform: translateX(-50%); }
+.tab2 { top: 50%; right: -22%; transform: translateY(-50%); }
+.tab3 { bottom: -8%; left: 50%; transform: translateX(-50%); }
+.tab4 { top: 50%; left: -22%; transform: translateY(-50%); }
+.tab5 { bottom: -18%; left: 50%; transform: translateX(-50%); }
 
   /* Central Globe */
   .center-content{
@@ -712,4 +712,5 @@ function fillSelect(selectEl, items){
 
 </body>
 </html>
+
 
