@@ -36,13 +36,12 @@
   h1,h2,h3,p,a,label,button,select,input{ text-shadow:0 0 8px var(--neon), 0 0 20px var(--neon-soft); }
 
   /* Spaceship Wheel */
-  .wheel{
+ .wheel{
     position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) rotate(0deg);
     width:440px; height:440px; border-radius:50%;
-    background:radial-gradient(circle, rgba(0,0,0,0.96) 68%, transparent 100%);
+    background:radial-gradient(circle at center, #000 60%, #111 100%);
     border:2px solid var(--neon-soft);
-    box-shadow:0 0 50px var(--neon), inset 0 0 40px rgba(0,255,204,0.35);
-    transition:transform 0.2s ease-out; z-index:1;
+    box-shadow:inset 0 0 50px var(--neon);
   }
 
   /* Orbiting Alien Tabs */
@@ -701,6 +700,7 @@ function fillSelect(selectEl, items){
 
 </body>
 </html>
+
 
 
 
