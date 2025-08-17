@@ -44,19 +44,31 @@
     box-shadow:inset 0 0 50px var(--neon);
   }
 
-  /* Orbiting Alien Tabs */
-  .tab{position:absolute; background:rgba(0,255,204,0.08); border:1px solid var(--neon-soft);
-    padding:9px 18px; border-radius:50px 10px 50px 10px; color:var(--neon);
-    text-decoration:none; font-weight:bold; text-transform:uppercase;
-    transition:background 0.3s, transform 0.3s; cursor:pointer; backdrop-filter:blur(3px);
-    box-shadow:0 0 16px rgba(0,255,204,0.35);
+   /* Orbiting Alien Tabs */
+ .tab {
+  position: absolute;
+  background: rgba(0, 255, 204, 0.08);
+  border: 2px solid var(--neon-soft);
+  padding: 12px 22px;
+  border-radius: 50% / 40%;
+  color: var(--neon);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.95rem;
+  letter-spacing: 2px;
+  text-decoration: none;
+  font-weight: bold;
+  text-transform: uppercase;
+  transition: background 0.3s, transform 0.3s;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 0 16px rgba(0, 255, 204, 0.35), inset 0 0 12px rgba(0,255,204,0.25);
+
   }
-  .tab:hover{ background:rgba(0,255,204,0.28); transform:scale(1.08); }
-  .tab1{ top:-42px; left:50%; transform:translateX(-50%); }
-  .tab2{ top:50%; right:-130px; transform:translateY(-50%); }
-  .tab3{ bottom:-42px; left:50%; transform:translateX(-50%); }
-  .tab4{ top:50%; left:-130px; transform:translateY(-50%); }
-  .tab5{ bottom:-105px; left:50%; transform:translateX(-50%); }
+.tab1 { top: -42px; left: 50%; transform: translateX(-50%); }
+.tab2 { top: 50%; right: -130px; transform: translateY(-50%); }
+.tab3 { bottom: -42px; left: 50%; transform: translateX(-50%); }
+.tab4 { top: 50%; left: -130px; transform: translateY(-50%); }
+.tab5 { bottom: -105px; left: 50%; transform: translateX(-50%); }
 
   /* Central Globe */
   .center-content{
@@ -700,3 +712,4 @@ function fillSelect(selectEl, items){
 
 </body>
 </html>
+
