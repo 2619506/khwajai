@@ -124,6 +124,77 @@ body::before {
 .left .job-details li { text-align: right; } 
 .right .job-details li { text-align: left; }
 
+/* --- PROOF BADGES (For Certificates/Letters) --- */
+.proof-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(139, 92, 246, 0.15);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-decoration: none;
+    transition: 0.3s;
+    font-weight: 600;
+}
+.proof-badge:hover { background: var(--accent); color: white; box-shadow: 0 0 10px var(--accent-glow); }
+
+/* --- ACADEMIC PROJECTS GRID --- */
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.project-card {
+    background: #0a0a0a; border: 1px solid var(--glass-border);
+    padding: 2rem; border-radius: 16px; transition: 0.3s;
+}
+.project-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+
+.project-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+.project-header h3 { font-size: 1.2rem; color: var(--text-main); }
+
+.tech-tag {
+    background: #1e1e24; color: var(--accent);
+    font-size: 0.75rem; padding: 3px 8px;
+    border-radius: 5px; border: 1px solid var(--glass-border);
+}
+
+.project-institution { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 15px; font-style: italic; }
+.project-body p { font-size: 0.9rem; color: #d4d4d8; margin-bottom: 10px; line-height: 1.5; }
+.project-body strong { color: var(--text-main); }
+
+.btn-text.small { font-size: 0.8rem; margin-top: 10px; display: inline-block; }
+
+/* --- CERTIFICATIONS GRID --- */
+.certs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.cert-item {
+    display: flex; align-items: center; gap: 15px;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 1.5rem; border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    transition: 0.3s;
+}
+.cert-item:hover { background: rgba(255, 255, 255, 0.05); border-color: var(--accent); }
+
+.cert-icon { font-size: 2rem; color: var(--accent); }
+.cert-item h4 { font-size: 1rem; margin-bottom: 2px; color: var(--text-main); }
+.cert-item p { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px; }
+.cert-item a { font-size: 0.8rem; color: var(--accent); text-decoration: none; font-weight: 600; }
+.cert-item a:hover { text-decoration: underline; }
+
 /* --- SKILLS & EDUCATION --- */
 .skills-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
 .skill-category {
@@ -182,154 +253,5 @@ footer { text-align: center; padding: 3rem; border-top: 1px solid var(--glass-bo
     .left, .right { left: 0; text-align: left; }
     .left .timeline-dot, .right .timeline-dot { left: 21px; }
     .left .job-details li { text-align: left; }
-    .nav-links { display: none; } /* Simplified mobile menu */
-}
-/* --- EXISTING STYLES (Keep everything from before) --- */
-/* ... (Keep your previous CSS here) ... */
-
-/* --- NEW: PROOF BADGE (Top Right Corner) --- */
-.timeline-card, .skill-category {
-    position: relative; /* Needed for absolute positioning of badge */
-}
-
-.proof-badge {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: rgba(139, 92, 246, 0.15);
-    border: 1px solid var(--accent);
-    color: var(--accent);
-    font-size: 0.75rem;
-    padding: 4px 10px;
-    border-radius: 20px;
-    text-decoration: none;
-    transition: 0.3s;
-    font-weight: 600;
-}
-
-.proof-badge:hover {
-    background: var(--accent);
-    color: white;
-    box-shadow: 0 0 10px var(--accent-glow);
-}
-
-/* --- NEW: ACADEMIC PROJECTS SECTION --- */
-.projects-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-    max-width: 1100px;
-    margin: 0 auto;
-}
-
-.project-card {
-    background: #0a0a0a;
-    border: 1px solid var(--glass-border);
-    padding: 2rem;
-    border-radius: 16px;
-    transition: 0.3s;
-}
-
-.project-card:hover {
-    transform: translateY(-5px);
-    border-color: var(--accent);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-}
-
-.project-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 5px;
-}
-
-.project-header h3 {
-    font-size: 1.2rem;
-    color: var(--text-main);
-}
-
-.tech-tag {
-    background: #1e1e24;
-    color: var(--accent);
-    font-size: 0.75rem;
-    padding: 3px 8px;
-    border-radius: 5px;
-    border: 1px solid var(--glass-border);
-}
-
-.project-institution {
-    color: var(--text-muted);
-    font-size: 0.85rem;
-    margin-bottom: 15px;
-    font-style: italic;
-}
-
-.project-body p {
-    font-size: 0.9rem;
-    color: #d4d4d8;
-    margin-bottom: 10px;
-    line-height: 1.5;
-}
-
-.project-body strong {
-    color: var(--text-main);
-}
-
-.btn-text.small {
-    font-size: 0.8rem;
-    margin-top: 10px;
-    display: inline-block;
-}
-
-/* --- NEW: CERTIFICATIONS GRID --- */
-.certs-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-    max-width: 900px;
-    margin: 0 auto;
-}
-
-.cert-item {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    background: rgba(255, 255, 255, 0.03);
-    padding: 1.5rem;
-    border-radius: 12px;
-    border: 1px solid var(--glass-border);
-    transition: 0.3s;
-}
-
-.cert-item:hover {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: var(--accent);
-}
-
-.cert-icon {
-    font-size: 2rem;
-    color: var(--accent);
-}
-
-.cert-item h4 {
-    font-size: 1rem;
-    margin-bottom: 2px;
-    color: var(--text-main);
-}
-
-.cert-item p {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    margin-bottom: 5px;
-}
-
-.cert-item a {
-    font-size: 0.8rem;
-    color: var(--accent);
-    text-decoration: none;
-    font-weight: 600;
-}
-
-.cert-item a:hover {
-    text-decoration: underline;
+    .nav-links { display: none; }
 }
