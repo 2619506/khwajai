@@ -14,7 +14,7 @@
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;600&display=swap');
 
   :root{
-    --neon: #f8fafc;
+    --neon-white: #f8fafc;
     --deep-space: #000000;
   }
 
@@ -22,7 +22,7 @@
   html, body { height:100%; }
   body {
     margin: 0; overflow: hidden; background: #020617; 
-    color: var(--neon);
+    color: var(--neon-white);
     font-family: 'Outfit', sans-serif;
     letter-spacing: 0.5px;
   }
@@ -30,208 +30,181 @@
   /* Starfield */
   canvas#stars { position:fixed; inset:0; z-index:-3; }
 
-  /* --- PLANET TEXTURE ENGINE (CSS Procedural) --- */
+  /* --- PLANET TEXTURES --- */
   
-  /* 1. EARTH-LIKE SURFACE (Main Globe) */
+  /* 1. EARTH (Main) */
   .earth-surface {
     border-radius: 50%;
-    /* Ocean and Landmass Gradient */
+    /* Rich Earth Gradient: Green Land, Blue Ocean, Deep Shadow */
     background: radial-gradient(
-      circle at 30% 30%, 
-      #4ade80 0%,      /* Bright Land Highlight */
-      #059669 20%,     /* Green Land */
-      #0284c7 40%,     /* Ocean Blue */
-      #0c4a6e 70%,     /* Deep Ocean */
-      #020617 100%     /* Shadow Side */
+      circle at 35% 35%, 
+      #4ade80 0%,      /* Highlight */
+      #059669 25%,     /* Land */
+      #0369a1 50%,     /* Ocean */
+      #0f172a 85%,     /* Deep Ocean */
+      #020617 100%     /* Shadow */
     );
-    /* Cloud Swirls via Shadow */
     box-shadow: 
-      inset 10px 10px 40px rgba(255,255,255,0.3), /* Atmosphere */
-      inset -20px -20px 60px rgba(0,0,0,0.95),    /* Night Side */
-      0 0 40px rgba(6, 182, 212, 0.4);            /* Space Glow */
-    
-    position: relative;
-    overflow: hidden;
+      inset 10px 10px 50px rgba(255,255,255,0.2), 
+      inset -20px -20px 60px rgba(0,0,0,0.9),
+      0 0 50px rgba(14, 165, 233, 0.3); /* Atmosphere Glow */
     border: 1px solid rgba(255,255,255,0.1);
-  }
-  
-  /* Cloud Texture Overlay */
-  .earth-surface::after {
-    content: ''; position: absolute; inset: 0; border-radius: 50%;
-    background-image: 
-      radial-gradient(circle at 70% 20%, rgba(255,255,255,0.4) 0%, transparent 20%),
-      radial-gradient(circle at 30% 80%, rgba(255,255,255,0.2) 0%, transparent 15%);
-    filter: blur(8px);
-    pointer-events: none;
+    position: relative;
   }
 
-  /* 2. MOON SURFACE (Satellites) */
+  /* 2. MOON (Satellites) */
   .moon-surface {
     border-radius: 50%;
-    /* Rocky Grey Gradient */
+    /* Natural Moon Grey */
     background: radial-gradient(
       circle at 30% 30%, 
-      #f1f5f9 0%,      /* Highlight */
-      #94a3b8 30%,     /* Grey Rock */
-      #475569 60%,     /* Shadow Edge */
-      #0f172a 100%     /* Dark Side */
+      #f8fafc 0%,      /* White Highlight */
+      #cbd5e1 20%,     /* Light Grey */
+      #64748b 50%,     /* Rock Grey */
+      #1e293b 85%,     /* Shadow */
+      #000000 100%
     );
     box-shadow: 
       inset 2px 2px 10px rgba(255,255,255,0.5), 
-      inset -5px -5px 20px rgba(0,0,0,0.9),
-      0 0 15px rgba(255,255,255,0.1);
-    
-    position: relative;
-    overflow: hidden;
+      0 0 20px rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255,255,255,0.2);
     cursor: pointer;
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
-    border: 1px solid rgba(255,255,255,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .moon-surface:hover {
+    transform: scale(1.15);
+    box-shadow: 0 0 35px rgba(255, 255, 255, 0.4);
+    z-index: 50;
   }
 
-  /* Craters */
-  .moon-surface::before {
-    content: ''; position: absolute; inset: 0; border-radius: 50%;
-    background-image: 
-      radial-gradient(circle at 20% 50%, rgba(0,0,0,0.15) 4%, transparent 5%),
-      radial-gradient(circle at 80% 30%, rgba(0,0,0,0.1) 6%, transparent 7%);
-    pointer-events: none;
-  }
-
-  /* 3. ICE GIANT (Portfolio) */
-  .ice-surface {
+  /* 3. NEON ORANGE (Portfolio) */
+  .orange-planet {
     border-radius: 50%;
-    background: radial-gradient(circle at 30% 30%, #e0f2fe 0%, #38bdf8 40%, #0369a1 80%, #000000 100%);
-    box-shadow: inset 5px 5px 20px rgba(255,255,255,0.5), 0 0 30px rgba(56, 189, 248, 0.5);
+    /* Glowing Neon Orange Gradient */
+    background: radial-gradient(
+      circle at 30% 30%, 
+      #fff7ed 0%,      /* Bright Core */
+      #fdba74 20%,     /* Orange Highlight */
+      #f97316 50%,     /* Neon Orange */
+      #c2410c 80%,     /* Burnt Orange */
+      #431407 100%     /* Dark Side */
+    );
+    box-shadow: 
+      inset 5px 5px 20px rgba(255,255,255,0.5), 
+      0 0 40px rgba(249, 115, 22, 0.6); /* Intense Glow */
     cursor: pointer;
     transition: transform 0.3s;
+    animation: floatPortfolio 6s ease-in-out infinite;
   }
+  .orange-planet:hover { transform: scale(1.15); box-shadow: 0 0 60px rgba(249, 115, 22, 0.8); }
 
-  /* --- LAYOUT & POSITIONING --- */
+  @keyframes floatPortfolio { 0%,100%{transform:translateY(0)} 50%{transform:translateY(10px)} }
 
-  /* MAIN GLOBE CONTAINER */
+
+  /* --- MAIN LAYOUT --- */
+  
+  /* Central Earth Container */
   .wheel {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-    width: min(65vw, 550px); height: min(65vw, 550px);
+    width: min(60vw, 500px); height: min(60vw, 500px);
     z-index: 10;
   }
 
-  /* ORBITING MOONS (The 3 Tabs) */
-  .moon-tab {
+  /* SATELLITE MOON POSITIONING (Tucked Close) */
+  .satellite {
     position: absolute;
-    width: 100px; height: 100px;
+    width: 90px; height: 90px;
     z-index: 20;
-    
     display: flex; justify-content: center; align-items: center; text-align: center;
-    color: #fff; font-family: 'Orbitron', sans-serif; font-size: 0.7rem; font-weight: 700;
+    color: #fff; font-family: 'Orbitron', sans-serif; font-size: 0.65rem; font-weight: 700;
     text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,1);
   }
 
-  .moon-tab:hover {
-    transform: scale(1.15);
-    box-shadow: 0 0 25px rgba(255, 255, 255, 0.4);
-    z-index: 30;
+  /* 1. Tools: Left Side (Overlapping slightly) */
+  .pos-tools {
+    top: 50%;
+    left: -60px; /* Pull closer */
+    transform: translateY(-50%);
   }
 
-  /* POSITIONS RELATIVE TO MAIN GLOBE (Inside .wheel) */
-  
-  /* Tools: Close Left */
-  .pos-tools { 
-    top: 50%; 
-    left: -130px; 
-    transform: translateY(-50%); 
+  /* 2. AI & ML: Right Side */
+  .pos-ai {
+    top: 50%;
+    right: -60px; /* Pull closer */
+    transform: translateY(-50%);
   }
 
-  /* AI & ML: Close Right */
-  .pos-ai { 
-    top: 50%; 
-    right: -130px; 
-    transform: translateY(-50%); 
+  /* 3. Projects: Bottom Center */
+  .pos-projects {
+    bottom: -60px; /* Pull closer */
+    left: 50%;
+    transform: translateX(-50%);
   }
 
-  /* Projects: Close Bottom */
-  .pos-projects { 
-    bottom: -130px; 
-    left: 50%; 
-    transform: translateX(-50%); 
-  }
-
-  /* Fix for the transforms overlapping on hover */
-  .pos-tools:hover { transform: translateY(-50%) scale(1.15); }
-  .pos-ai:hover { transform: translateY(-50%) scale(1.15); }
-  .pos-projects:hover { transform: translateX(-50%) scale(1.15); }
-
-
-  /* PORTFOLIO (Distant Planet) */
-  .portfolio-planet {
-    position: fixed; top: 5%; right: 5%;
+  /* --- PORTFOLIO (Top Right Corner) --- */
+  .portfolio-orbit {
+    position: fixed; top: 8%; right: 8%;
     width: 110px; height: 110px;
     z-index: 100;
     display: flex; justify-content: center; align-items: center;
-    color: #fff; font-family: 'Orbitron', sans-serif; font-size: 0.75rem; font-weight: 900;
-    animation: floatPlanet 8s ease-in-out infinite;
+    color: #fff; font-family: 'Orbitron', sans-serif; font-size: 0.75rem; font-weight: 900; text-shadow: 0 2px 4px rgba(0,0,0,0.8);
   }
-  .portfolio-planet:hover { transform: scale(1.15); }
 
-  @keyframes floatPlanet { 0%,100%{transform:translateY(0)} 50%{transform:translateY(10px)} }
-
-  /* --- CENTER CONTENT --- */
+  /* --- CENTER TEXT ALIGNMENT --- */
   .center-content {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-    width: 75%; height: 75%;
+    width: 80%; /* Restrict width for round shape */
+    height: 80%;
     display: flex; flex-direction: column; justify-content: center; align-items: center;
     pointer-events: none; text-align: center; z-index: 30;
   }
 
   #ccTitle {
-    margin: 0 0 10px 0;
+    margin: 0 0 15px 0;
     font-family: 'Orbitron', sans-serif;
-    font-size: clamp(2.2rem, 5vw, 3.5rem); 
-    font-weight: 800; letter-spacing: 3px;
-    /* Clean White Title */
+    font-size: clamp(2.2rem, 5vw, 3.2rem); 
+    font-weight: 900; letter-spacing: 2px;
     color: #ffffff;
-    text-shadow: 0 4px 10px rgba(0,0,0,0.8);
+    text-shadow: 0 4px 15px rgba(0,0,0,0.6);
   }
 
   #ccText {
     color: #f1f5f9; font-size: clamp(0.85rem, 1.4vh, 1.0rem);
-    line-height: 1.6; font-weight: 400; text-wrap: balance; max-width: 480px;
+    line-height: 1.6; font-weight: 400;
+    
+    /* FIX: Balance text to look round */
+    text-wrap: balance; 
+    width: 100%;
+    max-width: 420px; 
+    
     text-shadow: 0 2px 5px rgba(0,0,0,0.9);
   }
   
   #ccText b {
-    color: #4ade80; /* Green tint for subtitle to match Earth */
+    color: #86efac; /* Pale Green to match Earth */
     font-weight: 700; display: block; margin-bottom: 8px;
     font-size: 1.1em; letter-spacing: 1px; text-transform: uppercase;
-    border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 8px;
     display: inline-block;
   }
   
   #ccText ul { text-align: left; padding-left: 20px; margin-top: 5px; font-size: 0.9em; }
   #ccText li { margin-bottom: 4px; }
 
-  /* --- CHATBOT & GLOW --- */
-  
-  /* Chatbot Dock - Moved to Bottom Left */
+  /* --- CHATBOT DOCK (Bottom Left) --- */
   .assistant-wrap {
     position: fixed; left: 30px; bottom: 30px; width: 60px; height: 60px;
     z-index: 9999; pointer-events: none;
   }
   .assistant-wrap::before {
     content: ""; position: absolute; inset: 0; border-radius: 50%;
-    background: radial-gradient(circle at center, rgba(74, 222, 128, 0.9) 0%, rgba(5, 150, 105, 0.4) 40%, transparent 100%);
-    box-shadow: 0 0 20px rgba(74, 222, 128, 0.5);
+    background: radial-gradient(circle at center, rgba(34, 197, 94, 0.8) 0%, rgba(21, 128, 61, 0.4) 40%, transparent 100%);
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.6);
     animation: pulseGlow 4s ease-in-out infinite;
     z-index: -1; pointer-events: none;
   }
   @keyframes pulseGlow { 0%,100%{opacity:0.8; transform:scale(1);} 50%{opacity:1; transform:scale(1.1);} }
-
-  /* Bottom Center Light Shine (Atmosphere) */
-  .bottom-shine {
-    position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%);
-    width: 60vw; height: 200px;
-    background: radial-gradient(ellipse at center, rgba(6, 182, 212, 0.15) 0%, transparent 70%);
-    z-index: 0; pointer-events: none;
-  }
 
   /* OVERLAY STYLES */
   .overlay { position: fixed; inset: 0; display: none; place-items: center; z-index: 500; background: radial-gradient(ellipse at center, rgba(15, 23, 42, 0.95) 0%, rgba(2, 6, 23, 0.98) 80%); animation: fadeIn 300ms ease-out; }
@@ -245,8 +218,8 @@
   input, select, button { width: 100%; padding: 10px; margin-top: 5px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.5); color: #fff; }
   .btn { cursor: pointer; font-weight: bold; text-transform: uppercase; } .btn:hover { background: rgba(255,255,255,0.1); }
   #sphereWrap { position: absolute; inset: 8px; border-radius: 12px; overflow: hidden; z-index: 0; pointer-events: none; }
-  canvas#sphere { width: 100%; height: 100%; display: block; filter: drop-shadow(0 0 10px var(--neon)); opacity: 0.6; }
-  .insights { position: absolute; left: 16px; right: 16px; bottom: 16px; z-index: 2; background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 10px; color: var(--ink); font-size: 0.85rem; }
+  canvas#sphere { width: 100%; height: 100%; display: block; filter: drop-shadow(0 0 10px var(--neon-white)); opacity: 0.6; }
+  .insights { position: absolute; left: 16px; right: 16px; bottom: 16px; z-index: 2; background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 10px; color: var(--neon-white); font-size: 0.85rem; }
   
   /* RESPONSIVE */
   @media (max-width: 980px){ 
@@ -254,16 +227,15 @@
     .chart-wrap { height: 50vh; } 
     #sphereWrap { display: none; }
     
-    .wheel { width: 75vw; height: 75vw; }
-    .moon-tab { width: 70px; height: 70px; font-size: 0.6rem; }
+    .wheel { width: 80vw; height: 80vw; }
+    .satellite { width: 70px; height: 70px; font-size: 0.55rem; }
     
-    /* Pull moons closer on mobile so they don't go off-screen */
-    .pos-tools { left: -30px; top: -40px; transform: none; }
-    .pos-ai { right: -30px; top: -40px; transform: none; }
-    .pos-projects { bottom: -60px; left: 50%; }
+    /* Pull moons closer on mobile */
+    .pos-tools { left: -25px; }
+    .pos-ai { right: -25px; }
+    .pos-projects { bottom: -35px; }
     
-    .portfolio-planet { top: 15px; right: 15px; width: 70px; height: 70px; font-size: 0.6rem; }
-    
+    .portfolio-orbit { top: 20px; right: 20px; width: 70px; height: 70px; font-size: 0.6rem; }
     #ccTitle { font-size: 1.8rem; }
     #ccText { font-size: 0.75rem; line-height: 1.3; }
   }
@@ -273,32 +245,30 @@
 
 <canvas id="stars"></canvas>
 
-<div class="bottom-shine"></div>
-
 <div class="wheel earth-surface" id="wheel">
   
-  <div class="moon-tab moon-surface pos-tools" onclick="openOverlay()">
+  <div class="satellite moon-surface pos-tools" onclick="openOverlay()">
     Tools
   </div>
 
-  <div class="moon-tab moon-surface pos-ai" onclick="showAIML()">
+  <div class="satellite moon-surface pos-ai" onclick="showAIML()">
     AI & ML
   </div>
 
-  <div class="moon-tab moon-surface pos-projects" onclick="showProjects()">
+  <div class="satellite moon-surface pos-projects" onclick="showProjects()">
     Projects
   </div>
 
   <div class="center-content" id="centerContent">
     <h1 id="ccTitle">KHWAJA AI</h1>
     <p id="ccText">
-      <b>Financial AI & Business Intelligence</b>
+      <b>Financial AI & Business Analytics Strategist</b>
       Merging an MSc in Business Analytics & Finance with over 5 years of operational expertise. From streamlining diplomatic workflows to driving data-led strategies in retail, I bridge the gap between technical insights and executive decision-making. I specialize in optimizing processes, financial modeling, and delivering actionable intelligence using Python, SQL, and Power BI.
     </p>
   </div>
 </div>
 
-<div class="portfolio-planet ice-surface" onclick="window.open('/portfolio/', '_blank')">
+<div class="portfolio-orbit orange-planet" onclick="window.open('/portfolio/', '_blank')">
   Portfolio
 </div>
 
@@ -359,7 +329,7 @@
   };
   if(document.readyState==="complete"){onLoad()} else { window.addEventListener("load", onLoad) }
 })();
-/* Move Chatbase to Bottom Left Dock */
+/* Move Chatbase to Dock */
 window.addEventListener("load", function(){
   setTimeout(()=>{
     const bubble = document.querySelector("#chatbase-bubble, iframe[src*='chatbase']");
