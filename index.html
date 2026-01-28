@@ -11,7 +11,7 @@
 <script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700&family=Outfit:wght@300;400;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;600&display=swap');
 
   :root{
     /* --- THEME: DEEP SPACE & STARK LIGHT --- */
@@ -34,31 +34,36 @@
   canvas#stars { position:fixed; inset:0; z-index:-3; }
 
   /* --- PLANET SURFACE TEXTURES (CSS Procedural Generation) --- */
+  /* This class applies the realistic "Sunlit Moon" look */
   .planet-surface {
     border-radius: 50%;
-    /* Base Rock Gradient */
-    background: radial-gradient(circle at 30% 30%, #cbd5e1 0%, #64748b 20%, #334155 50%, #0f172a 100%);
+    /* Realistic Lighting: Light source Top-Left, Deep Shadow Bottom-Right */
+    background: radial-gradient(
+      circle at 30% 30%, 
+      #e2e8f0 0%,      /* Specular Highlight */
+      #94a3b8 20%,     /* Lit Surface */
+      #475569 50%,     /* Mid-tone */
+      #0f172a 85%,     /* Shadow */
+      #020617 100%     /* Space Black */
+    );
     
-    /* Realistic Lighting & Atmosphere */
+    /* Atmosphere & Shadow */
     box-shadow: 
-      inset 5px 5px 20px rgba(255,255,255,0.3), /* Sun reflection */
-      inset -10px -10px 30px rgba(0,0,0,0.9),   /* Core Shadow */
-      0 0 25px rgba(0,0,0,0.8);                 /* Space Shadow */
+      inset 4px 4px 15px rgba(255,255,255,0.4), /* Rim Light */
+      inset -10px -10px 40px rgba(0,0,0,0.9),   /* Core Shadow */
+      0 0 30px rgba(0,0,0,0.6);                 /* Drop Shadow */
     
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.05);
     position: relative;
     overflow: hidden;
   }
 
-  /* Texture Overlay (Crater Effect) */
+  /* Texture Overlay (Craters) */
   .planet-surface::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    border-radius: 50%;
+    content: ''; position: absolute; inset: 0; border-radius: 50%;
     background-image: 
-      radial-gradient(circle at 20% 80%, rgba(0,0,0,0.1) 2%, transparent 4%),
-      radial-gradient(circle at 80% 20%, rgba(0,0,0,0.1) 3%, transparent 6%),
+      radial-gradient(circle at 20% 80%, rgba(0,0,0,0.2) 2%, transparent 4%),
+      radial-gradient(circle at 80% 20%, rgba(0,0,0,0.2) 3%, transparent 6%),
       radial-gradient(circle at 50% 50%, rgba(255,255,255,0.05) 1%, transparent 2%);
     background-size: 100% 100%;
     pointer-events: none;
@@ -67,23 +72,24 @@
   /* --- MAIN ASTEROID / GLOBE --- */
   .wheel {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%) rotate(0deg);
-    width: min(75vw, 550px); height: min(75vw, 550px);
+    width: min(70vw, 500px); height: min(70vw, 500px); /* Slightly smaller to allow orbit space */
     z-index: 1;
+    transition: all 0.5s ease-out;
   }
 
   /* --- ORBITING MOONS (Tabs) --- */
   .tab {
     position: absolute;
-    width: 90px; height: 90px;
+    width: 95px; height: 95px;
     
     /* Text Styling */
     color: #fff;
     font-family: 'Orbitron', sans-serif;
-    font-size: 0.65rem;
+    font-size: 0.7rem;
     letter-spacing: 1px;
     font-weight: 700;
     text-transform: uppercase;
-    text-shadow: 0 1px 3px rgba(0,0,0,1);
+    text-shadow: 0 2px 4px rgba(0,0,0,1);
     
     /* Centering */
     display: flex; justify-content: center; align-items: center; text-align: center;
@@ -95,46 +101,51 @@
 
   .tab:hover {
     transform: scale(1.2) translateX(-50%);
-    box-shadow: 0 0 30px rgba(200, 220, 255, 0.3);
-    border-color: #fff;
+    box-shadow: 0 0 40px rgba(255, 255, 255, 0.3);
     z-index: 10;
+    border: 1px solid rgba(255,255,255,0.4);
   }
 
   /* --- DISTANCED ORBITS (Triangular Layout) --- */
-  /* Top Center */
-  .tab1 { top: -18%; left: 50%; transform: translateX(-50%); }
+  /* Top Center - Projects */
+  .tab1 { top: -20%; left: 50%; transform: translateX(-50%); }
   
-  /* Bottom Right */
-  .tab2 { bottom: -5%; right: -10%; transform: translate(0, 0); }
+  /* Bottom Right - AI & ML */
+  .tab2 { bottom: -5%; right: -15%; transform: translate(0, 0); }
   
-  /* Bottom Left */
-  .tab3 { bottom: -5%; left: -10%; transform: translate(0, 0); }
+  /* Bottom Left - Tools */
+  .tab3 { bottom: -5%; left: -15%; transform: translate(0, 0); }
 
   /* --- ISOLATED PORTFOLIO PLANET (Top Right) --- */
   .portfolio-orbit {
     position: fixed;
-    top: 5%;          /* Top corner */
-    right: 5%;        /* Right corner */
-    width: 100px;
-    height: 100px;
+    top: 6%;          
+    right: 6%;        
+    width: 110px;
+    height: 110px;
     z-index: 100;
     
-    /* Distinct Blue-ish Moon Look */
-    background: radial-gradient(circle at 30% 30%, #e0f2fe 0%, #7dd3fc 30%, #0ea5e9 60%, #0c4a6e 100%);
+    /* Distinct Blue Moon Look for Portfolio */
+    background: radial-gradient(circle at 30% 30%, #e0f2fe 0%, #38bdf8 30%, #0284c7 60%, #082f49 100%);
+    box-shadow: inset 5px 5px 20px rgba(255,255,255,0.4), 0 0 30px rgba(56, 189, 248, 0.4);
     animation: floatPlanet 8s ease-in-out infinite;
   }
   
-  .portfolio-orbit:hover { transform: scale(1.15); cursor: pointer; }
+  .portfolio-orbit:hover { 
+    transform: scale(1.15); 
+    cursor: pointer; 
+    box-shadow: 0 0 50px rgba(56, 189, 248, 0.6);
+  }
 
   @keyframes floatPlanet {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(10px); }
+    50% { transform: translateY(15px); }
   }
 
   /* --- CENTER CONTENT --- */
   .center-content {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-    width: 70%; height: 70%;
+    width: 75%; height: 75%;
     display: flex; flex-direction: column; justify-content: center; align-items: center;
     pointer-events: none; text-align: center;
   }
@@ -150,17 +161,20 @@
   }
 
   #ccText {
-    color: #e2e8f0; font-size: clamp(0.85rem, 1.4vh, 1.05rem);
-    line-height: 1.7; font-weight: 300; text-wrap: balance; max-width: 450px;
+    color: #e2e8f0; font-size: clamp(0.85rem, 1.4vh, 1.0rem);
+    line-height: 1.6; font-weight: 300; text-wrap: balance; max-width: 480px;
     text-shadow: 0 2px 5px rgba(0,0,0,0.9);
   }
   
   #ccText b {
-    color: #fff; font-weight: 700; display: block; margin-bottom: 12px;
+    color: #fff; font-weight: 700; display: block; margin-bottom: 8px;
     font-size: 1.1em; letter-spacing: 1px; text-transform: uppercase;
-    border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 8px;
     display: inline-block;
   }
+  
+  #ccText ul { text-align: left; padding-left: 20px; margin-top: 5px; font-size: 0.9em; }
+  #ccText li { margin-bottom: 4px; }
 
   /* Assistant Dock (Bottom Left) */
   .assistant-wrap {
@@ -189,7 +203,7 @@
   input, select, button { width: 100%; padding: 10px; margin-top: 5px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.5); color: #fff; }
   .btn { cursor: pointer; font-weight: bold; text-transform: uppercase; } .btn:hover { background: rgba(255,255,255,0.1); }
   #sphereWrap { position: absolute; inset: 8px; border-radius: 12px; overflow: hidden; z-index: 0; pointer-events: none; }
-  canvas#sphere { width: 100%; height: 100%; display: block; filter: drop-shadow(0 0 10px var(--neon-soft)); opacity: 0.6; }
+  canvas#sphere { width: 100%; height: 100%; display: block; filter: drop-shadow(0 0 10px var(--neon)); opacity: 0.6; }
   .insights { position: absolute; left: 16px; right: 16px; bottom: 16px; z-index: 2; background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 10px; color: var(--ink); font-size: 0.85rem; }
   
   /* RESPONSIVE */
@@ -198,17 +212,17 @@
     .chart-wrap { height: 50vh; } 
     #sphereWrap { display: none; }
     
-    /* Mobile adjustments for Portfolio */
+    /* Mobile: Portfolio smaller and closer */
     .portfolio-orbit {
       width: 70px; height: 70px;
-      top: 20px; right: 20px;
+      top: 15px; right: 15px;
       font-size: 0.55rem;
     }
     
-    /* Bring Moons closer on Mobile so they fit */
+    /* Mobile: Bring Orbiting Moons closer */
     .tab1 { top: -15%; }
-    .tab2 { bottom: -10%; right: 0; }
-    .tab3 { bottom: -10%; left: 0; }
+    .tab2 { bottom: -8%; right: -5%; }
+    .tab3 { bottom: -8%; left: -5%; }
     
     .wheel { width: 85vw; height: 85vw; }
     #ccTitle { font-size: 2rem; }
@@ -222,14 +236,14 @@
 
 <div class="wheel planet-surface" id="wheel">
   
-  <div class="tab tab1 planet-surface" onclick="showHome()">Projects</div>
-  <div class="tab tab2 planet-surface" onclick="showMessage('AI & ML bay online...')">AI & ML</div>
+  <div class="tab tab1 planet-surface" onclick="showProjects()">Projects</div>
+  <div class="tab tab2 planet-surface" onclick="showAIML()">AI & ML</div>
   <div class="tab tab3 planet-surface" onclick="openOverlay()">Tools</div>
 
   <div class="center-content" id="centerContent">
     <h1 id="ccTitle">KHWAJA GHAFOORI</h1>
     <p id="ccText">
-      <b> Financial AI & Business Intelligence </b>
+      <b>Financial AI & Business Intelligence</b>
       Merging an MSc in Business Analytics & Finance with over 5 years of operational expertise. From streamlining diplomatic workflows to driving data-led strategies in retail, I bridge the gap between technical insights and executive decision-making. I specialize in optimizing processes, financial modeling, and delivering actionable intelligence using Python, SQL, and Power BI.
     </p>
   </div>
@@ -334,19 +348,54 @@ document.addEventListener('mousemove', e=>{
   wheel.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`; 
 });
 
-/* Home & UI Logic */
+/* Home & Content Logic */
+// 1. Projects Function (Extracted from CVs)
+function showProjects(){
+  const cc = document.getElementById('centerContent');
+  cc.innerHTML = `
+    <h1 id="ccTitle" style="font-size:2.5rem">KEY PROJECTS</h1>
+    <div id="ccText" style="text-align:left; font-size:0.9rem;">
+      <ul style="list-style-type:none; padding:0;">
+        <li style="margin-bottom:10px;"><b>🛍️ iOutlet Revenue Analysis</b> Analyzed 32,000+ sales transactions (£8.9M) to identify seasonal trends and built Python dashboards for reporting.</li>
+        <li style="margin-bottom:10px;"><b>🍄 Sustainable Production (AREA)</b> Managed an £80k donor-funded project, coordinating field teams and streamlining reporting workflows by 50%.</li>
+        <li><b>📈 Financial Forecasting (Uni. Dundee)</b> Developed equity price forecasting models using MATLAB & R, improving predictive accuracy through back-testing.</li>
+      </ul>
+      <div style="text-align:center; margin-top:10px; font-size:0.8rem; color:#94a3b8;">(Click 'Portfolio' for full details)</div>
+    </div>
+  `;
+}
+
+// 2. AI & ML Function (Extracted from Skills)
+function showAIML(){
+  const cc = document.getElementById('centerContent');
+  cc.innerHTML = `
+    <h1 id="ccTitle" style="font-size:2.5rem">AI & MACHINE LEARNING</h1>
+    <div id="ccText">
+      <b>Technical Arsenal</b>
+      <p>Proficient in deploying <b>Python</b> (Pandas, Scikit-Learn) and <b>R</b> for predictive modeling.</p>
+      <br>
+      <b>Core Competencies</b>
+      <ul style="display:inline-block; text-align:left;">
+        <li>• Financial Forecasting (ARIMA/Time-Series)</li>
+        <li>• Purchasing Behavior Modeling</li>
+        <li>• Regression Analysis & KPI Design</li>
+        <li>• Automated Streamlit Dashboards</li>
+      </ul>
+    </div>
+  `;
+}
+
+// 3. Home Reset
 function showHome(){
   const cc = document.getElementById('centerContent');
   cc.innerHTML = `<h1 id="ccTitle">KHWAJA AI</h1><p id="ccText"><b>Business Intelligence & Operations Strategist</b>Merging an MSc in Business Analytics & Finance with over 5 years of operational expertise. From streamlining diplomatic workflows to driving data-led strategies in retail, I bridge the gap between technical insights and executive decision-making. I specialize in optimizing processes, financial modeling, and delivering actionable intelligence using Python, SQL, and Power BI.</p>`;
 }
-function showMessage(msg){ 
-  const cc = document.getElementById('centerContent'); 
-  cc.innerHTML = `<h1 id="ccTitle" style="font-size:2rem">SYSTEM</h1><p id="ccText" style="font-size:1.2rem">${msg}</p>`; 
-}
+
+// 4. Overlay Logic
 function openOverlay(){ document.getElementById('analyzerOverlay').style.display = 'grid'; startSphere(); onResizeSphere(); }
 function closeOverlay(){ document.getElementById('analyzerOverlay').style.display = 'none'; stopSphere(); }
 
-/* Chart/File Logic (Simplified for brevity) */
+/* Chart/File Logic (Standard) */
 let dataset1 = [], dataset2 = [];
 const el = id => document.getElementById(id);
 const setStatus = msg => el('status').textContent = msg;
