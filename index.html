@@ -14,7 +14,6 @@
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;600&display=swap');
 
   :root{
-    /* --- THEME: DEEP SPACE & STARK LIGHT --- */
     --neon: #f8fafc;
     --rock-surface: #94a3b8;
     --rock-shadow: #0f172a;
@@ -33,184 +32,144 @@
   /* Starfield */
   canvas#stars { position:fixed; inset:0; z-index:-3; }
 
-  /* --- PLANET SURFACE TEXTURES (CSS Procedural Generation) --- */
-  .planet-surface {
+  /* --- HYPER-REALISTIC PLANET CSS ENGINE --- */
+  .celestial-body {
     border-radius: 50%;
-    /* Realistic Lighting: Light source Top-Left, Deep Shadow Bottom-Right */
-    background: radial-gradient(
-      circle at 30% 30%, 
-      #e2e8f0 0%,      /* Specular Highlight */
-      #94a3b8 20%,     /* Lit Surface */
-      #475569 50%,     /* Mid-tone */
-      #0f172a 85%,     /* Shadow */
-      #020617 100%     /* Space Black */
-    );
-    
-    /* Atmosphere & Shadow */
-    box-shadow: 
-      inset 4px 4px 15px rgba(255,255,255,0.4), /* Rim Light */
-      inset -10px -10px 40px rgba(0,0,0,0.9),   /* Core Shadow */
-      0 0 30px rgba(0,0,0,0.6);                 /* Drop Shadow */
-    
-    border: 1px solid rgba(255, 255, 255, 0.05);
     position: relative;
     overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s;
+    border: 1px solid rgba(255,255,255,0.05);
   }
 
-  /* Texture Overlay (Craters) */
-  .planet-surface::before {
-    content: ''; position: absolute; inset: 0; border-radius: 50%;
+  /* Procedural Surface Texture (Craters & Noise) */
+  .texture-overlay {
+    position: absolute; inset: 0; border-radius: 50%;
+    opacity: 0.6;
     background-image: 
-      radial-gradient(circle at 20% 80%, rgba(0,0,0,0.2) 2%, transparent 4%),
-      radial-gradient(circle at 80% 20%, rgba(0,0,0,0.2) 3%, transparent 6%),
-      radial-gradient(circle at 50% 50%, rgba(255,255,255,0.05) 1%, transparent 2%);
+      radial-gradient(circle at 20% 80%, rgba(0,0,0,0.4) 2%, transparent 6%), /* Big Crater */
+      radial-gradient(circle at 80% 20%, rgba(0,0,0,0.3) 4%, transparent 8%), /* Medium Crater */
+      radial-gradient(circle at 50% 50%, rgba(255,255,255,0.05) 1%, transparent 2%), /* Highlight */
+      repeating-radial-gradient(circle at 50% 50%, transparent 0, rgba(0,0,0,0.05) 2px, transparent 4px); /* Noise */
     background-size: 100% 100%;
     pointer-events: none;
-  }
-
-  /* --- MAIN ASTEROID / GLOBE --- */
-  .wheel {
-    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%) rotate(0deg);
-    width: min(70vw, 550px); height: min(70vw, 550px);
     z-index: 1;
-    transition: all 0.5s ease-out;
   }
 
-  /* --- ORBITING MOONS (Tabs) --- */
-  /* Shared Base Style for ALL Moons (Blue Glossy Look) */
-  .moon-style {
-    position: absolute;
-    width: 95px; height: 95px;
-    z-index: 10; /* Ensure they are ON TOP of the main globe */
-    
-    /* Blue Moon Look (Same as Portfolio) */
-    background: radial-gradient(circle at 30% 30%, #e0f2fe 0%, #38bdf8 30%, #0284c7 60%, #082f49 100%);
-    box-shadow: inset 5px 5px 20px rgba(255,255,255,0.4), 0 0 20px rgba(56, 189, 248, 0.3);
-    border-radius: 50%;
-    border: 1px solid rgba(255,255,255,0.1);
-
-    /* Text Styling */
-    color: #fff;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.7rem;
-    letter-spacing: 1px;
-    font-weight: 700;
-    text-transform: uppercase;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-    
-    /* Centering */
-    display: flex; justify-content: center; align-items: center; text-align: center;
-    cursor: pointer;
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
-    user-select: none;
-  }
-
-  .moon-style:hover {
-    transform: scale(1.15) translateX(0); /* Pop effect */
-    box-shadow: 0 0 40px rgba(56, 189, 248, 0.6);
-    border-color: #fff;
-    z-index: 20;
-  }
-
-  /* --- ORBIT POSITIONS (Tucked closer to be visible) --- */
-  /* Projects: Top Center */
-  .tab1 { 
-    top: -12%; 
-    left: 50%; 
-    transform: translateX(-50%); 
-  }
-  
-  /* AI & ML: Bottom Right */
-  .tab2 { 
-    bottom: 5%; 
-    right: -8%; 
-    transform: translate(0, 0); 
-  }
-  
-  /* Tools: Bottom Left */
-  .tab3 { 
-    bottom: 5%; 
-    left: -8%; 
-    transform: translate(0, 0); 
-  }
-
-  /* Hover Fixes to prevent jumping */
-  .tab1:hover { transform: translateX(-50%) scale(1.15); }
-  .tab2:hover { transform: scale(1.15); }
-  .tab3:hover { transform: scale(1.15); }
-
-
-  /* --- ISOLATED PORTFOLIO PLANET (Top Right Corner) --- */
-  .portfolio-orbit {
+  /* --- SATELLITE MOONS (Corner Tabs) --- */
+  .moon {
     position: fixed;
-    top: 5%;          
-    right: 5%;        
-    width: 110px;
-    height: 110px;
-    z-index: 100;
+    width: 100px; height: 100px;
+    z-index: 50;
     
-    /* Same Blue Moon Look */
-    background: radial-gradient(circle at 30% 30%, #e0f2fe 0%, #38bdf8 30%, #0284c7 60%, #082f49 100%);
-    box-shadow: inset 5px 5px 20px rgba(255,255,255,0.4), 0 0 30px rgba(56, 189, 248, 0.4);
-    animation: floatPlanet 8s ease-in-out infinite;
-    
-    border-radius: 50%;
-    color: #fff;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.75rem;
-    font-weight: 700;
+    /* MOON LIGHTING: Ice/Rock Appearance */
+    background: radial-gradient(
+      circle at 30% 30%, 
+      #e0f2fe 0%,      /* Highlight */
+      #94a3b8 25%,     /* Midtone */
+      #475569 50%,     /* Shadow Edge */
+      #0f172a 85%,     /* Dark Side */
+      #020617 100%     /* Space Blend */
+    );
+    box-shadow: 
+      inset 4px 4px 15px rgba(255,255,255,0.5), /* Rim Light */
+      0 0 25px rgba(148, 163, 184, 0.2);        /* Glow */
+      
+    /* Text Styling */
     display: flex; justify-content: center; align-items: center;
-    cursor: pointer;
-    transition: transform 0.3s;
-  }
-  
-  .portfolio-orbit:hover { 
-    transform: scale(1.15); 
-    box-shadow: 0 0 50px rgba(56, 189, 248, 0.6);
+    color: #fff; font-family: 'Orbitron', sans-serif; font-size: 0.7rem; font-weight: 700;
+    text-transform: uppercase; text-align: center;
+    text-shadow: 0 2px 4px rgba(0,0,0,1);
   }
 
-  @keyframes floatPlanet {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(10px); }
+  /* Interaction */
+  .moon:hover {
+    transform: scale(1.15);
+    box-shadow: 0 0 40px rgba(148, 163, 184, 0.5);
+    z-index: 100;
+  }
+
+  /* --- POSITIONS (The 4 Corners of the Galaxy) --- */
+  /* 1. Projects (Top Left) */
+  .pos-tl { top: 8%; left: 8%; animation: float1 7s ease-in-out infinite; }
+  
+  /* 2. Portfolio (Top Right - Special Blue Tint) */
+  .pos-tr { 
+    top: 8%; right: 8%; 
+    background: radial-gradient(circle at 30% 30%, #e0f2fe 0%, #38bdf8 40%, #0c4a6e 100%);
+    box-shadow: inset 4px 4px 15px rgba(255,255,255,0.6), 0 0 30px rgba(56, 189, 248, 0.4);
+    animation: float2 8s ease-in-out infinite;
+  }
+  
+  /* 3. Tools (Bottom Left) */
+  .pos-bl { bottom: 8%; left: 8%; animation: float3 6s ease-in-out infinite; }
+  
+  /* 4. AI & ML (Bottom Right) */
+  .pos-br { bottom: 8%; right: 8%; animation: float1 9s ease-in-out infinite; }
+
+  /* Floating Animations */
+  @keyframes float1 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+  @keyframes float2 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(8px)} }
+  @keyframes float3 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+
+
+  /* --- MAIN CENTRAL ASTEROID --- */
+  .wheel {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    width: min(65vw, 500px); height: min(65vw, 500px);
+    z-index: 1;
+    
+    /* DEEP ROCK SURFACE */
+    background: radial-gradient(
+      circle at 40% 40%, 
+      #64748b 0%,      /* Lit dust */
+      #334155 30%,     /* Grey rock */
+      #1e293b 60%,     /* Dark rock */
+      #020617 100%     /* Shadow */
+    );
+    box-shadow: 
+      inset 10px 10px 50px rgba(255,255,255,0.1), 
+      inset -20px -20px 80px rgba(0,0,0,0.9),
+      0 0 60px rgba(0,0,0,0.7);
   }
 
   /* --- CENTER CONTENT --- */
   .center-content {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-    width: 75%; height: 75%;
+    width: 80%; height: 80%;
     display: flex; flex-direction: column; justify-content: center; align-items: center;
     pointer-events: none; text-align: center;
   }
 
   #ccTitle {
-    margin: 0 0 10px 0;
+    margin: 0 0 15px 0;
     font-family: 'Orbitron', sans-serif;
-    font-size: clamp(2.2rem, 5vw, 3.5rem); 
-    font-weight: 800; letter-spacing: 3px;
-    background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #64748b 100%);
+    font-size: clamp(2.5rem, 6vw, 4rem); 
+    font-weight: 900; letter-spacing: 4px;
+    background: linear-gradient(180deg, #ffffff 0%, #94a3b8 100%);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
+    filter: drop-shadow(0 5px 15px rgba(0,0,0,0.8));
   }
 
   #ccText {
-    color: #e2e8f0; font-size: clamp(0.85rem, 1.4vh, 1.0rem);
-    line-height: 1.6; font-weight: 300; text-wrap: balance; max-width: 480px;
-    text-shadow: 0 2px 5px rgba(0,0,0,0.9);
+    color: #e2e8f0; font-size: clamp(0.9rem, 1.5vh, 1.1rem);
+    line-height: 1.7; font-weight: 300; text-wrap: balance; max-width: 500px;
+    text-shadow: 0 2px 4px rgba(0,0,0,1);
   }
   
   #ccText b {
-    color: #fff; font-weight: 700; display: block; margin-bottom: 8px;
+    color: #fff; font-weight: 700; display: block; margin-bottom: 12px;
     font-size: 1.1em; letter-spacing: 1px; text-transform: uppercase;
-    border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px;
     display: inline-block;
   }
   
-  #ccText ul { text-align: left; padding-left: 20px; margin-top: 5px; font-size: 0.9em; }
-  #ccText li { margin-bottom: 4px; }
+  #ccText ul { text-align: left; padding-left: 20px; font-size: 0.9em; }
+  #ccText li { margin-bottom: 6px; }
 
-  /* Assistant Dock (Bottom Left) */
+  /* Assistant Dock (Bottom Center-ish) */
   .assistant-wrap {
-    position: fixed; left: 20px; bottom: 20px; width: 58px; height: 58px;
+    position: fixed; left: 50%; bottom: 20px; width: 58px; height: 58px; transform: translateX(-50%);
     z-index: 9998; pointer-events: none;
   }
   .assistant-wrap::before {
@@ -244,19 +203,14 @@
     .chart-wrap { height: 50vh; } 
     #sphereWrap { display: none; }
     
-    /* Mobile: Portfolio smaller and closer */
-    .portfolio-orbit {
-      width: 70px; height: 70px;
-      top: 15px; right: 15px;
-      font-size: 0.55rem;
-    }
+    /* Mobile: Make moons smaller and closer to edge */
+    .moon { width: 70px; height: 70px; font-size: 0.55rem; }
+    .pos-tl { top: 15px; left: 15px; }
+    .pos-tr { top: 15px; right: 15px; }
+    .pos-bl { bottom: 80px; left: 15px; } /* Above chatbot if needed */
+    .pos-br { bottom: 80px; right: 15px; }
     
-    /* Mobile: Bring Orbiting Moons closer */
-    .tab1 { top: -12%; }
-    .tab2 { bottom: -5%; right: 0; }
-    .tab3 { bottom: -5%; left: 0; }
-    
-    .wheel { width: 85vw; height: 85vw; }
+    .wheel { width: 90vw; height: 90vw; }
     #ccTitle { font-size: 2rem; }
     #ccText { font-size: 0.8rem; line-height: 1.4; }
   }
@@ -266,23 +220,35 @@
 
 <canvas id="stars"></canvas>
 
-<div class="wheel planet-surface" id="wheel">
-  
-  <div class="moon-style tab1" onclick="showProjects()">Projects</div>
-  <div class="moon-style tab2" onclick="showAIML()">AI & ML</div>
-  <div class="moon-style tab3" onclick="openOverlay()">Tools</div>
+<div class="moon celestial-body pos-tl" onclick="showProjects()">
+  <div class="texture-overlay"></div>
+  Projects
+</div>
 
-  <div class="center-content" id="centerContent">
+<div class="moon celestial-body pos-tr" onclick="window.open('/portfolio/', '_blank')">
+  <div class="texture-overlay"></div>
+  Portfolio
+</div>
+
+<div class="moon celestial-body pos-bl" onclick="openOverlay()">
+  <div class="texture-overlay"></div>
+  Tools
+</div>
+
+<div class="moon celestial-body pos-br" onclick="showAIML()">
+  <div class="texture-overlay"></div>
+  AI & ML
+</div>
+
+
+<div class="wheel celestial-body" id="wheel">
+  <div class="texture-overlay"></div> <div class="center-content" id="centerContent">
     <h1 id="ccTitle">KHWAJA GHAFOORI</h1>
     <p id="ccText">
       <b>Financial AI & Business Analytics Strategist</b>
       Merging an MSc in Business Analytics & Finance with over 5 years of operational expertise. From streamlining diplomatic workflows to driving data-led strategies in retail, I bridge the gap between technical insights and executive decision-making. I specialize in optimizing processes, financial modeling, and delivering actionable intelligence using Python, SQL, and Power BI.
     </p>
   </div>
-</div>
-
-<div class="portfolio-orbit" onclick="window.open('/portfolio/', '_blank')">
-  Portfolio
 </div>
 
 <div class="assistant-wrap">
@@ -387,8 +353,8 @@ function showProjects(){
     <h1 id="ccTitle" style="font-size:2.5rem">KEY PROJECTS</h1>
     <div id="ccText" style="text-align:left; font-size:0.9rem;">
       <ul style="list-style-type:none; padding:0;">
-        <li style="margin-bottom:10px;"><b> iOutlet Revenue Analysis</b> Analyzed 32,000+ sales transactions (£8.9M) to identify seasonal trends and built Python dashboards for reporting.</li>
-        <li style="margin-bottom:10px;"><b> Sustainable Production (AREA)</b> Managed an £80k donor-funded project, coordinating field teams and streamlining reporting workflows by 50%.</li>
+        <li style="margin-bottom:10px;"><b>🛍️ iOutlet Revenue Analysis</b> Analyzed 32,000+ sales transactions (£8.9M) to identify seasonal trends and built Python dashboards for reporting.</li>
+        <li style="margin-bottom:10px;"><b>🍄 Sustainable Production (AREA)</b> Managed an £80k donor-funded project, coordinating field teams and streamlining reporting workflows by 50%.</li>
         <li><b>📈 Financial Forecasting (Uni. Dundee)</b> Developed equity price forecasting models using MATLAB & R, improving predictive accuracy through back-testing.</li>
       </ul>
       <div style="text-align:center; margin-top:10px; font-size:0.8rem; color:#94a3b8;">(Click 'Portfolio' for full details)</div>
