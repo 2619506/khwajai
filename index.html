@@ -14,17 +14,21 @@
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500&display=swap');
 
   :root{
-    --neon: #00ffcc;               /* MAIN GREEN-CYAN COLOR */
-    --neon-soft: rgba(0,255,204,0.6);
-    --glass: rgba(0,10,10,0.55);
-    --glass-strong: rgba(0,20,20,0.75);
-    --ink: #b7ffee;
+    /* --- NEW THEME: STARLIGHT & ROCK --- */
+    --neon: #e2e8f0;               /* Starlight White/Silver */
+    --neon-soft: rgba(226, 232, 240, 0.5); /* Soft White Glow */
+    --rock-dark: #1e293b;          /* Dark Slate (Asteroid Shadow) */
+    --rock-light: #475569;         /* Lighter Slate (Asteroid Highlight) */
+    --glass: rgba(15, 23, 42, 0.6); /* Dark Blue-Grey Glass */
+    --glass-strong: rgba(15, 23, 42, 0.85);
+    --ink: #cbd5e1;                /* Soft Grey Text */
   }
 
   * { box-sizing:border-box; }
   html, body { height:100%; }
   body {
-    margin: 0; overflow: hidden; background: black; color: var(--neon);
+    margin: 0; overflow: hidden; background: #020617; /* Deepest Cosmic Blue/Black */
+    color: var(--neon);
     font-family: 'Share Tech Mono', monospace; letter-spacing: 0.6px;
   }
 
@@ -32,23 +36,31 @@
   canvas#stars { position:fixed; inset:0; z-index:-3; }
 
   /* Global glow */
-  h1,h2,h3,p,a,label,button,select,input { text-shadow:0 0 8px var(--neon), 0 0 20px var(--neon-soft); }
+  h1,h2,h3,p,a,label,button,select,input { 
+    text-shadow: 0 0 5px var(--neon-soft); 
+  }
 
-  /* Spaceship Wheel */
+  /* Spaceship Wheel / Asteroid */
   .wheel {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%) rotate(0deg);
     width: min(80vw, 500px); height: min(80vw, 500px); border-radius: 50%;
-    background: radial-gradient(circle at center, #000 60%, #111 100%);
-    border: 2px solid var(--neon-soft);
-    box-shadow: inset 0 0 50px var(--neon);
+    
+    /* ROCKY PLANET GRADIENT */
+    background: radial-gradient(circle at 35% 35%, var(--rock-light) 0%, var(--rock-dark) 50%, #000000 100%);
+    
+    /* Subtle silver rim */
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    
+    /* Atmosphere glow */
+    box-shadow: inset 0 0 80px rgba(0,0,0,0.8), 0 0 40px rgba(226, 232, 240, 0.15);
     z-index: 1;
   }
 
   /* Orbiting Alien Tabs */
   .tab {
     position: absolute;
-    background: rgba(0, 255, 204, 0.08);
-    border: 2px solid var(--neon-soft);
+    background: rgba(30, 41, 59, 0.4); /* Dark Slate Glass */
+    border: 1px solid var(--neon-soft);
     padding: 12px 22px;
     border-radius: 50% / 40%;
     color: var(--neon);
@@ -58,13 +70,17 @@
     text-decoration: none;
     font-weight: bold;
     text-transform: uppercase;
-    transition: background 0.3s, transform 0.3s;
+    transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
     cursor: pointer;
     backdrop-filter: blur(4px);
-    box-shadow: 0 0 16px rgba(0, 255, 204, 0.35), inset 0 0 12px rgba(0,255,204,0.25);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
     user-select: none;
   }
-  .tab:hover { background: rgba(0, 255, 204, 0.25); transform: scale(1.1) translateX(-50%); }
+  .tab:hover { 
+    background: rgba(255, 255, 255, 0.1); 
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    transform: scale(1.1) translateX(-50%); 
+  }
   
   /* Specific Tab Positions */
   .tab1 { top: -8%; left: 50%; transform: translateX(-50%); }
@@ -81,18 +97,19 @@
     display: flex; flex-direction: column; justify-content: center; align-items: center;
     pointer-events: none; /* Let clicks pass through to wheel if needed */
   }
-  .center-content h1 { margin: 6px 0 8px; font-size: clamp(1rem, 2.4vh, 1.35rem); }
+  .center-content h1 { margin: 6px 0 8px; font-size: clamp(1rem, 2.4vh, 1.35rem); color: #fff; }
   .center-content p { margin: 0; color: var(--ink); font-size: clamp(0.72rem, 1.9vh, 0.95rem); line-height: 1.35; }
 
-  /* Assistant Dock (The glowing hole for Chatbase) */
+  /* Assistant Dock */
   .assistant-wrap {
     position: fixed; left: 14px; bottom: 15px; width: 58px; height: 58px;
     z-index: 9998; pointer-events: none;
   }
   .assistant-wrap::before {
     content: ""; position: absolute; inset: 0; border-radius: 50%;
-    background: radial-gradient(circle at center, rgba(0,255,204,0.8) 0%, rgba(0,255,204,0.35) 40%, transparent 100%);
-    box-shadow: 0 0 18px rgba(0,255,204,0.7), 0 0 36px rgba(0,255,204,0.5);
+    /* White/Blue Energy Core */
+    background: radial-gradient(circle at center, rgba(255,255,255,0.9) 0%, rgba(139, 169, 219, 0.4) 40%, transparent 100%);
+    box-shadow: 0 0 18px rgba(255,255,255,0.4);
     filter: blur(2px);
     animation: assistantGlow 4s ease-in-out infinite alternate;
     z-index: -1; pointer-events: none;
@@ -107,7 +124,7 @@
   /* ========================= */
   .overlay {
     position: fixed; inset: 0; display: none; place-items: center; z-index: 5;
-    background: radial-gradient(ellipse at center, rgba(0,10,10,0.25) 0%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0.95) 100%);
+    background: radial-gradient(ellipse at center, rgba(15, 23, 42, 0.4) 0%, rgba(2, 6, 23, 0.9) 80%);
     animation: fadeIn 300ms ease-out;
   }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -115,74 +132,74 @@
   .panel {
     width: min(1200px, 92vw); height: min(78vh, 820px); border: 1px solid var(--neon-soft);
     background: linear-gradient(180deg, var(--glass), var(--glass-strong));
-    border-radius: 24px; box-shadow: 0 0 60px rgba(0,255,204,0.35), inset 0 0 40px rgba(0,255,204,0.15);
-    backdrop-filter: blur(10px) saturate(140%);
+    border-radius: 24px; box-shadow: 0 0 60px rgba(0,0,0,0.5), inset 0 0 40px rgba(255,255,255,0.05);
+    backdrop-filter: blur(12px) saturate(110%);
     position: relative; overflow: hidden;
   }
   /* Grid lines overlay */
-  .panel::before { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(to bottom, rgba(0,255,204,0.04) 0, rgba(0,255,204,0.04) 2px, transparent 2px, transparent 4px); pointer-events: none; }
+  .panel::before { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(to bottom, rgba(255,255,255,0.03) 0, rgba(255,255,255,0.03) 2px, transparent 2px, transparent 4px); pointer-events: none; }
   
   .panel-header {
     display: flex; align-items: center; justify-content: space-between; padding: 14px 18px;
-    border-bottom: 1px solid rgba(0,255,204,0.25);
-    background: linear-gradient(180deg, rgba(0,255,204,0.08), rgba(0,255,204,0.02));
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
   }
   .close-btn {
     width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--neon);
     background: transparent; color: var(--neon); cursor: pointer;
-    box-shadow: 0 0 16px rgba(0,255,204,0.5);
+    box-shadow: 0 0 10px rgba(255,255,255,0.2);
     display: grid; place-items: center;
   }
-  .close-btn:hover { background: rgba(0,255,204,0.12); transform: scale(1.06); }
+  .close-btn:hover { background: rgba(255,255,255,0.1); transform: scale(1.06); }
 
   .panel-body { display: grid; grid-template-columns: 320px 1fr; gap: 16px; height: calc(100% - 62px); padding: 16px; }
 
   /* Controls Sidebar */
   .controls { overflow-y: auto; padding-right: 6px; }
   .controls::-webkit-scrollbar { width: 6px; }
-  .controls::-webkit-scrollbar-thumb { background: var(--neon-soft); border-radius: 3px; }
+  .controls::-webkit-scrollbar-thumb { background: var(--rock-light); border-radius: 3px; }
 
   .card {
-    border: 1px solid rgba(0,255,204,0.25); border-radius: 16px; padding: 12px; margin-bottom: 12px;
-    background: rgba(0,15,15,0.55); box-shadow: 0 0 22px rgba(0,255,204,0.12);
+    border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 12px; margin-bottom: 12px;
+    background: rgba(15, 23, 42, 0.6); box-shadow: 0 4px 6px rgba(0,0,0,0.3);
   }
   .card h3 { margin: 4px 0 10px; font-size: 0.95rem; letter-spacing: 1.5px; border-bottom: 1px dashed var(--neon-soft); padding-bottom: 5px; }
 
   label { display: block; font-size: 0.8rem; margin: 8px 0 4px; color: var(--ink); }
   input[type="file"], select, button {
-    width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(0,255,204,0.35);
-    background: rgba(0,0,0,0.6); color: var(--neon);
-    box-shadow: inset 0 0 16px rgba(0,255,204,0.15);
+    width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(0,0,0,0.4); color: var(--neon);
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
   }
   .btn { cursor: pointer; text-transform: uppercase; letter-spacing: 1.6px; font-weight: 700; transition: 0.2s; }
-  .btn:hover { background: rgba(0,255,204,0.25); }
+  .btn:hover { background: rgba(255,255,255,0.1); border-color: #fff; }
   .btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
   .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
   /* Chart Area */
-  .chart-wrap { position: relative; height: 100%; border: 1px solid rgba(0,255,204,0.25); border-radius: 16px; padding: 8px; background: rgba(0,10,10,0.45); }
+  .chart-wrap { position: relative; height: 100%; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 8px; background: rgba(0,0,0,0.3); }
   #chart { width: 100%; height: 100%; border-radius: 12px; position: relative; z-index: 1; }
 
   /* Holographic Sphere */
   #sphereWrap { position: absolute; inset: 8px; border-radius: 12px; overflow: hidden; z-index: 0; pointer-events: none; }
-  canvas#sphere { width: 100%; height: 100%; display: block; filter: drop-shadow(0 0 20px var(--neon)) blur(0.2px); opacity: 0.55; }
+  canvas#sphere { width: 100%; height: 100%; display: block; filter: drop-shadow(0 0 10px var(--neon-soft)); opacity: 0.6; }
 
   /* AI Insights Box */
   .insights {
     position: absolute; left: 16px; right: 16px; bottom: 16px; z-index: 2;
-    background: rgba(0,0,0,0.7); border: 1px solid rgba(0,255,204,0.25);
+    background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255,255,255,0.2);
     border-radius: 12px; padding: 10px 12px; color: var(--ink); font-size: 0.85rem;
     backdrop-filter: blur(6px);
     animation: pulse 3s ease-in-out infinite;
   }
   @keyframes pulse {
-    0%, 100% { box-shadow: 0 0 16px rgba(0,255,204,0.15); }
-    50% { box-shadow: 0 0 28px rgba(0,255,204,0.35); }
+    0%, 100% { box-shadow: 0 0 10px rgba(255,255,255,0.05); }
+    50% { box-shadow: 0 0 20px rgba(255,255,255,0.15); }
   }
 
   .footer-actions { display: flex; gap: 10px; justify-content: flex-end; padding-top: 8px; }
-  .pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; border: 1px solid rgba(0,255,204,0.35); }
+  .pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.2); }
 
   /* Responsive */
   @media (max-width: 980px){
@@ -341,6 +358,7 @@ window.addEventListener("load", function(){
 </script>
 
 <script>
+/* STARFIELD: Updated to White Stars (Realistic Space) */
 const canvas = document.getElementById('stars');
 const ctx = canvas.getContext('2d');
 let stars = [], meteors = [];
@@ -350,7 +368,7 @@ resizeCanvas(); addEventListener('resize', resizeCanvas);
 
 function createStars(count){ 
   stars = []; 
-  for(let i=0;i<count;i++){ stars.push({ x:Math.random()*canvas.width, y:Math.random()*canvas.height, speed:Math.random()*0.5+0.2, size:Math.random()*2 }); } 
+  for(let i=0;i<count;i++){ stars.push({ x:Math.random()*canvas.width, y:Math.random()*canvas.height, speed:Math.random()*0.3+0.1, size:Math.random()*1.8 }); } 
 }
 
 function createMeteors(count){ 
@@ -360,13 +378,13 @@ function createMeteors(count){
 
 function drawStars(){ 
   ctx.clearRect(0,0,canvas.width,canvas.height); 
-  ctx.fillStyle = '#00ffcc'; 
+  ctx.fillStyle = '#ffffff'; // PURE WHITE STARS
   for(const s of stars){ 
     ctx.beginPath(); ctx.arc(s.x,s.y,s.size,0,Math.PI*2); ctx.fill(); 
     s.y += s.speed; 
     if(s.y>canvas.height){ s.y=0; s.x=Math.random()*canvas.width; } 
   } 
-  ctx.strokeStyle = '#00ffcc'; ctx.lineWidth = 1.5; 
+  ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.0; 
   for(const m of meteors){ 
     ctx.beginPath(); ctx.moveTo(m.x,m.y); ctx.lineTo(m.x + m.length*m.speedX/10, m.y + m.length*m.speedY/10); ctx.stroke(); 
     m.x += m.speedX; m.y += m.speedY; 
@@ -374,7 +392,7 @@ function drawStars(){
   } 
 }
 
-createStars(220); createMeteors(6);
+createStars(250); createMeteors(4);
 (function animate(){ drawStars(); requestAnimationFrame(animate); })();
 </script>
 
@@ -565,13 +583,13 @@ function buildTrace(ds, xKey, yKey, type, name){
 
 function baseLayout(type, mode){
   return {
-    title:{ text:`Khwaja AI Analyzer — ${type.toUpperCase()}`, font:{family:'Share Tech Mono', size:18, color:'#a6ffee'} },
-    paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0.55)',
-    font:{color:'#a6ffee'},
-    xaxis:{gridcolor:'rgba(0,255,204,0.15)', zerolinecolor:'rgba(0,255,204,0.25)'},
-    yaxis:{gridcolor:'rgba(0,255,204,0.15)', zerolinecolor:'rgba(0,255,204,0.25)'},
+    title:{ text:`Khwaja AI Analyzer — ${type.toUpperCase()}`, font:{family:'Share Tech Mono', size:18, color:'#e2e8f0'} },
+    paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(15, 23, 42, 0.4)',
+    font:{color:'#e2e8f0'},
+    xaxis:{gridcolor:'rgba(255,255,255,0.1)', zerolinecolor:'rgba(255,255,255,0.2)'},
+    yaxis:{gridcolor:'rgba(255,255,255,0.1)', zerolinecolor:'rgba(255,255,255,0.2)'},
     margin:{t:50,r:20,b:45,l:55},
-    legend:{bgcolor:'rgba(0,0,0,0.35)', bordercolor:'rgba(0,255,204,0.2)', borderwidth:1, orientation:'h'},
+    legend:{bgcolor:'rgba(0,0,0,0.35)', bordercolor:'rgba(255,255,255,0.2)', borderwidth:1, orientation:'h'},
     transition:{duration:500, easing:'cubic-in-out'}
   };
 }
@@ -622,7 +640,7 @@ function slope(arr){
   return num/(den||1);
 }
 
-/* Three.js Holographic Sphere */
+/* Three.js Holographic Sphere - UPDATED COLOR (Rock/Silver) */
 let sphereScene, sphereCamera, sphereRenderer, sphereMesh, sphereReq;
 function startSphere(){
   const wrap = document.getElementById('sphereWrap');
@@ -637,14 +655,21 @@ function startSphere(){
   sphereRenderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 
   const geo = new THREE.SphereGeometry(2.2, 48, 48);
-  const mat = new THREE.MeshPhongMaterial({ color: 0x00ffcc, emissive: 0x00221a, shininess: 80, transparent:true, opacity:0.4, wireframe:true });
+  const mat = new THREE.MeshPhongMaterial({ 
+    color: 0x94a3b8,        /* Rock Grey */
+    emissive: 0x0f172a,     /* Dark Shadow */
+    shininess: 30, 
+    transparent:true, 
+    opacity:0.6, 
+    wireframe:true 
+  });
   sphereMesh = new THREE.Mesh(geo, mat);
   sphereScene.add(sphereMesh);
 
-  const glow = new THREE.PointLight(0x00ffcc, 1.2, 50);
+  const glow = new THREE.PointLight(0xffffff, 1.0, 50);
   glow.position.set(4,4,6);
   sphereScene.add(glow);
-  sphereScene.add(new THREE.AmbientLight(0x00ffc6, 0.25));
+  sphereScene.add(new THREE.AmbientLight(0xffffff, 0.3));
 
   const animate = ()=>{
     sphereMesh.rotation.y += 0.0025; sphereMesh.rotation.x += 0.0008;
@@ -666,4 +691,3 @@ addEventListener('resize', onResizeSphere);
 
 </body>
 </html>
-
