@@ -3,210 +3,193 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Khwaja AI</title>
+<title>Khwaja AI | Intelligent Analytics</title>
 
-<!-- Libraries -->
 <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500&display=swap');
 
   :root{
-    --neon:#00ffcc;                 /* MAIN GREEN-CYAN COLOR */
-    --neon-soft:rgba(0,255,204,0.6);
-    --glass:rgba(0,10,10,0.55);
-    --glass-strong:rgba(0,20,20,0.75);
-    --ink:#b7ffee;
+    --neon: #00ffcc;               /* MAIN GREEN-CYAN COLOR */
+    --neon-soft: rgba(0,255,204,0.6);
+    --glass: rgba(0,10,10,0.55);
+    --glass-strong: rgba(0,20,20,0.75);
+    --ink: #b7ffee;
   }
 
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0; overflow:hidden; background:black; color:var(--neon);
-    font-family:'Share Tech Mono', monospace; letter-spacing:0.6px;
+  * { box-sizing:border-box; }
+  html, body { height:100%; }
+  body {
+    margin: 0; overflow: hidden; background: black; color: var(--neon);
+    font-family: 'Share Tech Mono', monospace; letter-spacing: 0.6px;
   }
 
   /* Starfield canvas */
-  canvas#stars{position:fixed; inset:0; z-index:-3}
+  canvas#stars { position:fixed; inset:0; z-index:-3; }
 
   /* Global glow */
-  h1,h2,h3,p,a,label,button,select,input{ text-shadow:0 0 8px var(--neon), 0 0 20px var(--neon-soft); }
+  h1,h2,h3,p,a,label,button,select,input { text-shadow:0 0 8px var(--neon), 0 0 20px var(--neon-soft); }
 
   /* Spaceship Wheel */
- .wheel{
-    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) rotate(0deg);
-    width: min(80vw, 500px); height: min(80vw, 500px); border-radius:50%;
-    background:radial-gradient(circle at center, #000 60%, #111 100%);
-    border:2px solid var(--neon-soft);
-    box-shadow:inset 0 0 50px var(--neon);
+  .wheel {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%) rotate(0deg);
+    width: min(80vw, 500px); height: min(80vw, 500px); border-radius: 50%;
+    background: radial-gradient(circle at center, #000 60%, #111 100%);
+    border: 2px solid var(--neon-soft);
+    box-shadow: inset 0 0 50px var(--neon);
+    z-index: 1;
   }
 
-   /* Orbiting Alien Tabs */
- .tab {
-  position: absolute;
-  background: rgba(0, 255, 204, 0.08);
-  border: 2px solid var(--neon-soft);
-  padding: 12px 22px;
-  border-radius: 50% / 40%;
-  color: var(--neon);
-  font-family: 'Orbitron', sans-serif;
-  font-size: 0.95rem;
-  letter-spacing: 2px;
-  text-decoration: none;
-  font-weight: bold;
-  text-transform: uppercase;
-  transition: background 0.3s, transform 0.3s;
-  cursor: pointer;
-  backdrop-filter: blur(4px);
-  box-shadow: 0 0 16px rgba(0, 255, 204, 0.35), inset 0 0 12px rgba(0,255,204,0.25);
-
+  /* Orbiting Alien Tabs */
+  .tab {
+    position: absolute;
+    background: rgba(0, 255, 204, 0.08);
+    border: 2px solid var(--neon-soft);
+    padding: 12px 22px;
+    border-radius: 50% / 40%;
+    color: var(--neon);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.95rem;
+    letter-spacing: 2px;
+    text-decoration: none;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: background 0.3s, transform 0.3s;
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 0 16px rgba(0, 255, 204, 0.35), inset 0 0 12px rgba(0,255,204,0.25);
+    user-select: none;
   }
-.tab1 { top: -8%; left: 50%; transform: translateX(-50%); }
-.tab2 { top: 50%; right: -22%; transform: translateY(-50%); }
-.tab3 { bottom: -8%; left: 50%; transform: translateX(-50%); }
-.tab4 { top: 50%; left: -22%; transform: translateY(-50%); }
-.tab5 { bottom: -18%; left: 50%; transform: translateX(-50%); }
+  .tab:hover { background: rgba(0, 255, 204, 0.25); transform: scale(1.1) translateX(-50%); }
+  
+  /* Specific Tab Positions */
+  .tab1 { top: -8%; left: 50%; transform: translateX(-50%); }
+  .tab2 { top: 50%; right: -22%; transform: translateY(-50%); }
+  .tab3 { bottom: -8%; left: 50%; transform: translateX(-50%); }
+  .tab4 { top: 50%; left: -22%; transform: translateY(-50%); }
+  .tab5 { bottom: -18%; left: 50%; transform: translateX(-50%); }
 
   /* Central Globe */
-  .center-content{
-    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-    width:310px; height:310px; background:none; border-radius:0;
-    padding:22px; text-align:center; overflow:hidden; /* no scrollbar */
-    box-shadow:none;
-    display:flex; flex-direction:column; justify-content:center; align-items:center;
+  .center-content {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    width: 310px; height: 310px; background: none; 
+    padding: 22px; text-align: center; overflow: hidden;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    pointer-events: none; /* Let clicks pass through to wheel if needed */
   }
-  .center-content h1{margin:6px 0 8px}
-  .center-content p{margin:0; color:var(--ink)}
-  /* Dynamic text sizes (will be adjusted by JS too) */
-  .center-content h1{font-size:clamp(1rem,2.4vh,1.35rem)}
-  .center-content p{font-size:clamp(0.72rem,1.9vh,0.95rem); line-height:1.35}
+  .center-content h1 { margin: 6px 0 8px; font-size: clamp(1rem, 2.4vh, 1.35rem); }
+  .center-content p { margin: 0; color: var(--ink); font-size: clamp(0.72rem, 1.9vh, 0.95rem); line-height: 1.35; }
 
-  /* Chatbot left fixed */
-  /* Assistant dock (the neon hole) */
-  .assistant-wrap{
-    position: fixed;
-    left: 14px;
-    bottom: 15px;
-    width: 58px;
-    height: 58px;
-    z-index: 9998; /* under the chat bubble we’ll overlay */
-    pointer-events: none; /* the hole itself doesn’t catch clicks */
+  /* Assistant Dock (The glowing hole for Chatbase) */
+  .assistant-wrap {
+    position: fixed; left: 14px; bottom: 15px; width: 58px; height: 58px;
+    z-index: 9998; pointer-events: none;
   }
-  /* The actual glowing circle */
-.assistant-wrap::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  border-radius:50%;
-  background: radial-gradient(circle at center,
-    rgba(0,255,204,0.8) 0%,   /* strong neon core */
-    rgba(0,255,204,0.35) 40%, /* soft glow mid */
-    rgba(0,255,204,0.05) 75%, /* fading out */
-    transparent 100%);        /* full fade */
-  box-shadow:
-    0 0 18px rgba(0,255,204,0.7),
-    0 0 36px rgba(0,255,204,0.5),
-    0 0 64px rgba(0,255,204,0.4);
-  filter: blur(2px);  /* soft edges */
-  animation: assistantGlow 4s ease-in-out infinite alternate;
-  z-index:-1;
-  pointer-events:none;
-}
+  .assistant-wrap::before {
+    content: ""; position: absolute; inset: 0; border-radius: 50%;
+    background: radial-gradient(circle at center, rgba(0,255,204,0.8) 0%, rgba(0,255,204,0.35) 40%, transparent 100%);
+    box-shadow: 0 0 18px rgba(0,255,204,0.7), 0 0 36px rgba(0,255,204,0.5);
+    filter: blur(2px);
+    animation: assistantGlow 4s ease-in-out infinite alternate;
+    z-index: -1; pointer-events: none;
+  }
+  @keyframes assistantGlow {
+    from { opacity: 0.65; transform: scale(0.95); }
+    to   { opacity: 1; transform: scale(1.05); }
+  }
 
-/* Gentle breathing animation */
-@keyframes assistantGlow {
-  from { opacity: 0.65; transform: scale(0.95); }
-  to   { opacity: 1; transform: scale(1.05); }
-}
   /* ========================= */
-  /* Alien Holographic OVERLAY */
+  /* ALIEN OVERLAY: ANALYZER   */
   /* ========================= */
-  .overlay{
-    position:fixed; inset:0; display:none; place-items:center; z-index:5;
-    background:radial-gradient(ellipse at center, rgba(0,10,10,0.25) 0%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0.95) 100%);
-    animation:fadeIn 300ms ease-out;
+  .overlay {
+    position: fixed; inset: 0; display: none; place-items: center; z-index: 5;
+    background: radial-gradient(ellipse at center, rgba(0,10,10,0.25) 0%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0.95) 100%);
+    animation: fadeIn 300ms ease-out;
   }
-  @keyframes fadeIn{from{opacity:0} to{opacity:1}}
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-  .panel{
-    width:min(1200px,92vw); height:min(78vh,820px); border:1px solid var(--neon-soft);
-    background:linear-gradient(180deg, var(--glass), var(--glass-strong));
-    border-radius:24px; box-shadow:0 0 60px rgba(0,255,204,0.35), inset 0 0 40px rgba(0,255,204,0.15);
+  .panel {
+    width: min(1200px, 92vw); height: min(78vh, 820px); border: 1px solid var(--neon-soft);
+    background: linear-gradient(180deg, var(--glass), var(--glass-strong));
+    border-radius: 24px; box-shadow: 0 0 60px rgba(0,255,204,0.35), inset 0 0 40px rgba(0,255,204,0.15);
     backdrop-filter: blur(10px) saturate(140%);
-    position:relative; overflow:hidden;
+    position: relative; overflow: hidden;
   }
-  .panel::before{content:""; position:absolute; inset:0; background:repeating-linear-gradient( to bottom, rgba(0,255,204,0.04) 0, rgba(0,255,204,0.04) 2px, transparent 2px, transparent 4px ); pointer-events:none}
-  .panel::after{content:""; position:absolute; inset:0; box-shadow:inset 0 0 140px rgba(0,0,0,0.6); pointer-events:none}
-
-  .panel-header{
-    display:flex; align-items:center; justify-content:space-between; padding:14px 18px; border-bottom:1px solid rgba(0,255,204,0.25);
-    background:linear-gradient(180deg, rgba(0,255,204,0.08), rgba(0,255,204,0.02));
+  /* Grid lines overlay */
+  .panel::before { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(to bottom, rgba(0,255,204,0.04) 0, rgba(0,255,204,0.04) 2px, transparent 2px, transparent 4px); pointer-events: none; }
+  
+  .panel-header {
+    display: flex; align-items: center; justify-content: space-between; padding: 14px 18px;
+    border-bottom: 1px solid rgba(0,255,204,0.25);
+    background: linear-gradient(180deg, rgba(0,255,204,0.08), rgba(0,255,204,0.02));
   }
-  .panel-title{font-size:1.05rem; letter-spacing:2px}
-  .close-btn{
-    width:36px; height:36px; border-radius:50%; border:1px solid var(--neon);
-    background:transparent; color:var(--neon); cursor:pointer;
-    box-shadow:0 0 16px rgba(0,255,204,0.5), inset 0 0 12px rgba(0,255,204,0.2);
+  .close-btn {
+    width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--neon);
+    background: transparent; color: var(--neon); cursor: pointer;
+    box-shadow: 0 0 16px rgba(0,255,204,0.5);
+    display: grid; place-items: center;
   }
-  .close-btn:hover{ background:rgba(0,255,204,0.12); transform:scale(1.06) }
+  .close-btn:hover { background: rgba(0,255,204,0.12); transform: scale(1.06); }
 
-  .panel-body{ display:grid; grid-template-columns: 320px 1fr; gap:16px; height:calc(100% - 62px); padding:16px; }
+  .panel-body { display: grid; grid-template-columns: 320px 1fr; gap: 16px; height: calc(100% - 62px); padding: 16px; }
 
-  /* Controls column */
-  .controls{ overflow:auto; padding-right:6px }
-  .card{
-    border:1px solid rgba(0,255,204,0.25); border-radius:16px; padding:12px; margin-bottom:12px;
-    background:rgba(0,15,15,0.55); box-shadow:0 0 22px rgba(0,255,204,0.12);
+  /* Controls Sidebar */
+  .controls { overflow-y: auto; padding-right: 6px; }
+  .controls::-webkit-scrollbar { width: 6px; }
+  .controls::-webkit-scrollbar-thumb { background: var(--neon-soft); border-radius: 3px; }
+
+  .card {
+    border: 1px solid rgba(0,255,204,0.25); border-radius: 16px; padding: 12px; margin-bottom: 12px;
+    background: rgba(0,15,15,0.55); box-shadow: 0 0 22px rgba(0,255,204,0.12);
   }
-  .card h3{ margin:4px 0 10px; font-size:0.95rem; letter-spacing:1.5px }
+  .card h3 { margin: 4px 0 10px; font-size: 0.95rem; letter-spacing: 1.5px; border-bottom: 1px dashed var(--neon-soft); padding-bottom: 5px; }
 
-  label{display:block; font-size:0.8rem; margin:8px 0 4px; color:var(--ink)}
-  input[type="file"], select, button{
-    width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(0,255,204,0.35);
-    background:rgba(0,0,0,0.6); color:var(--neon);
-    box-shadow:inset 0 0 16px rgba(0,255,204,0.15), 0 0 12px rgba(0,255,204,0.1);
+  label { display: block; font-size: 0.8rem; margin: 8px 0 4px; color: var(--ink); }
+  input[type="file"], select, button {
+    width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(0,255,204,0.35);
+    background: rgba(0,0,0,0.6); color: var(--neon);
+    box-shadow: inset 0 0 16px rgba(0,255,204,0.15);
   }
-  select{ cursor:pointer }
-  .btn{ cursor:pointer; text-transform:uppercase; letter-spacing:1.6px; font-weight:700 }
-  .btn:hover{ background:rgba(0,255,204,0.18) }
-  .btn:disabled{ opacity:0.4; cursor:not-allowed }
+  .btn { cursor: pointer; text-transform: uppercase; letter-spacing: 1.6px; font-weight: 700; transition: 0.2s; }
+  .btn:hover { background: rgba(0,255,204,0.25); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-  .row{ display:grid; grid-template-columns: 1fr 1fr; gap:10px }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
   /* Chart Area */
-  .chart-wrap{ position:relative; height:100%; border:1px solid rgba(0,255,204,0.25); border-radius:16px; padding:8px; background:rgba(0,10,10,0.45) }
-  #chart{ width:100%; height:100%; border-radius:12px; position:relative; z-index:1; }
+  .chart-wrap { position: relative; height: 100%; border: 1px solid rgba(0,255,204,0.25); border-radius: 16px; padding: 8px; background: rgba(0,10,10,0.45); }
+  #chart { width: 100%; height: 100%; border-radius: 12px; position: relative; z-index: 1; }
 
-  /* Holographic sphere (Three.js canvas behind Plotly) */
-  #sphereWrap{ position:absolute; inset:8px; border-radius:12px; overflow:hidden; z-index:0; }
-  canvas#sphere{ width:100%; height:100%; display:block; filter: drop-shadow(0 0 20px var(--neon)) blur(0.2px); opacity:0.55; }
+  /* Holographic Sphere */
+  #sphereWrap { position: absolute; inset: 8px; border-radius: 12px; overflow: hidden; z-index: 0; pointer-events: none; }
+  canvas#sphere { width: 100%; height: 100%; display: block; filter: drop-shadow(0 0 20px var(--neon)) blur(0.2px); opacity: 0.55; }
 
-  /* Insights */
-  .insights{
-    position:absolute; left:16px; right:16px; bottom:16px; z-index:2;
-    background:rgba(0,0,0,0.55); border:1px solid rgba(0,255,204,0.25);
-    border-radius:12px; padding:10px 12px; color:var(--ink); font-size:0.85rem;
-    box-shadow:0 0 16px rgba(0,255,204,0.15), inset 0 0 12px rgba(0,255,204,0.1);
+  /* AI Insights Box */
+  .insights {
+    position: absolute; left: 16px; right: 16px; bottom: 16px; z-index: 2;
+    background: rgba(0,0,0,0.7); border: 1px solid rgba(0,255,204,0.25);
+    border-radius: 12px; padding: 10px 12px; color: var(--ink); font-size: 0.85rem;
     backdrop-filter: blur(6px);
-    animation:pulse 3s ease-in-out infinite;
+    animation: pulse 3s ease-in-out infinite;
   }
   @keyframes pulse {
-    0%,100% { box-shadow:0 0 16px rgba(0,255,204,0.15), inset 0 0 12px rgba(0,255,204,0.1) }
-    50% { box-shadow:0 0 28px rgba(0,255,204,0.35), inset 0 0 18px rgba(0,255,204,0.18) }
+    0%, 100% { box-shadow: 0 0 16px rgba(0,255,204,0.15); }
+    50% { box-shadow: 0 0 28px rgba(0,255,204,0.35); }
   }
 
-  .footer-actions{ display:flex; gap:10px; justify-content:flex-end; padding-top:8px }
-  .pill{ display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:999px; border:1px solid rgba(0,255,204,0.35) }
+  .footer-actions { display: flex; gap: 10px; justify-content: flex-end; padding-top: 8px; }
+  .pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; border: 1px solid rgba(0,255,204,0.35); }
 
   /* Responsive */
   @media (max-width: 980px){
-    .panel-body{ grid-template-columns: 1fr; height:auto }
-    .chart-wrap{ height:56vh }
-    .insights{ position:static; margin-top:10px }
-    #sphereWrap{ position:static; height:220px; margin-bottom:8px }
+    .panel-body { grid-template-columns: 1fr; height: auto; overflow-y: auto; }
+    .chart-wrap { height: 50vh; }
+    .insights { position: static; margin-top: 10px; }
+    #sphereWrap { display: none; } /* Hide heavy 3D on mobile for performance */
   }
 </style>
 </head>
@@ -214,7 +197,6 @@
 
 <canvas id="stars"></canvas>
 
-<!-- Wheel -->
 <div class="wheel" id="wheel">
   <div class="tab tab1" onclick="showHome()">Analytics</div>
   <div class="tab tab2" onclick="showMessage('Finance panel docking soon…')">Finance</div>
@@ -226,22 +208,15 @@
     <h1 id="ccTitle">Khwaja AI</h1>
     <p id="ccText">
       Intergalactic expertise in <b>Business Analytics</b>, <b>Finance</b>, and <b>Artificial Intelligence</b>.<br/>
-      Pilot projects that use machine learning for predictive insights and deploy
-      futuristic tools for real-time data visualisation. Engage the orbiting tabs
-      to access modules and launch the analyzer.
+      Pilot projects that use machine learning for predictive insights. Engage the orbiting tabs to launch the analyzer.
     </p>
   </div>
 </div>
 
-<!-- Chatbot -->
-<!-- Assistant Dock -->
 <div class="assistant-wrap">
   <div class="assistant-hole" aria-label="AI Assistant Dock"></div>
 </div>
 
-<!-- ============================= -->
-<!-- ALIEN OVERLAY: KHWAJA ANALYZER -->
-<!-- ============================= -->
 <div id="analyzerOverlay" class="overlay" aria-hidden="true">
   <div class="panel" role="dialog" aria-modal="true" aria-labelledby="panelTitle">
     <div class="panel-header">
@@ -250,36 +225,35 @@
     </div>
 
     <div class="panel-body">
-      <!-- Controls -->
       <div class="controls">
         <div class="card">
-          <h3>1) Upload Datasets (CSV / Excel)</h3>
+          <h3>1) Upload Datasets</h3>
           <label>Dataset 1</label>
           <input id="file1" type="file" accept=".csv,.xlsx,.xls" />
           <label>Dataset 2</label>
           <input id="file2" type="file" accept=".csv,.xlsx,.xls" />
-          <div style="margin-top:8px;font-size:.8rem;color:var(--ink)">Tip: First rows should have headers.</div>
+          <div style="margin-top:8px;font-size:.7rem;color:var(--ink)">*First row must contain headers</div>
         </div>
 
         <div class="card">
           <h3>2) Select Columns</h3>
           <div class="row">
             <div>
-              <label for="x1">X (Dataset 1)</label>
+              <label for="x1">X (Set 1)</label>
               <select id="x1" disabled></select>
             </div>
             <div>
-              <label for="y1">Y (Dataset 1)</label>
+              <label for="y1">Y (Set 1)</label>
               <select id="y1" disabled></select>
             </div>
           </div>
           <div class="row">
             <div>
-              <label for="x2">X (Dataset 2)</label>
+              <label for="x2">X (Set 2)</label>
               <select id="x2" disabled></select>
             </div>
             <div>
-              <label for="y2">Y (Dataset 2)</label>
+              <label for="y2">Y (Set 2)</label>
               <select id="y2" disabled></select>
             </div>
           </div>
@@ -301,7 +275,7 @@
               <label for="mode">Compare Mode</label>
               <select id="mode" disabled>
                 <option value="overlay">Overlay</option>
-                <option value="side">Side-by-Side (Bars)</option>
+                <option value="side">Side-by-Side</option>
               </select>
             </div>
           </div>
@@ -310,10 +284,9 @@
         <div class="card">
           <h3>3) Render</h3>
           <button id="vizBtn" class="btn" onclick="plotData()" disabled>Visualize ▶</button>
-          <div class="footer-actions" style="margin-top:10px">
-            <button class="btn" onclick="downloadChart('png')" disabled id="dlPng">Download PNG</button>
-            <button class="btn" onclick="downloadChart('jpeg')" disabled id="dlJpg">Download JPEG</button>
-            <button class="btn" onclick="downloadChart('svg')" disabled id="dlSvg">Download SVG</button>
+          <div class="footer-actions">
+            <button class="btn" onclick="downloadChart('png')" disabled id="dlPng">PNG</button>
+            <button class="btn" onclick="downloadChart('svg')" disabled id="dlSvg">SVG</button>
           </div>
         </div>
 
@@ -323,9 +296,7 @@
         </div>
       </div>
 
-      <!-- Chart Area -->
       <div class="chart-wrap">
-        <!-- Holographic sphere backdrop -->
         <div id="sphereWrap"><canvas id="sphere"></canvas></div>
 
         <div id="chart"></div>
@@ -335,7 +306,6 @@
   </div>
 </div>
 
-<!-- Chatbase Embed (unchanged) -->
 <script>
 (function(){
   if(!window.chatbase || window.chatbase("getState")!=="initialized"){
@@ -345,16 +315,16 @@
   const onLoad=function(){
     const script=document.createElement("script");
     script.src="https://www.chatbase.co/embed.min.js";
-    script.id="85-fKKKuG65obFx8ejTz3";
+    script.id="85-fKKKuG65obFx8ejTz3"; // Khwaja ID
     script.domain="www.chatbase.co";
     document.body.appendChild(script);
   };
   if(document.readyState==="complete"){onLoad()} else { window.addEventListener("load", onLoad) }
 })();
-  
 </script>
 
 <script>
+/* Attempt to move Chatbase bubble into the custom Neon Dock */
 window.addEventListener("load", function(){
   setTimeout(()=>{
     const bubble = document.querySelector("#chatbase-bubble, iframe[src*='chatbase']");
@@ -366,33 +336,58 @@ window.addEventListener("load", function(){
       bubble.style.zIndex = "12";
       document.querySelector(".assistant-wrap").appendChild(bubble);
     }
-  }, 1500); // wait for chatbase to render
+  }, 2500); // Increased timeout to ensure render
 });
 </script>
 
-<!-- Stars + Meteors Animation -->
 <script>
 const canvas = document.getElementById('stars');
 const ctx = canvas.getContext('2d');
 let stars = [], meteors = [];
+
 function resizeCanvas(){ canvas.width = innerWidth; canvas.height = innerHeight; }
 resizeCanvas(); addEventListener('resize', resizeCanvas);
-function createStars(count){ stars = []; for(let i=0;i<count;i++){ stars.push({ x:Math.random()*canvas.width, y:Math.random()*canvas.height, speed:Math.random()*0.5+0.2, size:Math.random()*2 }); } }
-function createMeteors(count){ meteors = []; for(let i=0;i<count;i++){ meteors.push({ x:Math.random()*canvas.width, y:Math.random()*canvas.height, speedX:-(Math.random()*4+2), speedY:Math.random()*2+1, length:Math.random()*50+30 }); } }
-function drawStars(){ ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = '#00ffcc'; for(const s of stars){ ctx.beginPath(); ctx.arc(s.x,s.y,s.size,0,Math.PI*2); ctx.fill(); s.y += s.speed; if(s.y>canvas.height){ s.y=0; s.x=Math.random()*canvas.width; } } ctx.strokeStyle = '#00ffcc'; ctx.lineWidth = 1.5; for(const m of meteors){ ctx.beginPath(); ctx.moveTo(m.x,m.y); ctx.lineTo(m.x + m.length*m.speedX/10, m.y + m.length*m.speedY/10); ctx.stroke(); m.x += m.speedX; m.y += m.speedY; if(m.x < -100 || m.y > canvas.height+100){ m.x = canvas.width + Math.random()*200; m.y = Math.random()*canvas.height/2; } } }
+
+function createStars(count){ 
+  stars = []; 
+  for(let i=0;i<count;i++){ stars.push({ x:Math.random()*canvas.width, y:Math.random()*canvas.height, speed:Math.random()*0.5+0.2, size:Math.random()*2 }); } 
+}
+
+function createMeteors(count){ 
+  meteors = []; 
+  for(let i=0;i<count;i++){ meteors.push({ x:Math.random()*canvas.width, y:Math.random()*canvas.height, speedX:-(Math.random()*4+2), speedY:Math.random()*2+1, length:Math.random()*50+30 }); } 
+}
+
+function drawStars(){ 
+  ctx.clearRect(0,0,canvas.width,canvas.height); 
+  ctx.fillStyle = '#00ffcc'; 
+  for(const s of stars){ 
+    ctx.beginPath(); ctx.arc(s.x,s.y,s.size,0,Math.PI*2); ctx.fill(); 
+    s.y += s.speed; 
+    if(s.y>canvas.height){ s.y=0; s.x=Math.random()*canvas.width; } 
+  } 
+  ctx.strokeStyle = '#00ffcc'; ctx.lineWidth = 1.5; 
+  for(const m of meteors){ 
+    ctx.beginPath(); ctx.moveTo(m.x,m.y); ctx.lineTo(m.x + m.length*m.speedX/10, m.y + m.length*m.speedY/10); ctx.stroke(); 
+    m.x += m.speedX; m.y += m.speedY; 
+    if(m.x < -100 || m.y > canvas.height+100){ m.x = canvas.width + Math.random()*200; m.y = Math.random()*canvas.height/2; } 
+  } 
+}
+
 createStars(220); createMeteors(6);
 (function animate(){ drawStars(); requestAnimationFrame(animate); })();
 </script>
 
-<!-- Wheel rotation by mouse -->
 <script>
+// Wheel Rotate
 const wheel = document.getElementById('wheel');
-document.addEventListener('mousemove', e=>{ const centerX = innerWidth/2; const offsetX = e.clientX - centerX; const rotation = offsetX/20; wheel.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`; });
-</script>
+document.addEventListener('mousemove', e=>{ 
+  const centerX = innerWidth/2; const offsetX = e.clientX - centerX; 
+  const rotation = offsetX/30; 
+  wheel.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`; 
+});
 
-<!-- Overlay logic + Analyzer code + Center text fitting + Sphere -->
-<script>
-// ===== Center text auto-fit (no scrollbar) =====
+// Text Fitter
 function fitCenterText(){
   const cc = document.getElementById('centerContent');
   const h1 = cc.querySelector('h1');
@@ -402,55 +397,59 @@ function fitCenterText(){
   let pSize = parseFloat(getComputedStyle(p).fontSize);
   let guard=0;
   while((cc.scrollHeight > cc.clientHeight) && guard<60){
-    hSize = Math.max(12, hSize - 0.5);
-    pSize = Math.max(10, pSize - 0.5);
-    h1.style.fontSize = hSize + 'px';
-    p.style.fontSize = pSize + 'px';
+    hSize = Math.max(12, hSize - 0.5); pSize = Math.max(10, pSize - 0.5);
+    h1.style.fontSize = hSize + 'px'; p.style.fontSize = pSize + 'px';
     guard++;
   }
 }
 window.addEventListener('load', fitCenterText);
 window.addEventListener('resize', ()=>{ setTimeout(fitCenterText, 100); });
 
-// ===== Overlay controls =====
+// Navigation logic
 function showHome(){
   const cc = document.getElementById('centerContent');
-  cc.innerHTML = `<h1>Khwaja AI</h1><p>Intergalactic expertise in <b>Business Analytics</b>, <b>Finance</b>, and <b>Artificial Intelligence</b>.<br/>Pilot projects that use machine learning for predictive insights and deploy futuristic tools for real-time visualisation. Click <b>Tools</b> to launch the analyzer.</p>`;
+  cc.innerHTML = `<h1>Khwaja AI</h1><p>Intergalactic expertise in <b>Business Analytics</b>, <b>Finance</b>, and <b>Artificial Intelligence</b>.<br/>Pilot projects that use machine learning for predictive insights. Click <b>Tools</b> to launch the analyzer.</p>`;
   fitCenterText();
 }
-function showMessage(msg){ const cc = document.getElementById('centerContent'); cc.innerHTML = `<h1>Console</h1><p>${msg}</p>`; fitCenterText(); }
+function showMessage(msg){ 
+  const cc = document.getElementById('centerContent'); 
+  cc.innerHTML = `<h1>Console</h1><p>${msg}</p>`; 
+  fitCenterText(); 
+}
 
-function openOverlay(){ document.getElementById('analyzerOverlay').style.display = 'grid'; setStatus('Overlay online. Load data to begin…'); startSphere(); onResizeSphere(); }
-function closeOverlay(){ document.getElementById('analyzerOverlay').style.display = 'none'; stopSphere(); }
+function openOverlay(){ 
+  document.getElementById('analyzerOverlay').style.display = 'grid'; 
+  setStatus('Overlay online. Load data to begin…'); 
+  startSphere(); onResizeSphere(); 
+}
+function closeOverlay(){ 
+  document.getElementById('analyzerOverlay').style.display = 'none'; 
+  stopSphere(); 
+}
 
-// ===== Analyzer state =====
+// Data Analyzer Logic
 let dataset1 = [], dataset2 = [];
 let ds1Label = 'Dataset 1', ds2Label = 'Dataset 2';
 const el = id => document.getElementById(id);
 const setStatus = msg => el('status').textContent = msg;
 
-// Enable/disable controls based on readiness
 function setControlsEnabled(enabled){
-  ['x1','y1','x2','y2','chartType','mode','vizBtn','dlPng','dlJpg','dlSvg'].forEach(id=>{
+  ['x1','y1','x2','y2','chartType','mode','vizBtn','dlPng','dlSvg'].forEach(id=>{
     const e = el(id); if(e){ e.disabled = !enabled; }
   });
 }
-// Initially disabled
 setControlsEnabled(false);
 
-// Hook up file inputs
-function wireFileInputs(){
-  el('file1').addEventListener('change', e=> loadFile(e.target.files[0], 1));
-  el('file2').addEventListener('change', e=> loadFile(e.target.files[0], 2));
-}
-wireFileInputs();
+// File Inputs
+el('file1').addEventListener('change', e=> loadFile(e.target.files[0], 1));
+el('file2').addEventListener('change', e=> loadFile(e.target.files[0], 2));
 
 function loadFile(file, index){
   if(!file){ return; }
   const name = file.name || `dataset${index}`;
   const ext = name.split('.').pop().toLowerCase();
   setStatus(`Loading ${name} …`);
-
+  
   const assign = data => assignData(data, index, name);
 
   if(ext === 'csv'){
@@ -465,23 +464,27 @@ function loadFile(file, index){
     };
     reader.readAsArrayBuffer(file);
   } else {
-    alert('Unsupported file type. Please upload CSV or Excel.');
-    setStatus('Unsupported file type.');
+    setStatus('Error: Unsupported file type.');
   }
 }
 
 function assignData(data, index, label){
-  // Clean empty rows
+  // Filter empty rows
   const cleaned = (data||[]).filter(row => Object.values(row).some(v => v!==null && v!=='' && v!==undefined));
   if(index===1){ dataset1 = cleaned; ds1Label = label; } else { dataset2 = cleaned; ds2Label = label; }
   setStatus(`${label} loaded (${cleaned.length} rows).`);
-  if(dataset1.length && dataset2.length){ populateDropdowns(); setControlsEnabled(true); }
+  
+  // If both loaded or just one, try populating
+  if(dataset1.length && dataset2.length){ 
+    populateDropdowns(); 
+    setControlsEnabled(true); 
+  }
 }
 
 function populateDropdowns(){
   const sample1 = dataset1[0] || {}; const sample2 = dataset2[0] || {};
   const keys1 = Object.keys(sample1); const keys2 = Object.keys(sample2);
-  const keys = Array.from(new Set([...keys1, ...keys2])); // union
+  const keys = Array.from(new Set([...keys1, ...keys2]));
 
   const numeric1 = keys.filter(k=> isNumericColumn(dataset1, k));
   const numeric2 = keys.filter(k=> isNumericColumn(dataset2, k));
@@ -491,7 +494,7 @@ function populateDropdowns(){
   fillSelect(el('x2'), keys2.length?keys2:keys);
   fillSelect(el('y2'), numeric2.length?numeric2:keys2.length?keys2:keys);
 
-  setStatus('Columns ready. Choose X/Y and chart type.');
+  setStatus('Ready to Render.');
 }
 
 function fillSelect(selectEl, items){
@@ -508,8 +511,9 @@ function isNumericColumn(ds, key){
 
 function toNum(v){ return (typeof v === 'number')? v : parseFloat(v); }
 
+// Visualization
 function plotData(){
-  if(!dataset1.length || !dataset2.length){ alert('Upload both datasets first.'); return; }
+  if(!dataset1.length || !dataset2.length){ alert('Please upload two datasets.'); return; }
   const x1 = el('x1').value; const y1 = el('y1').value;
   const x2 = el('x2').value; const y2 = el('y2').value;
   const chartType = el('chartType').value; const mode = el('mode').value;
@@ -527,15 +531,15 @@ function plotData(){
   if(chartType === 'bar' && mode === 'side'){ layout.barmode = 'group'; }
   if(chartType === 'bar' && mode === 'overlay'){ layout.barmode = 'overlay'; trace1.opacity=0.85; trace2.opacity=0.65; }
 
-  // Smooth transition
   const plotDiv = document.getElementById('chart');
+  // React uses existing DOM to update smoothly
   const firstTime = !plotDiv.data;
   const plot = firstTime ? Plotly.newPlot(plotDiv, data, layout, {responsive:true, displaylogo:false})
                          : Plotly.react(plotDiv, data, layout, {responsive:true, displaylogo:false});
+  
   plot.then(()=>{
-    setStatus('Visualization rendered.');
-    ['dlPng','dlJpg','dlSvg'].forEach(id=> el(id).disabled=false);
-    updateInsights(dataset1, dataset2, y1, y2, x1, x2);
+    setStatus('Visualization complete.');
+    updateInsights(dataset1, dataset2, y1, y2);
   });
 }
 
@@ -544,34 +548,15 @@ function buildTrace(ds, xKey, yKey, type, name){
   const y = ds.map(r=> r[yKey]).map(toNum);
 
   if(type === 'heatmap'){
-    // Build frequency heatmap
-    const bins = 20;
-    const xVals = x.map(Number).filter(n=>!isNaN(n));
-    const yVals = y.map(Number).filter(n=>!isNaN(n));
-    const xMin = Math.min(...xVals), xMax=Math.max(...xVals);
-    const yMin = Math.min(...yVals), yMax=Math.max(...yVals);
-    const z = Array.from({length:bins},()=>Array(bins).fill(0));
-    for(let i=0;i<Math.min(xVals.length,yVals.length);i++){
-      const xi = Math.min(bins-1, Math.max(0, Math.floor((xVals[i]-xMin)/(xMax-xMin||1)*bins)));
-      const yi = Math.min(bins-1, Math.max(0, Math.floor((yVals[i]-yMin)/(yMax-yMin||1)*bins)));
-      z[yi][xi]++;
-    }
-    return { type:'heatmap', z, name, colorscale:'Viridis' };
+    const bins = 20; 
+    // Basic 2D histogram simulation for heatmap
+    // Note: For true heatmaps, Plotly usually expects Z matrix. This is a simplified binning.
+    return { type: 'histogram2d', x: x, y: y, name: name, colorscale:'Viridis' };
   }
-
-  if(type === 'pie'){
-    return { type:'pie', labels:x, values:y, name, hole:0.25 };
-  }
-
-  if(type === 'box'){
-    return { type:'box', y, name, boxmean:true };
-  }
-  if(type === 'histogram'){
-    return { type:'histogram', x:y, name, opacity:0.75 };
-  }
-  if(type === 'bar'){
-    return { type:'bar', x, y, name };
-  }
+  if(type === 'pie') return { type:'pie', labels:x, values:y, name, hole:0.25 };
+  if(type === 'box') return { type:'box', y, name, boxmean:true };
+  if(type === 'histogram') return { type:'histogram', x:y, name, opacity:0.75 };
+  if(type === 'bar') return { type:'bar', x, y, name };
 
   const mode = (type==='line' || type==='area') ? 'lines' : 'markers';
   const fill = (type==='area') ? 'tozeroy' : undefined;
@@ -587,7 +572,6 @@ function baseLayout(type, mode){
     yaxis:{gridcolor:'rgba(0,255,204,0.15)', zerolinecolor:'rgba(0,255,204,0.25)'},
     margin:{t:50,r:20,b:45,l:55},
     legend:{bgcolor:'rgba(0,0,0,0.35)', bordercolor:'rgba(0,255,204,0.2)', borderwidth:1, orientation:'h'},
-    shapes:[{ type:'rect', xref:'paper', yref:'paper', x0:0, y0:0, x1:1, y1:1, line:{width:1, color:'rgba(0,255,204,0.25)'}, fillcolor:'rgba(0,255,204,0.04)'}],
     transition:{duration:500, easing:'cubic-in-out'}
   };
 }
@@ -596,8 +580,8 @@ function downloadChart(fmt='png'){
   Plotly.downloadImage('chart', {format:fmt, filename:`khwaja_ai_chart_${Date.now()}`});
 }
 
-/* ---------- AI-Style Insights ---------- */
-function updateInsights(ds1, ds2, yKey1, yKey2, xKey1, xKey2){
+/* Insights Engine */
+function updateInsights(ds1, ds2, yKey1, yKey2){
   const box = document.getElementById('insights');
   const y1 = ds1.map(r=> toNum(r[yKey1])).filter(n=> !isNaN(n));
   const y2 = ds2.map(r=> toNum(r[yKey2])).filter(n=> !isNaN(n));
@@ -605,25 +589,22 @@ function updateInsights(ds1, ds2, yKey1, yKey2, xKey1, xKey2){
 
   const paired = pairArrays(y1, y2);
   const corr = pearson(paired.a, paired.b);
-  const trend1 = slope(ds1.map(r=> toNum(r[yKey1])));
-  const trend2 = slope(ds2.map(r=> toNum(r[yKey2])));
+  const trend1 = slope(y1);
+  const trend2 = slope(y2);
 
   const msg = [
     `<b>Alien Insight</b> —`,
-    `Correlation (Y₁:${yKey1} vs Y₂:${yKey2}): <b>${isFinite(corr)?corr.toFixed(2):'n/a'}</b>`,
-    `Trend Y₁: <b>${trend1>0?'↗︎ up':'↘︎ down'}</b> (slope ${prettyNum(trend1)})`,
-    `Trend Y₂: <b>${trend2>0?'↗︎ up':'↘︎ down'}</b> (slope ${prettyNum(trend2)})`,
-    anomalyNote(y1,y2)
+    `Correlation: <b>${isFinite(corr)?corr.toFixed(2):'n/a'}</b>`,
+    `Trend 1: <b>${trend1>0?'↗︎ up':'↘︎ down'}</b>`,
+    `Trend 2: <b>${trend2>0?'↗︎ up':'↘︎ down'}</b>`,
   ].join(' · ');
 
   box.innerHTML = msg;
   box.style.display='block';
 }
 
-function pairArrays(a,b){
-  const n = Math.min(a.length,b.length);
-  return {a:a.slice(0,n), b:b.slice(0,n)};
-}
+// Math Helpers
+function pairArrays(a,b){ const n = Math.min(a.length,b.length); return {a:a.slice(0,n), b:b.slice(0,n)}; }
 function mean(arr){ return arr.reduce((s,v)=>s+v,0)/arr.length }
 function pearson(a,b){
   const n=Math.min(a.length,b.length); if(n<3) return NaN;
@@ -640,18 +621,8 @@ function slope(arr){
   for(let i=0;i<n;i++){ num += (x[i]-mx)*(arr[i]-my); den += (x[i]-mx)*(x[i]-mx); }
   return num/(den||1);
 }
-function std(arr){
-  const m=mean(arr); const v=mean(arr.map(v=>(v-m)*(v-m)));
-  return Math.sqrt(v);
-}
-function anomalyNote(a,b){
-  const s1 = std(a), s2 = std(b);
-  const note = (s1>0 && s2>0 && (s1>2*s2 || s2>2*s1)) ? 'Volatility mismatch detected' : 'No major volatility mismatch';
-  return `<i>${note}</i>`;
-}
-function prettyNum(n){ return (Math.abs(n)<1? n.toFixed(3) : n.toFixed(2)) }
 
-/* ---------- Three.js Holographic Sphere ---------- */
+/* Three.js Holographic Sphere */
 let sphereScene, sphereCamera, sphereRenderer, sphereMesh, sphereReq;
 function startSphere(){
   const wrap = document.getElementById('sphereWrap');
@@ -666,27 +637,17 @@ function startSphere(){
   sphereRenderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 
   const geo = new THREE.SphereGeometry(2.2, 48, 48);
-  const mat = new THREE.MeshPhongMaterial({
-    color: 0x00ffcc,
-    emissive: 0x00221a,
-    shininess: 80,
-    transparent:true,
-    opacity:0.4,
-    wireframe:true
-  });
+  const mat = new THREE.MeshPhongMaterial({ color: 0x00ffcc, emissive: 0x00221a, shininess: 80, transparent:true, opacity:0.4, wireframe:true });
   sphereMesh = new THREE.Mesh(geo, mat);
   sphereScene.add(sphereMesh);
 
   const glow = new THREE.PointLight(0x00ffcc, 1.2, 50);
   glow.position.set(4,4,6);
   sphereScene.add(glow);
-
-  const rim = new THREE.AmbientLight(0x00ffc6, 0.25);
-  sphereScene.add(rim);
+  sphereScene.add(new THREE.AmbientLight(0x00ffc6, 0.25));
 
   const animate = ()=>{
-    sphereMesh.rotation.y += 0.0025;
-    sphereMesh.rotation.x += 0.0008;
+    sphereMesh.rotation.y += 0.0025; sphereMesh.rotation.x += 0.0008;
     sphereRenderer.render(sphereScene, sphereCamera);
     sphereReq = requestAnimationFrame(animate);
   };
@@ -701,16 +662,7 @@ function onResizeSphere(){
   sphereRenderer.setSize(w,h,false);
 }
 addEventListener('resize', onResizeSphere);
-
-/* ---------- Utility ---------- */
-function fillSelect(selectEl, items){
-  selectEl.innerHTML = '';
-  items.forEach(k=>{ const o=document.createElement('option'); o.value=o.textContent=k; selectEl.appendChild(o); });
-  selectEl.disabled = items.length === 0;
-}
 </script>
 
 </body>
 </html>
-
-
