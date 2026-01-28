@@ -3,204 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Khwaja Ghafoori | Business & Financial Analyst</title>
+    <title>Khwaja Ghafoori - Portfolio</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-    <canvas id="particles"></canvas>
-
-    <nav class="navbar">
-        <div class="logo">KG.</div>
+    <nav class="glass-nav">
+        <div class="logo">Portfolio.</div>
         <ul class="nav-links">
-            <li><a href="#home">Home</a></li>
             <li><a href="#about">About</a></li>
             <li><a href="#experience">Experience</a></li>
             <li><a href="#skills">Skills</a></li>
+            <li><a href="#education">Education</a></li>
             <li><a href="#contact">Contact</a></li>
         </ul>
-        <div class="hamburger">
-            <i class="fas fa-bars"></i>
-        </div>
+        <a href="#contact" class="btn-primary">Hire Me</a>
     </nav>
 
-    <section id="home" class="hero">
-        <div class="container hero-content">
-            <div class="hero-text hidden">
-                <h3>Hello, I'm</h3>
-                <h1>Khwaja Ghafoori</h1>
-                <h2>Business & Financial Analyst</h2>
-                [cite_start]<p>Turning Data Into Smarter Strategies & Sustainable Growth [cite: 17]</p>
-                <div class="cta-buttons">
-                    <a href="#contact" class="btn primary">Get in Touch</a>
-                    <a href="#experience" class="btn secondary">View Work</a>
+    <section id="about" class="hero-section">
+        <div class="hero-content fade-in">
+            <h1 class="name-title">Khwaja <br> <span class="highlight">"Ghafoori"</span></h1>
+            
+            <p class="tagline">
+                Financial Reporting, Automation & BI | Advanced Excel, Python, R, MATLAB, Power BI, Tableau | Turning Data Into Smarter Strategies
+            </p>
+            
+            <p class="summary">
+                Graduate Financial Analyst with a master's degree in Business Analytics & Finance and over five years of experience supporting reporting, financial operations, and data-driven decision-making in regulated environments.
+            </p>
+
+            <div class="hero-buttons">
+                <a href="#contact" class="btn-white"><i class="far fa-envelope"></i> Contact Me</a>
+                <a href="Khwaja_CV.pdf" target="_blank" class="btn-outline"><i class="fas fa-download"></i> Download CV</a>
+            </div>
+        </div>
+
+        <div class="hero-image fade-in delay-1">
+            <div class="image-wrapper">
+                <img src="profile.jpg" alt="Khwaja Ghafoori" onerror="this.src='https://via.placeholder.com/500x600?text=Khwaja+Photo'">
+            </div>
+        </div>
+    </section>
+
+    <section class="stats-section">
+        <div class="stat-card fade-in">
+            <h2>5+</h2>
+            <h3>Years</h3>
+            <p>Experience</p>
+        </div>
+        <div class="stat-card fade-in delay-1">
+            <h2>50+</h2>
+            <h3>Projects</h3>
+            <p>Completed</p>
+        </div>
+        <div class="stat-card fade-in delay-2">
+            <h2>30+</h2>
+            <h3>Clients</h3>
+            <p>Global</p>
+        </div>
+        <div class="stat-card fade-in delay-3">
+            <h2>12</h2>
+            <h3>Awards</h3>
+            <p>Received</p>
+        </div>
+    </section>
+
+    <section id="experience" class="section-pad">
+        <h2 class="section-heading">Experience<span class="dot">.</span></h2>
+        <p class="section-sub">My professional journey</p>
+        <div class="divider"></div>
+
+        <div class="timeline">
+            <div class="timeline-item fade-up">
+                <div class="timeline-dot"></div>
+                <div class="timeline-card">
+                    <span class="timeline-role">Business Analytics Intern</span>
+                    <h3 class="company">The iOutlet</h3>
+                    <p class="location"><i class="fas fa-map-marker-alt"></i> Plymouth, England, UK</p>
+                    <ul class="job-details">
+                        <li>Analysed revenue datasets to identify financial trends and support strategic decisions, improving sales efficiency by 20%.</li>
+                        <li>Built automated Python/Streamlit dashboards to speed up financial reporting and reduce manual reporting time by 40%.</li>
+                        <li>Conducted competitor and cost analyses to identify margin-improvement opportunities, revealing potential 15% cost reductions.</li>
+                    </ul>
                 </div>
             </div>
-            <div class="hero-image hidden delay-1">
-                <div class="img-placeholder">
-                    <img src="images/profile.jpg" alt="Khwaja Ghafoori" onerror="this.src='https://via.placeholder.com/400x400?text=Your+Photo'">
+
+            <div class="timeline-item fade-up delay-1">
+                <div class="timeline-dot"></div>
+                <div class="timeline-card">
+                    <span class="date-badge">Dec 2019 – Nov 2024</span>
+                    <span class="timeline-role">Administrative & Systems Officer</span>
+                    <h3 class="company">Embassy of Republic of Afghanistan</h3>
+                    <p class="location"><i class="fas fa-map-marker-alt"></i> India</p>
+                    <ul class="job-details">
+                        <li>Improved reporting efficiency by ~40% by implementing a departmental database and producing weekly management dashboards.</li>
+                        <li>Maintained accurate, audit-ready records while documenting workflows.</li>
+                        <li>Coordinated compliance and cross-department operations.</li>
+                    </ul>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="about" class="glass-section">
-        <div class="container">
-            <h2 class="section-title">About Me 👨‍💻</h2>
-            <div class="about-grid">
-                <div class="about-img hidden">
-                    <img src="images/about.jpg" alt="Working" onerror="this.src='https://via.placeholder.com/600x400?text=Workspace+Photo'">
-                </div>
-                <div class="about-text hidden delay-1">
-                    <p>
-                        [cite_start]I am a Graduate Financial Analyst with a master's degree in Business Analytics & Finance and over five years of experience supporting reporting, financial operations, and data-driven decision-making in regulated environments[cite: 19].
-                    </p>
-                    <p>
-                        [cite_start]My background combines financial reporting, KPI analysis, data modelling, and dashboard development using Excel, Power BI, SQL, Python, and Alteryx[cite: 20]. [cite_start]Previously, I worked in government and NGO environments, managing operations and improving processes[cite: 22].
-                    </p>
-                    <div class="stats-row">
-                        <div class="stat-item">
-                            <h3>5+</h3>
-                            <p>Years Experience</p>
-                        </div>
-                        <div class="stat-item">
-                            <h3>MSc & MBA</h3>
-                            <p>Double Masters</p>
-                        </div>
-                        <div class="stat-item">
-                            <h3>40%</h3>
-                            [cite_start]<p>Efficiency Gain [cite: 35]</p>
-                        </div>
-                    </div>
+    <section id="skills" class="section-pad">
+        <h2 class="section-heading">Technologies<span class="dot">.</span></h2>
+        <p class="section-sub">Technologies & tools I work with</p>
+        <div class="divider"></div>
+
+        <div class="skills-container">
+            <div class="skill-category fade-up">
+                <h3>Technical</h3>
+                <div class="skill-tags">
+                    <span>Advanced Excel</span>
+                    <span>Python</span>
+                    <span>R</span>
+                    <span>MATLAB</span>
+                    <span>Power BI</span>
+                    <span>Tableau</span>
+                    <span>SPSS</span>
+                    <span>AI & ML</span>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <section id="experience">
-        <div class="container">
-            <h2 class="section-title">Experience 🚀</h2>
-            <div class="timeline">
-                
-                <div class="timeline-item hidden">
-                    <div class="timeline-content glass-card">
-                        <span class="date">May 2025 - July 2025</span>
-                        <h3>Business Analytics Intern</h3>
-                        <h4>The iOutlet | [cite_start]Plymouth, UK [cite: 25, 27]</h4>
-                        <ul>
-                            [cite_start]<li>Analysed revenue datasets to identify financial trends, improving sales efficiency by 20%[cite: 28].</li>
-                            [cite_start]<li>Built automated Python/Streamlit dashboards, reducing manual reporting time by 40%[cite: 29].</li>
-                            [cite_start]<li>Conducted competitor analysis revealing potential 15% cost reductions[cite: 30].</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="timeline-item hidden">
-                    <div class="timeline-content glass-card">
-                        <span class="date">Dec 2019 - Nov 2024</span>
-                        <h3>Administrative & Systems Officer</h3>
-                        <h4>Embassy of Republic of Afghanistan | [cite_start]India [cite: 32, 34]</h4>
-                        <ul>
-                            [cite_start]<li>Improved reporting efficiency by ~40% by implementing a departmental database[cite: 35].</li>
-                            [cite_start]<li>Streamlined executive scheduling for senior leaders, saving 8+ hours weekly[cite: 38].</li>
-                            [cite_start]<li>Maintained audit-ready records and documented workflows[cite: 37].</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="timeline-item hidden">
-                    <div class="timeline-content glass-card">
-                        <span class="date">Sep 2014 - Oct 2016</span>
-                        <h3>Project Office Coordinator</h3>
-                        <h4>AREA | [cite_start]Balkh, Afghanistan [cite: 39, 42]</h4>
-                        <ul>
-                            [cite_start]<li>Coordinated delivery of an £80k donor-funded project ensuring compliance[cite: 43].</li>
-                            [cite_start]<li>Streamlined reporting workflows, reducing submission delays by ~50%[cite: 44].</li>
-                            [cite_start]<li>Liaised between field teams and management for smooth coordination[cite: 45].</li>
-                        </ul>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <section id="skills" class="glass-section">
-        <div class="container">
-            <h2 class="section-title">Technical Skills 🛠️</h2>
-            <div class="skills-grid">
-                <div class="skill-card hidden">
-                    <i class="fab fa-python"></i>
-                    <h3>Python</h3>
-                </div>
-                <div class="skill-card hidden delay-1">
-                    <i class="fas fa-database"></i>
-                    <h3>SQL & Data</h3>
-                </div>
-                <div class="skill-card hidden delay-2">
-                    <i class="fas fa-chart-bar"></i>
-                    <h3>Power BI & Tableau</h3>
-                </div>
-                <div class="skill-card hidden">
-                    <i class="fas fa-table"></i>
-                    <h3>Advanced Excel</h3>
-                </div>
-                <div class="skill-card hidden delay-1">
-                    <i class="fas fa-brain"></i>
-                    <h3>AI & ML</h3>
-                </div>
-                <div class="skill-card hidden delay-2">
-                    <i class="fab fa-salesforce"></i>
-                    [cite_start]<h3>Salesforce & NetSuite [cite: 5, 6]</h3>
+            <div class="skill-category fade-up delay-1">
+                <h3>Tools</h3>
+                <div class="skill-tags">
+                    <span>Salesforce</span>
+                    <span>NetSuite</span>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <section id="education">
-        <div class="container">
-            <h2 class="section-title">Education 🎓</h2>
-            <div class="education-grid">
-                <div class="edu-card glass-card hidden">
-                    <h3>MSc Business Analytics & Finance</h3>
-                    [cite_start]<p class="school">University of Dundee [cite: 47]</p>
-                    [cite_start]<p class="year">Jan 2025 - Jan 2026 [cite: 48]</p>
-                </div>
-                <div class="edu-card glass-card hidden delay-1">
-                    <h3>MBA (Marketing & Operations)</h3>
-                    [cite_start]<p class="school">Jamia Millia Islamia [cite: 49]</p>
-                    [cite_start]<p class="year">2012 - 2014 [cite: 51]</p>
-                </div>
-                <div class="edu-card glass-card hidden delay-2">
-                    <h3>BBS Honours</h3>
-                    [cite_start]<p class="school">Jamia Millia Islamia [cite: 52]</p>
-                    [cite_start]<p class="year">2008 - 2012 [cite: 54]</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="contact" class="glass-section">
-        <div class="container">
-            <h2 class="section-title">Let's Connect 📬</h2>
-            <div class="contact-wrapper">
-                <div class="contact-info hidden">
-                    [cite_start]<p>I am actively seeking Financial Analyst and Business Analyst roles[cite: 23].</p>
-                    <a href="mailto:khwaja.abdulghani@gmail.com" class="contact-link">
-                        [cite_start]<i class="fas fa-envelope"></i> khwaja.abdulghani@gmail.com [cite: 2]
-                    </a>
-                    <a href="https://www.linkedin.com/in/khwaja786" target="_blank" class="contact-link">
-                        [cite_start]<i class="fab fa-linkedin"></i> LinkedIn Profile [cite: 3]
-                    </a>
+            <div class="skill-category fade-up delay-2">
+                <h3>Process</h3>
+                <div class="skill-tags">
+                    <span>User Acceptance Testing</span>
                 </div>
             </div>
         </div>
     </section>
 
     <footer>
-        <p>&copy; 2026 Khwaja Ghafoori. Built with pure Code.</p>
+        <p>&copy; 2026 Khwaja Ghafoori. Built with Code.</p>
     </footer>
 
     <script src="script.js"></script>
