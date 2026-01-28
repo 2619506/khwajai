@@ -35,7 +35,6 @@
   /* 1. EARTH (Main) */
   .earth-surface {
     border-radius: 50%;
-    /* Rich Earth Gradient: Green Land, Blue Ocean, Deep Shadow */
     background: radial-gradient(
       circle at 35% 35%, 
       #4ade80 0%,      /* Highlight */
@@ -47,7 +46,7 @@
     box-shadow: 
       inset 10px 10px 50px rgba(255,255,255,0.2), 
       inset -20px -20px 60px rgba(0,0,0,0.9),
-      0 0 50px rgba(14, 165, 233, 0.3); /* Atmosphere Glow */
+      0 0 60px rgba(14, 165, 233, 0.25); /* Atmosphere Glow */
     border: 1px solid rgba(255,255,255,0.1);
     position: relative;
   }
@@ -55,10 +54,9 @@
   /* 2. MOON (Satellites) */
   .moon-surface {
     border-radius: 50%;
-    /* Natural Moon Grey */
     background: radial-gradient(
       circle at 30% 30%, 
-      #f8fafc 0%,      /* White Highlight */
+      #f8fafc 0%,      /* Highlight */
       #cbd5e1 20%,     /* Light Grey */
       #64748b 50%,     /* Rock Grey */
       #1e293b 85%,     /* Shadow */
@@ -78,28 +76,37 @@
     z-index: 50;
   }
 
-  /* 3. NEON ORANGE (Portfolio) */
-  .orange-planet {
+  /* 3. SUN (Portfolio) - UPDATED FOR SHINE */
+  .sun-surface {
     border-radius: 50%;
-    /* Glowing Neon Orange Gradient */
+    /* Blazing Sun Gradient */
     background: radial-gradient(
       circle at 30% 30%, 
-      #fff7ed 0%,      /* Bright Core */
-      #fdba74 20%,     /* Orange Highlight */
-      #f97316 50%,     /* Neon Orange */
-      #c2410c 80%,     /* Burnt Orange */
-      #431407 100%     /* Dark Side */
+      #fff7ed 0%,      /* Core White */
+      #fcd34d 20%,     /* Bright Yellow */
+      #f59e0b 50%,     /* Orange */
+      #ea580c 85%,     /* Red-Orange */
+      #7c2d12 100%     /* Dark Edge */
     );
+    /* Solar Glow */
     box-shadow: 
-      inset 5px 5px 20px rgba(255,255,255,0.5), 
-      0 0 40px rgba(249, 115, 22, 0.6); /* Intense Glow */
+      inset 0 0 20px rgba(255,255,255,0.8),
+      0 0 60px rgba(251, 191, 36, 0.6),
+      0 0 100px rgba(245, 158, 11, 0.3);
+      
     cursor: pointer;
     transition: transform 0.3s;
-    animation: floatPortfolio 6s ease-in-out infinite;
+    animation: pulseSun 4s ease-in-out infinite;
   }
-  .orange-planet:hover { transform: scale(1.15); box-shadow: 0 0 60px rgba(249, 115, 22, 0.8); }
+  .sun-surface:hover { 
+    transform: scale(1.15); 
+    box-shadow: 0 0 80px rgba(251, 191, 36, 0.9); 
+  }
 
-  @keyframes floatPortfolio { 0%,100%{transform:translateY(0)} 50%{transform:translateY(10px)} }
+  @keyframes pulseSun { 
+    0%,100%{ box-shadow: 0 0 60px rgba(251, 191, 36, 0.6); } 
+    50%{ box-shadow: 0 0 90px rgba(251, 191, 36, 0.8); } 
+  }
 
 
   /* --- MAIN LAYOUT --- */
@@ -111,7 +118,7 @@
     z-index: 10;
   }
 
-  /* SATELLITE MOON POSITIONING (Tucked Close) */
+  /* SATELLITE MOON POSITIONING (Spaced Out) */
   .satellite {
     position: absolute;
     width: 90px; height: 90px;
@@ -121,40 +128,48 @@
     text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,1);
   }
 
-  /* 1. Tools: Left Side (Overlapping slightly) */
+  /* INCREASED DISTANCE HERE (Moved from -60px to -110px) */
+  
+  /* 1. Tools: Left Side */
   .pos-tools {
     top: 50%;
-    left: -60px; /* Pull closer */
+    left: -110px; /* More space */
     transform: translateY(-50%);
   }
 
   /* 2. AI & ML: Right Side */
   .pos-ai {
     top: 50%;
-    right: -60px; /* Pull closer */
+    right: -110px; /* More space */
     transform: translateY(-50%);
   }
 
   /* 3. Projects: Bottom Center */
   .pos-projects {
-    bottom: -60px; /* Pull closer */
+    bottom: -110px; /* More space */
     left: 50%;
     transform: translateX(-50%);
   }
 
-  /* --- PORTFOLIO (Top Right Corner) --- */
+  /* --- PORTFOLIO (Top Right Sun) --- */
   .portfolio-orbit {
     position: fixed; top: 8%; right: 8%;
-    width: 110px; height: 110px;
+    width: 120px; height: 120px;
     z-index: 100;
     display: flex; justify-content: center; align-items: center;
-    color: #fff; font-family: 'Orbitron', sans-serif; font-size: 0.75rem; font-weight: 900; text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    
+    /* Dark Text for Visibility on Sun */
+    color: #451a03; 
+    font-family: 'Orbitron', sans-serif; 
+    font-size: 0.85rem; 
+    font-weight: 900; 
+    text-shadow: 0 1px 2px rgba(255,255,255,0.5); /* Light shadow for crispness */
   }
 
   /* --- CENTER TEXT ALIGNMENT --- */
   .center-content {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-    width: 80%; /* Restrict width for round shape */
+    width: 80%;
     height: 80%;
     display: flex; flex-direction: column; justify-content: center; align-items: center;
     pointer-events: none; text-align: center; z-index: 30;
@@ -172,17 +187,13 @@
   #ccText {
     color: #f1f5f9; font-size: clamp(0.85rem, 1.4vh, 1.0rem);
     line-height: 1.6; font-weight: 400;
-    
-    /* FIX: Balance text to look round */
     text-wrap: balance; 
-    width: 100%;
-    max-width: 420px; 
-    
+    width: 100%; max-width: 420px; 
     text-shadow: 0 2px 5px rgba(0,0,0,0.9);
   }
   
   #ccText b {
-    color: #86efac; /* Pale Green to match Earth */
+    color: #86efac; /* Pale Green */
     font-weight: 700; display: block; margin-bottom: 8px;
     font-size: 1.1em; letter-spacing: 1px; text-transform: uppercase;
     border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 8px;
@@ -227,15 +238,15 @@
     .chart-wrap { height: 50vh; } 
     #sphereWrap { display: none; }
     
-    .wheel { width: 80vw; height: 80vw; }
-    .satellite { width: 70px; height: 70px; font-size: 0.55rem; }
+    .wheel { width: 75vw; height: 75vw; }
+    .satellite { width: 65px; height: 65px; font-size: 0.5rem; }
     
-    /* Pull moons closer on mobile */
-    .pos-tools { left: -25px; }
-    .pos-ai { right: -25px; }
-    .pos-projects { bottom: -35px; }
+    /* Mobile: Keep them closer otherwise they go off screen */
+    .pos-tools { left: -30px; }
+    .pos-ai { right: -30px; }
+    .pos-projects { bottom: -30px; }
     
-    .portfolio-orbit { top: 20px; right: 20px; width: 70px; height: 70px; font-size: 0.6rem; }
+    .portfolio-orbit { top: 20px; right: 20px; width: 80px; height: 80px; font-size: 0.65rem; }
     #ccTitle { font-size: 1.8rem; }
     #ccText { font-size: 0.75rem; line-height: 1.3; }
   }
@@ -268,7 +279,7 @@
   </div>
 </div>
 
-<div class="portfolio-orbit orange-planet" onclick="window.open('/portfolio/', '_blank')">
+<div class="portfolio-orbit sun-surface" onclick="window.open('/portfolio/', '_blank')">
   Portfolio
 </div>
 
@@ -370,6 +381,7 @@ document.addEventListener('mousemove', e=>{
 /* Home & UI Logic */
 function showProjects(){
   const cc = document.getElementById('centerContent');
+  // --- FUTURE UPDATE: Add links to your tools here ---
   cc.innerHTML = `
     <h1 id="ccTitle" style="font-size:2.5rem">KEY PROJECTS</h1>
     <div id="ccText" style="text-align:left; font-size:0.9rem;">
@@ -385,6 +397,7 @@ function showProjects(){
 
 function showAIML(){
   const cc = document.getElementById('centerContent');
+  // --- FUTURE UPDATE: Add more ML models here ---
   cc.innerHTML = `
     <h1 id="ccTitle" style="font-size:2.5rem">AI & MACHINE LEARNING</h1>
     <div id="ccText">
