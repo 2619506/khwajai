@@ -14,94 +14,117 @@
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700&family=Outfit:wght@300;400;600&display=swap');
 
   :root{
-    /* --- THEME: STARLIGHT & ROCK --- */
-    --neon: #e2e8f0;               /* Starlight White/Silver */
-    --neon-soft: rgba(226, 232, 240, 0.5); /* Soft White Glow */
-    --rock-dark: #0f172a;          /* Deep Slate Shadow */
-    --rock-light: #64748b;         /* Lighter Stone Highlight */
-    --glass: rgba(15, 23, 42, 0.6); 
-    --ink: #cbd5e1;                /* Soft Grey Text */
+    /* --- THEME: DEEP SPACE & STARK LIGHT --- */
+    --neon: #f8fafc;               /* Bright Starlight Text */
+    --neon-soft: rgba(226, 232, 240, 0.6); 
+    --rock-surface: #94a3b8;       /* Lit surface color */
+    --rock-shadow: #0f172a;        /* Dark side color */
+    --deep-space: #000000;         /* Pure shadow */
+    --atmosphere: rgba(147, 197, 253, 0.15); /* Faint blue atmosphere */
   }
 
   * { box-sizing:border-box; }
   html, body { height:100%; }
   body {
-    margin: 0; overflow: hidden; background: #020617; /* Deepest Cosmic Blue */
+    margin: 0; overflow: hidden; background: #020617; 
     color: var(--neon);
-    font-family: 'Outfit', sans-serif; /* Cleaner font for reading */
+    font-family: 'Outfit', sans-serif;
     letter-spacing: 0.5px;
   }
 
   /* Starfield */
   canvas#stars { position:fixed; inset:0; z-index:-3; }
 
+  /* --- COMMON PLANET SURFACE (Lighting Engine) --- */
+  .planet-surface {
+    border-radius: 50%;
+    /* REALISTIC LIGHTING: Light source top-left (30% 30%) */
+    background: radial-gradient(
+      circle at 25% 25%, 
+      #e2e8f0 0%,      /* Specular Highlight (Sun reflection) */
+      #64748b 20%,     /* Lit Rock */
+      #334155 45%,     /* Terminator Line (Day/Night border) */
+      #0f172a 70%,     /* Deep Shadow */
+      #000000 100%     /* Total Darkness */
+    );
+    /* Shadow glow only on the lit side (Top Left inset), Deep shadow on bottom right */
+    box-shadow: 
+      inset 4px 4px 20px rgba(255,255,255,0.2), /* Atmosphere reflection */
+      inset -10px -10px 40px rgba(0,0,0,0.9),   /* Deep core shadow */
+      0 0 30px rgba(0,0,0,0.5);                 /* Outer space drop shadow */
+    border: 1px solid rgba(255, 255, 255, 0.05); /* Very subtle rim */
+  }
+
   /* --- MAIN ASTEROID / GLOBE --- */
   .wheel {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%) rotate(0deg);
-    width: min(80vw, 550px); height: min(80vw, 550px); border-radius: 50%;
-    
-    /* 3D Rocky Gradient */
-    background: radial-gradient(circle at 30% 30%, var(--rock-light) 0%, var(--rock-dark) 50%, #000000 100%);
-    
-    /* Atmosphere/Rim Light */
-    box-shadow: 
-      inset 0 0 100px rgba(0,0,0,0.9), 
-      0 0 50px rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: min(75vw, 550px); height: min(75vw, 550px);
     z-index: 1;
+    transition: width 0.5s, height 0.5s;
   }
 
   /* --- ORBITING MINI-PLANETS (Tabs) --- */
   .tab {
     position: absolute;
-    width: 90px;  /* Fixed Equal Size */
-    height: 90px; /* Fixed Equal Size */
-    border-radius: 50%; /* Perfect Circle */
-    
-    /* Mini Planet Gradient (Matches Main Globe) */
-    background: radial-gradient(circle at 30% 30%, #94a3b8 0%, #1e293b 60%, #000 100%);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    width: 85px; height: 85px;
     
     /* Text Styling */
     color: #fff;
     font-family: 'Orbitron', sans-serif;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     letter-spacing: 1px;
     font-weight: 700;
     text-transform: uppercase;
+    text-shadow: 0 2px 4px rgba(0,0,0,1); /* Shadow for readability on rock */
     
     /* Centering Text */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    
+    display: flex; justify-content: center; align-items: center; text-align: center;
     cursor: pointer;
-    box-shadow: 0 0 15px rgba(0,0,0,0.8), inset 0 0 10px rgba(255,255,255,0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s;
     user-select: none;
     z-index: 2;
   }
 
   .tab:hover {
-    transform: scale(1.15) translateX(-50%); /* Pop effect */
-    border-color: #fff;
-    box-shadow: 0 0 25px rgba(255, 255, 255, 0.2), inset 0 0 15px rgba(255,255,255,0.2);
+    transform: scale(1.2) translateX(-50%); /* Pop effect */
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.15);
+    z-index: 10;
   }
 
-  /* Tab Positions (Adjusted for circles) */
-  .tab1 { top: -12%; left: 50%; transform: translateX(-50%); }
-  .tab2 { top: 50%; right: -12%; transform: translateY(-50%); }
-  .tab3 { bottom: -12%; left: 50%; transform: translateX(-50%); }
-  .tab4 { top: 50%; left: -12%; transform: translateY(-50%); }
-  /* Portfolio (Tab 5) positioned between bottom and left */
-  .tab5 { bottom: 8%; left: 8%; transform: translate(0, 0); } 
+  /* Tab Positions (Around Main Globe) */
+  .tab1 { top: -10%; left: 50%; transform: translateX(-50%); }
+  .tab2 { top: 50%; right: -10%; transform: translateY(-50%); }
+  .tab3 { bottom: -10%; left: 50%; transform: translateX(-50%); }
+  .tab4 { top: 50%; left: -10%; transform: translateY(-50%); }
 
-  /* --- CENTER CONTENT (The "Abstract") --- */
+  /* --- SEPARATE ORBIT: PORTFOLIO PLANET --- */
+  .portfolio-orbit {
+    position: fixed;
+    bottom: 5%;       /* Spacing from bottom */
+    left: 5%;         /* Spacing from left */
+    width: 110px;     /* Slightly larger than other tabs */
+    height: 110px;
+    z-index: 100;     /* Always on top */
+    
+    /* Floating Animation */
+    animation: floatPlanet 6s ease-in-out infinite;
+  }
+  
+  /* Make portfolio pop more on hover */
+  .portfolio-orbit:hover {
+    transform: scale(1.15) !important;
+    cursor: pointer;
+  }
+
+  @keyframes floatPlanet {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  /* --- CENTER CONTENT --- */
   .center-content {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-    width: 75%; /* Narrower width helps round the text shape */
-    height: 75%;
+    width: 70%; height: 70%;
     display: flex; flex-direction: column; justify-content: center; align-items: center;
     pointer-events: none;
     text-align: center;
@@ -109,63 +132,52 @@
 
   /* Catchy Title */
   #ccTitle {
-    margin: 0 0 15px 0;
+    margin: 0 0 10px 0;
     font-family: 'Orbitron', sans-serif;
-    font-size: clamp(2rem, 4vw, 3rem); /* Much Bigger */
-    font-weight: 700;
-    letter-spacing: 2px;
+    font-size: clamp(2.2rem, 5vw, 3.5rem); 
+    font-weight: 800;
+    letter-spacing: 3px;
     
-    /* Metallic Text Gradient */
-    background: linear-gradient(180deg, #ffffff 0%, #94a3b8 100%);
+    /* Metallic/Ice Gradient */
+    background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #64748b 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 15px rgba(255,255,255,0.3));
+    filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
   }
 
-  /* The "Round" Text Paragraph */
+  /* The Abstract Text */
   #ccText {
     color: #e2e8f0;
-    font-size: clamp(0.85rem, 1.2vh, 1rem);
-    line-height: 1.6;
+    font-size: clamp(0.85rem, 1.4vh, 1.05rem);
+    line-height: 1.7;
     font-weight: 300;
-    
-    /* Shaping text */
-    text-wrap: balance; /* Modern CSS to balance lines */
-    max-width: 400px;
-    margin: 0 auto;
-    
-    /* Slight shadow for readability against rock background */
-    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    text-wrap: balance;
+    max-width: 450px;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.9); /* Heavy shadow for contrast */
   }
   
   #ccText b {
     color: #fff;
-    font-weight: 600;
-    display: block; /* Force new line for the bold subtitle */
-    margin-bottom: 8px;
-    font-size: 1.1em;
-    letter-spacing: 1px;
+    font-weight: 700;
+    display: block; margin-bottom: 12px;
+    font-size: 1.1em; letter-spacing: 1px;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    padding-bottom: 10px;
+    display: inline-block;
   }
 
   /* Assistant Dock */
   .assistant-wrap {
-    position: fixed; left: 14px; bottom: 15px; width: 58px; height: 58px;
+    position: fixed; right: 20px; bottom: 20px; width: 58px; height: 58px; /* Moved to Right to balance Portfolio on Left */
     z-index: 9998; pointer-events: none;
   }
-  .assistant-wrap::before {
-    content: ""; position: absolute; inset: 0; border-radius: 50%;
-    background: radial-gradient(circle at center, rgba(255,255,255,0.9) 0%, rgba(139, 169, 219, 0.4) 40%, transparent 100%);
-    box-shadow: 0 0 18px rgba(255,255,255,0.4);
-    filter: blur(2px);
-    animation: assistantGlow 4s ease-in-out infinite alternate;
-    z-index: -1; pointer-events: none;
-  }
-  @keyframes assistantGlow { from { opacity: 0.65; transform: scale(0.95); } to { opacity: 1; transform: scale(1.05); } }
+  /* ... (Existing Assistant CSS) ... */
 
-  /* OVERLAY STYLES (Unchanged logic, just theme updates) */
-  .overlay { position: fixed; inset: 0; display: none; place-items: center; z-index: 5; background: radial-gradient(ellipse at center, rgba(15, 23, 42, 0.4) 0%, rgba(2, 6, 23, 0.9) 80%); animation: fadeIn 300ms ease-out; }
+  /* OVERLAY STYLES */
+  .overlay { position: fixed; inset: 0; display: none; place-items: center; z-index: 500; background: radial-gradient(ellipse at center, rgba(15, 23, 42, 0.8) 0%, rgba(2, 6, 23, 0.98) 80%); animation: fadeIn 300ms ease-out; }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-  .panel { width: min(1200px, 92vw); height: min(78vh, 820px); border: 1px solid var(--neon-soft); background: linear-gradient(180deg, rgba(15, 23, 42, 0.9), rgba(2, 6, 23, 0.95)); border-radius: 24px; box-shadow: 0 0 60px rgba(0,0,0,0.5); backdrop-filter: blur(12px); position: relative; overflow: hidden; }
+  .panel { width: min(1200px, 92vw); height: min(78vh, 820px); border: 1px solid rgba(255,255,255,0.1); background: linear-gradient(180deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98)); border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.8); backdrop-filter: blur(15px); position: relative; overflow: hidden; }
   .panel-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); }
   .close-btn { width: 36px; height: 36px; border-radius: 50%; border: 1px solid #fff; background: transparent; color: #fff; cursor: pointer; display: grid; place-items: center; }
   .panel-body { display: grid; grid-template-columns: 320px 1fr; gap: 16px; height: calc(100% - 62px); padding: 16px; }
@@ -177,20 +189,36 @@
   canvas#sphere { width: 100%; height: 100%; display: block; filter: drop-shadow(0 0 10px var(--neon-soft)); opacity: 0.6; }
   .insights { position: absolute; left: 16px; right: 16px; bottom: 16px; z-index: 2; background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 10px; color: var(--ink); font-size: 0.85rem; }
   
-  @media (max-width: 980px){ .panel-body { grid-template-columns: 1fr; height: auto; } .chart-wrap { height: 50vh; } #sphereWrap { display: none; } }
+  /* RESPONSIVE */
+  @media (max-width: 980px){ 
+    .panel-body { grid-template-columns: 1fr; height: auto; } 
+    .chart-wrap { height: 50vh; } 
+    #sphereWrap { display: none; }
+    
+    /* Adjust Portfolio Planet for Mobile */
+    .portfolio-orbit {
+      width: 80px; height: 80px;
+      bottom: 20px; left: 20px;
+      font-size: 0.6rem;
+    }
+    
+    /* Adjust Main Wheel for Mobile */
+    .wheel { width: 85vw; height: 85vw; }
+    #ccTitle { font-size: 2rem; }
+    #ccText { font-size: 0.8rem; line-height: 1.4; }
+  }
 </style>
 </head>
 <body>
 
 <canvas id="stars"></canvas>
 
-<div class="wheel" id="wheel">
+<div class="wheel planet-surface" id="wheel">
   
-  <div class="tab tab1" onclick="showHome()">Analytics</div>
-  <div class="tab tab2" onclick="showMessage('Finance panel docking...')">Finance</div>
-  <div class="tab tab3" onclick="showMessage('AI & ML bay online...')">AI & ML</div>
-  <div class="tab tab4" onclick="openOverlay()">Tools</div>
-  <div class="tab tab5" onclick="window.open('/portfolio/', '_blank')">Portfolio</div>
+  <div class="tab tab1 planet-surface" onclick="showHome()">Analytics</div>
+  <div class="tab tab2 planet-surface" onclick="showMessage('Finance panel docking...')">Finance</div>
+  <div class="tab tab3 planet-surface" onclick="showMessage('AI & ML bay online...')">AI & ML</div>
+  <div class="tab tab4 planet-surface" onclick="openOverlay()">Tools</div>
 
   <div class="center-content" id="centerContent">
     <h1 id="ccTitle">KHWAJA AI</h1>
@@ -199,6 +227,10 @@
       Merging an MSc in Business Analytics & Finance with over 5 years of operational expertise. From streamlining diplomatic workflows to driving data-led strategies in retail, I bridge the gap between technical insights and executive decision-making. I specialize in optimizing processes, financial modeling, and delivering actionable intelligence using Python, SQL, and Power BI.
     </p>
   </div>
+</div>
+
+<div class="tab portfolio-orbit planet-surface" onclick="window.open('/portfolio/', '_blank')">
+  Portfolio
 </div>
 
 <div class="assistant-wrap">
@@ -263,6 +295,7 @@ window.addEventListener("load", function(){
   setTimeout(()=>{
     const bubble = document.querySelector("#chatbase-bubble, iframe[src*='chatbase']");
     if(bubble){
+      // Adjusted bubble to match the new Right-side position
       bubble.style.position = "absolute"; bubble.style.bottom = "50%"; bubble.style.left = "50%";
       bubble.style.transform = "translate(-50%, 50%) scale(0.9)"; bubble.style.zIndex = "12";
       document.querySelector(".assistant-wrap").appendChild(bubble);
@@ -319,7 +352,7 @@ function loadFile(file, idx){
   if(!file) return; 
   setStatus(`Loading ${file.name}...`);
   if(file.name.endsWith('.csv')){ Papa.parse(file, {header:true, dynamicTyping:true, complete: res => assignData(res.data, idx)}); }
-  else { setStatus("Excel parsing requires server or fuller library setup."); } // Placeholder for brevity
+  else { setStatus("Excel parsing requires server or fuller library setup."); } 
 }
 function assignData(data, idx){ 
   const clean = data.filter(r => Object.values(r).some(v=>v!==null));
