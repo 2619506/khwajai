@@ -14,19 +14,15 @@
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;600&display=swap');
 
   :root{
-    /* --- NATURAL ROCK PALETTE --- */
-    --rock-light: #94a3b8;   /* Sunlit Dust */
-    --rock-mid: #475569;     /* Grey Stone */
-    --rock-dark: #1e293b;    /* Deep Crevasse */
-    --void: #020617;         /* Deep Space */
-    --highlight: #e2e8f0;    /* Specular Reflection */
+    --neon: #f8fafc;
+    --deep-space: #000000;
   }
 
   * { box-sizing:border-box; }
   html, body { height:100%; }
   body {
-    margin: 0; overflow: hidden; background: var(--void); 
-    color: #fff;
+    margin: 0; overflow: hidden; background: #020617; 
+    color: var(--neon);
     font-family: 'Outfit', sans-serif;
     letter-spacing: 0.5px;
   }
@@ -34,136 +30,211 @@
   /* Starfield */
   canvas#stars { position:fixed; inset:0; z-index:-3; }
 
-  /* --- PLANET SURFACE ENGINE (CSS Procedural) --- */
-  .celestial-body {
+  /* --- PLANET TEXTURE ENGINE (CSS Procedural) --- */
+  
+  /* 1. EARTH-LIKE SURFACE (Main Globe) */
+  .earth-surface {
     border-radius: 50%;
-    position: relative;
-    overflow: hidden;
-    /* Natural Lighting: Top-Left Light Source */
+    /* Ocean and Landmass Gradient */
     background: radial-gradient(
       circle at 30% 30%, 
-      var(--highlight) 0%, 
-      var(--rock-light) 20%, 
-      var(--rock-mid) 50%, 
-      var(--rock-dark) 80%, 
-      #000000 100%
+      #4ade80 0%,      /* Bright Land Highlight */
+      #059669 20%,     /* Green Land */
+      #0284c7 40%,     /* Ocean Blue */
+      #0c4a6e 70%,     /* Deep Ocean */
+      #020617 100%     /* Shadow Side */
     );
+    /* Cloud Swirls via Shadow */
     box-shadow: 
-      inset 5px 5px 20px rgba(255,255,255,0.2), 
-      inset -10px -10px 50px rgba(0,0,0,0.9),
-      0 0 40px rgba(0,0,0,0.8);
-    border: 1px solid rgba(255,255,255,0.05);
-    transition: transform 0.1s ease-out; /* Smooth movement for parallax */
+      inset 10px 10px 40px rgba(255,255,255,0.3), /* Atmosphere */
+      inset -20px -20px 60px rgba(0,0,0,0.95),    /* Night Side */
+      0 0 40px rgba(6, 182, 212, 0.4);            /* Space Glow */
+    
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.1);
   }
-
-  /* Craters & Texture */
-  .celestial-body::after {
+  
+  /* Cloud Texture Overlay */
+  .earth-surface::after {
     content: ''; position: absolute; inset: 0; border-radius: 50%;
     background-image: 
-      radial-gradient(circle at 25% 75%, rgba(0,0,0,0.15) 2%, transparent 5%),
-      radial-gradient(circle at 75% 25%, rgba(0,0,0,0.1) 4%, transparent 8%),
-      radial-gradient(circle at 50% 50%, rgba(255,255,255,0.03) 1%, transparent 2%);
-    mix-blend-mode: overlay;
+      radial-gradient(circle at 70% 20%, rgba(255,255,255,0.4) 0%, transparent 20%),
+      radial-gradient(circle at 30% 80%, rgba(255,255,255,0.2) 0%, transparent 15%);
+    filter: blur(8px);
     pointer-events: none;
   }
 
-  /* --- MAIN CENTRAL ASTEROID --- */
+  /* 2. MOON SURFACE (Satellites) */
+  .moon-surface {
+    border-radius: 50%;
+    /* Rocky Grey Gradient */
+    background: radial-gradient(
+      circle at 30% 30%, 
+      #f1f5f9 0%,      /* Highlight */
+      #94a3b8 30%,     /* Grey Rock */
+      #475569 60%,     /* Shadow Edge */
+      #0f172a 100%     /* Dark Side */
+    );
+    box-shadow: 
+      inset 2px 2px 10px rgba(255,255,255,0.5), 
+      inset -5px -5px 20px rgba(0,0,0,0.9),
+      0 0 15px rgba(255,255,255,0.1);
+    
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  /* Craters */
+  .moon-surface::before {
+    content: ''; position: absolute; inset: 0; border-radius: 50%;
+    background-image: 
+      radial-gradient(circle at 20% 50%, rgba(0,0,0,0.15) 4%, transparent 5%),
+      radial-gradient(circle at 80% 30%, rgba(0,0,0,0.1) 6%, transparent 7%);
+    pointer-events: none;
+  }
+
+  /* 3. ICE GIANT (Portfolio) */
+  .ice-surface {
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #e0f2fe 0%, #38bdf8 40%, #0369a1 80%, #000000 100%);
+    box-shadow: inset 5px 5px 20px rgba(255,255,255,0.5), 0 0 30px rgba(56, 189, 248, 0.5);
+    cursor: pointer;
+    transition: transform 0.3s;
+  }
+
+  /* --- LAYOUT & POSITIONING --- */
+
+  /* MAIN GLOBE CONTAINER */
   .wheel {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
     width: min(65vw, 550px); height: min(65vw, 550px);
-    z-index: 1;
-  }
-
-  /* --- SATELLITE MOONS (Tabs) --- */
-  .moon {
-    position: absolute;
-    width: 90px; height: 90px;
     z-index: 10;
-    cursor: pointer;
-    display: flex; justify-content: center; align-items: center;
-    color: #fff; font-family: 'Orbitron', sans-serif; font-size: 0.65rem; font-weight: 700;
-    text-transform: uppercase; text-align: center;
-    text-shadow: 0 2px 4px rgba(0,0,0,1);
-    transition: transform 0.1s ease-out, box-shadow 0.3s; /* Fast transform for mouse reaction */
   }
 
-  .moon:hover {
-    box-shadow: 0 0 30px rgba(255,255,255,0.3);
+  /* ORBITING MOONS (The 3 Tabs) */
+  .moon-tab {
+    position: absolute;
+    width: 100px; height: 100px;
     z-index: 20;
-    border-color: rgba(255,255,255,0.4);
+    
+    display: flex; justify-content: center; align-items: center; text-align: center;
+    color: #fff; font-family: 'Orbitron', sans-serif; font-size: 0.7rem; font-weight: 700;
+    text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,1);
   }
 
-  /* --- MOON POSITIONS (Closer to Globe) --- */
-  /* Top Left */
-  .pos-tl { top: 15%; left: 15%; }
-  
-  /* Bottom Left */
-  .pos-bl { bottom: 15%; left: 15%; }
-  
-  /* Bottom Right */
-  .pos-br { bottom: 15%; right: 15%; }
+  .moon-tab:hover {
+    transform: scale(1.15);
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.4);
+    z-index: 30;
+  }
 
-  /* --- PORTFOLIO PLANET (Isolated Top Right) --- */
-  .portfolio-orbit {
+  /* POSITIONS RELATIVE TO MAIN GLOBE (Inside .wheel) */
+  
+  /* Tools: Close Left */
+  .pos-tools { 
+    top: 50%; 
+    left: -130px; 
+    transform: translateY(-50%); 
+  }
+
+  /* AI & ML: Close Right */
+  .pos-ai { 
+    top: 50%; 
+    right: -130px; 
+    transform: translateY(-50%); 
+  }
+
+  /* Projects: Close Bottom */
+  .pos-projects { 
+    bottom: -130px; 
+    left: 50%; 
+    transform: translateX(-50%); 
+  }
+
+  /* Fix for the transforms overlapping on hover */
+  .pos-tools:hover { transform: translateY(-50%) scale(1.15); }
+  .pos-ai:hover { transform: translateY(-50%) scale(1.15); }
+  .pos-projects:hover { transform: translateX(-50%) scale(1.15); }
+
+
+  /* PORTFOLIO (Distant Planet) */
+  .portfolio-planet {
     position: fixed; top: 5%; right: 5%;
     width: 110px; height: 110px;
     z-index: 100;
-    /* Distinct Blue Ice Look */
-    background: radial-gradient(circle at 30% 30%, #e0f2fe 0%, #38bdf8 30%, #0284c7 60%, #082f49 100%);
-    box-shadow: inset 5px 5px 20px rgba(255,255,255,0.4), 0 0 30px rgba(56, 189, 248, 0.3);
-    animation: floatPlanet 8s ease-in-out infinite;
-    cursor: pointer;
     display: flex; justify-content: center; align-items: center;
-    color: #fff; font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 0.75rem;
-    border-radius: 50%;
+    color: #fff; font-family: 'Orbitron', sans-serif; font-size: 0.75rem; font-weight: 900;
+    animation: floatPlanet 8s ease-in-out infinite;
   }
-  .portfolio-orbit:hover { transform: scale(1.1); box-shadow: 0 0 50px rgba(56, 189, 248, 0.6); }
+  .portfolio-planet:hover { transform: scale(1.15); }
+
   @keyframes floatPlanet { 0%,100%{transform:translateY(0)} 50%{transform:translateY(10px)} }
 
-  /* --- CENTER TYPOGRAPHY (Beautified) --- */
+  /* --- CENTER CONTENT --- */
   .center-content {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
     width: 75%; height: 75%;
     display: flex; flex-direction: column; justify-content: center; align-items: center;
-    pointer-events: none; text-align: center;
+    pointer-events: none; text-align: center; z-index: 30;
   }
 
   #ccTitle {
-    margin: 0 0 8px 0;
+    margin: 0 0 10px 0;
     font-family: 'Orbitron', sans-serif;
-    font-size: clamp(2rem, 4.5vw, 3.2rem); 
-    font-weight: 900; letter-spacing: 3px;
-    text-transform: uppercase;
-    /* Silver-Metallic Gradient */
-    background: linear-gradient(180deg, #ffffff 10%, #94a3b8 100%);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6));
-  }
-
-  #ccSubtitle {
-    font-family: 'Orbitron', sans-serif;
-    font-size: clamp(0.7rem, 1.2vw, 0.9rem);
-    color: #cbd5e1; letter-spacing: 2px;
-    text-transform: uppercase; margin-bottom: 15px;
-    border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 5px;
+    font-size: clamp(2.2rem, 5vw, 3.5rem); 
+    font-weight: 800; letter-spacing: 3px;
+    /* Clean White Title */
+    color: #ffffff;
+    text-shadow: 0 4px 10px rgba(0,0,0,0.8);
   }
 
   #ccText {
-    color: #e2e8f0; font-size: clamp(0.85rem, 1.3vh, 1rem);
-    line-height: 1.6; font-weight: 300; 
-    text-align: justify; /* Newspaper style edges */
-    text-align-last: center; /* Center last line */
-    max-width: 480px;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+    color: #f1f5f9; font-size: clamp(0.85rem, 1.4vh, 1.0rem);
+    line-height: 1.6; font-weight: 400; text-wrap: balance; max-width: 480px;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.9);
+  }
+  
+  #ccText b {
+    color: #4ade80; /* Green tint for subtitle to match Earth */
+    font-weight: 700; display: block; margin-bottom: 8px;
+    font-size: 1.1em; letter-spacing: 1px; text-transform: uppercase;
+    border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 8px;
+    display: inline-block;
+  }
+  
+  #ccText ul { text-align: left; padding-left: 20px; margin-top: 5px; font-size: 0.9em; }
+  #ccText li { margin-bottom: 4px; }
+
+  /* --- CHATBOT & GLOW --- */
+  
+  /* Chatbot Dock - Moved to Bottom Left */
+  .assistant-wrap {
+    position: fixed; left: 30px; bottom: 30px; width: 60px; height: 60px;
+    z-index: 9999; pointer-events: none;
+  }
+  .assistant-wrap::before {
+    content: ""; position: absolute; inset: 0; border-radius: 50%;
+    background: radial-gradient(circle at center, rgba(74, 222, 128, 0.9) 0%, rgba(5, 150, 105, 0.4) 40%, transparent 100%);
+    box-shadow: 0 0 20px rgba(74, 222, 128, 0.5);
+    animation: pulseGlow 4s ease-in-out infinite;
+    z-index: -1; pointer-events: none;
+  }
+  @keyframes pulseGlow { 0%,100%{opacity:0.8; transform:scale(1);} 50%{opacity:1; transform:scale(1.1);} }
+
+  /* Bottom Center Light Shine (Atmosphere) */
+  .bottom-shine {
+    position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%);
+    width: 60vw; height: 200px;
+    background: radial-gradient(ellipse at center, rgba(6, 182, 212, 0.15) 0%, transparent 70%);
+    z-index: 0; pointer-events: none;
   }
 
-  /* Chatbot Dock */
-  .assistant-wrap { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); width: 58px; height: 58px; z-index: 9998; pointer-events: none; }
-  .assistant-wrap::before { content: ""; position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at center, rgba(255,255,255,0.9) 0%, rgba(139, 169, 219, 0.4) 40%, transparent 100%); box-shadow: 0 0 18px rgba(255,255,255,0.4); filter: blur(2px); animation: assistantGlow 4s ease-in-out infinite alternate; z-index: -1; }
-  @keyframes assistantGlow { from { opacity: 0.65; transform: scale(0.95); } to { opacity: 1; transform: scale(1.05); } }
-
-  /* OVERLAY & TOOLS */
-  .overlay { position: fixed; inset: 0; display: none; place-items: center; z-index: 500; background: radial-gradient(ellipse at center, rgba(15, 23, 42, 0.9) 0%, rgba(2, 6, 23, 0.98) 80%); animation: fadeIn 300ms ease-out; }
+  /* OVERLAY STYLES */
+  .overlay { position: fixed; inset: 0; display: none; place-items: center; z-index: 500; background: radial-gradient(ellipse at center, rgba(15, 23, 42, 0.95) 0%, rgba(2, 6, 23, 0.98) 80%); animation: fadeIn 300ms ease-out; }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   .panel { width: min(1200px, 92vw); height: min(78vh, 820px); border: 1px solid rgba(255,255,255,0.1); background: linear-gradient(180deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98)); border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.8); backdrop-filter: blur(15px); position: relative; overflow: hidden; }
   .panel-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); }
@@ -176,15 +247,25 @@
   #sphereWrap { position: absolute; inset: 8px; border-radius: 12px; overflow: hidden; z-index: 0; pointer-events: none; }
   canvas#sphere { width: 100%; height: 100%; display: block; filter: drop-shadow(0 0 10px var(--neon)); opacity: 0.6; }
   .insights { position: absolute; left: 16px; right: 16px; bottom: 16px; z-index: 2; background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 10px; color: var(--ink); font-size: 0.85rem; }
-
+  
+  /* RESPONSIVE */
   @media (max-width: 980px){ 
-    .panel-body { grid-template-columns: 1fr; height: auto; } .chart-wrap { height: 50vh; } #sphereWrap { display: none; }
-    .moon { width: 75px; height: 75px; font-size: 0.55rem; }
-    .pos-tl { top: 5%; left: 5%; }
-    .pos-bl { bottom: 15%; left: 5%; }
-    .pos-br { bottom: 15%; right: 5%; }
-    .portfolio-orbit { top: 5%; right: 5%; width: 75px; height: 75px; font-size: 0.55rem; }
-    .wheel { width: 85vw; height: 85vw; }
+    .panel-body { grid-template-columns: 1fr; height: auto; } 
+    .chart-wrap { height: 50vh; } 
+    #sphereWrap { display: none; }
+    
+    .wheel { width: 75vw; height: 75vw; }
+    .moon-tab { width: 70px; height: 70px; font-size: 0.6rem; }
+    
+    /* Pull moons closer on mobile so they don't go off-screen */
+    .pos-tools { left: -30px; top: -40px; transform: none; }
+    .pos-ai { right: -30px; top: -40px; transform: none; }
+    .pos-projects { bottom: -60px; left: 50%; }
+    
+    .portfolio-planet { top: 15px; right: 15px; width: 70px; height: 70px; font-size: 0.6rem; }
+    
+    #ccTitle { font-size: 1.8rem; }
+    #ccText { font-size: 0.75rem; line-height: 1.3; }
   }
 </style>
 </head>
@@ -192,24 +273,38 @@
 
 <canvas id="stars"></canvas>
 
-<div class="wheel celestial-body" id="wheel">
+<div class="bottom-shine"></div>
+
+<div class="wheel earth-surface" id="wheel">
   
+  <div class="moon-tab moon-surface pos-tools" onclick="openOverlay()">
+    Tools
+  </div>
+
+  <div class="moon-tab moon-surface pos-ai" onclick="showAIML()">
+    AI & ML
+  </div>
+
+  <div class="moon-tab moon-surface pos-projects" onclick="showProjects()">
+    Projects
+  </div>
+
   <div class="center-content" id="centerContent">
-    <h1 id="ccTitle">KHWAJA GHAFOORI</h1>
-    <div id="ccSubtitle">Financial AI & Business Intelligence</div>
+    <h1 id="ccTitle">KHWAJA AI</h1>
     <p id="ccText">
+      <b>Financial AI & Business Intelligence</b>
       Merging an MSc in Business Analytics & Finance with over 5 years of operational expertise. From streamlining diplomatic workflows to driving data-led strategies in retail, I bridge the gap between technical insights and executive decision-making. I specialize in optimizing processes, financial modeling, and delivering actionable intelligence using Python, SQL, and Power BI.
     </p>
   </div>
 </div>
 
-<div class="moon celestial-body pos-tl parallax-moon" data-speed="2" onclick="showProjects()">Projects</div>
-<div class="moon celestial-body pos-bl parallax-moon" data-speed="3" onclick="openOverlay()">Tools</div>
-<div class="moon celestial-body pos-br parallax-moon" data-speed="2" onclick="showAIML()">AI & ML</div>
+<div class="portfolio-planet ice-surface" onclick="window.open('/portfolio/', '_blank')">
+  Portfolio
+</div>
 
-<div class="portfolio-orbit" onclick="window.open('/portfolio/', '_blank')">Portfolio</div>
-
-<div class="assistant-wrap"><div class="assistant-hole"></div></div>
+<div class="assistant-wrap">
+  <div class="assistant-hole"></div>
+</div>
 
 <div id="analyzerOverlay" class="overlay" aria-hidden="true">
   <div class="panel" role="dialog">
@@ -219,82 +314,37 @@
     </div>
     <div class="panel-body">
       <div class="controls">
-        <div class="card"><h3>1. Data Upload</h3><label>Dataset 1</label><input id="file1" type="file" accept=".csv,.xlsx"><label>Dataset 2</label><input id="file2" type="file" accept=".csv,.xlsx"></div>
-        <div class="card"><h3>2. Config</h3><label>X</label><select id="x1" disabled></select><label>Y</label><select id="y1" disabled></select><label>Type</label><select id="chartType" disabled><option>scatter</option><option>line</option><option>bar</option><option>heatmap</option></select></div>
-        <div class="card"><h3>3. Render</h3><button id="vizBtn" class="btn" onclick="plotData()" disabled>Visualize</button></div>
-        <div class="card">Status: <span id="status">Waiting...</span></div>
+        <div class="card">
+          <h3>1. Data Upload</h3>
+          <label>Dataset 1 (CSV/Excel)</label><input id="file1" type="file" accept=".csv,.xlsx,.xls" />
+          <label>Dataset 2 (CSV/Excel)</label><input id="file2" type="file" accept=".csv,.xlsx,.xls" />
+        </div>
+        <div class="card">
+          <h3>2. Configuration</h3>
+          <label>X-Axis</label> <select id="x1" disabled></select>
+          <label>Y-Axis</label> <select id="y1" disabled></select>
+          <label>Chart Type</label>
+          <select id="chartType" disabled>
+            <option value="scatter">Scatter</option><option value="line">Line</option><option value="bar">Bar</option>
+            <option value="area">Area</option><option value="pie">Pie</option><option value="heatmap">Heatmap</option>
+          </select>
+        </div>
+        <div class="card">
+          <h3>3. Action</h3>
+          <button id="vizBtn" class="btn" onclick="plotData()" disabled>Visualize Data</button>
+        </div>
+        <div class="card">Status: <span id="status">Waiting for files...</span></div>
       </div>
-      <div class="chart-wrap"><div id="sphereWrap"><canvas id="sphere"></canvas></div><div id="chart"></div><div id="insights" class="insights" style="display:none"></div></div>
+      <div class="chart-wrap">
+        <div id="sphereWrap"><canvas id="sphere"></canvas></div>
+        <div id="chart"></div>
+        <div id="insights" class="insights" style="display:none;"></div>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
-// --- PARALLAX MOUSE EFFECT ---
-document.addEventListener('mousemove', (e) => {
-  const x = (window.innerWidth - e.pageX * 2) / 100;
-  const y = (window.innerHeight - e.pageY * 2) / 100;
-  
-  // Move the Main Globe (Slowly)
-  const wheel = document.getElementById('wheel');
-  wheel.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
-
-  // Move the Satellite Moons (Faster)
-  document.querySelectorAll('.parallax-moon').forEach(moon => {
-    const speed = moon.getAttribute('data-speed');
-    const xShift = x * speed;
-    const yShift = y * speed;
-    moon.style.transform = `translate(${xShift}px, ${yShift}px)`;
-  });
-});
-
-// --- CONTENT LOGIC ---
-function showProjects(){
-  const cc = document.getElementById('centerContent');
-  cc.innerHTML = `
-    <h1 id="ccTitle" style="font-size:2.2rem">KEY PROJECTS</h1>
-    <div id="ccText" style="text-align:left; font-size:0.9rem;">
-      <ul style="list-style-type:none; padding:0;">
-        <li style="margin-bottom:12px;"><b>🛍️ iOutlet Revenue Analysis</b><br>Analyzed 32,000+ transactions (£8.9M) to identify seasonal trends using Python dashboards.</li>
-        <li style="margin-bottom:12px;"><b>🍄 Sustainable Production (AREA)</b><br>Managed £80k donor-funded project, streamlining reporting workflows by 50%.</li>
-        <li><b>📈 Financial Forecasting</b><br>Developed equity price models (MATLAB & R) improving predictive accuracy via back-testing.</li>
-      </ul>
-    </div>
-  `;
-}
-
-function showAIML(){
-  const cc = document.getElementById('centerContent');
-  cc.innerHTML = `
-    <h1 id="ccTitle" style="font-size:2.2rem">AI & ML CORE</h1>
-    <div id="ccText" style="text-align:left;">
-      <div style="margin-bottom:15px"><b>Technical Arsenal</b><br>Python (Pandas, Scikit-Learn), R, Financial Modelling.</div>
-      <b>Capabilities</b>
-      <ul style="padding-left:15px; margin-top:5px;">
-        <li>Financial Forecasting (ARIMA)</li>
-        <li>Purchasing Behavior Modeling</li>
-        <li>Regression Analysis & KPIs</li>
-        <li>Automated Streamlit Dashboards</li>
-      </ul>
-    </div>
-  `;
-}
-
-function showHome(){
-  const cc = document.getElementById('centerContent');
-  cc.innerHTML = `<h1 id="ccTitle">KHWAJA GHAFOORI</h1><div id="ccSubtitle">Financial AI & Business Intelligence</div><p id="ccText">Merging an MSc in Business Analytics & Finance with over 5 years of operational expertise. From streamlining diplomatic workflows to driving data-led strategies in retail, I bridge the gap between technical insights and executive decision-making. I specialize in optimizing processes, financial modeling, and delivering actionable intelligence using Python, SQL, and Power BI.</p>`;
-}
-
-// Reset to home when clicking main globe background (not text)
-document.getElementById('wheel').addEventListener('click', (e) => {
-  if(e.target === document.getElementById('wheel')) showHome();
-});
-
-// --- STANDARD LOGIC (Chatbase, Stars, Overlay) ---
-function openOverlay(){ document.getElementById('analyzerOverlay').style.display = 'grid'; startSphere(); onResizeSphere(); }
-function closeOverlay(){ document.getElementById('analyzerOverlay').style.display = 'none'; stopSphere(); }
-
-// Chatbase
 (function(){
   if(!window.chatbase || window.chatbase("getState")!=="initialized"){
     window.chatbase=(...arguments)=>{ if(!window.chatbase.q){window.chatbase.q=[]} window.chatbase.q.push(arguments) };
@@ -309,6 +359,7 @@ function closeOverlay(){ document.getElementById('analyzerOverlay').style.displa
   };
   if(document.readyState==="complete"){onLoad()} else { window.addEventListener("load", onLoad) }
 })();
+/* Move Chatbase to Bottom Left Dock */
 window.addEventListener("load", function(){
   setTimeout(()=>{
     const bubble = document.querySelector("#chatbase-bubble, iframe[src*='chatbase']");
@@ -319,22 +370,106 @@ window.addEventListener("load", function(){
     }
   }, 2500);
 });
+</script>
 
-// Starfield
+<script>
 const canvas = document.getElementById('stars');
 const ctx = canvas.getContext('2d');
-let stars = [];
+let stars = [], meteors = [];
 function resizeCanvas(){ canvas.width = innerWidth; canvas.height = innerHeight; }
 resizeCanvas(); addEventListener('resize', resizeCanvas);
 function createStars(count){ stars=[]; for(let i=0;i<count;i++){ stars.push({ x:Math.random()*canvas.width, y:Math.random()*canvas.height, speed:Math.random()*0.2+0.05, size:Math.random()*1.5 }); } }
+function createMeteors(count){ meteors=[]; for(let i=0;i<count;i++){ meteors.push({ x:Math.random()*canvas.width, y:Math.random()*canvas.height, speedX:-(Math.random()*4+2), speedY:Math.random()*2+1, length:Math.random()*50+30 }); } }
 function drawStars(){ 
   ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = '#ffffff'; 
   for(const s of stars){ ctx.beginPath(); ctx.arc(s.x,s.y,s.size,0,Math.PI*2); ctx.fill(); s.y+=s.speed; if(s.y>canvas.height){s.y=0;s.x=Math.random()*canvas.width;} } 
-  requestAnimationFrame(drawStars);
+  ctx.strokeStyle = '#ffffff'; ctx.lineWidth=0.8;
+  for(const m of meteors){ ctx.beginPath(); ctx.moveTo(m.x,m.y); ctx.lineTo(m.x+m.length*m.speedX/10, m.y+m.length*m.speedY/10); ctx.stroke(); m.x+=m.speedX; m.y+=m.speedY; if(m.x<-100||m.y>canvas.height+100){m.x=canvas.width+Math.random()*200;m.y=Math.random()*canvas.height/2;} } 
 }
-createStars(300); drawStars();
+createStars(300); createMeteors(3);
+(function animate(){ drawStars(); requestAnimationFrame(animate); })();
 
-// 3D Sphere (Overlay)
+/* Wheel Rotation */
+const wheel = document.getElementById('wheel');
+document.addEventListener('mousemove', e=>{ 
+  const centerX = innerWidth/2; const offsetX = e.clientX - centerX; 
+  const rotation = offsetX/40; 
+  wheel.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`; 
+});
+
+/* Home & UI Logic */
+function showProjects(){
+  const cc = document.getElementById('centerContent');
+  cc.innerHTML = `
+    <h1 id="ccTitle" style="font-size:2.5rem">KEY PROJECTS</h1>
+    <div id="ccText" style="text-align:left; font-size:0.9rem;">
+      <ul style="list-style-type:none; padding:0;">
+        <li style="margin-bottom:10px;"><b>🛍️ iOutlet Revenue Analysis</b> Analyzed 32,000+ sales transactions (£8.9M) to identify seasonal trends and built Python dashboards for reporting.</li>
+        <li style="margin-bottom:10px;"><b>🍄 Sustainable Production (AREA)</b> Managed an £80k donor-funded project, coordinating field teams and streamlining reporting workflows by 50%.</li>
+        <li><b>📈 Financial Forecasting (Uni. Dundee)</b> Developed equity price forecasting models using MATLAB & R, improving predictive accuracy through back-testing.</li>
+      </ul>
+      <div style="text-align:center; margin-top:10px; font-size:0.8rem; color:#94a3b8;">(Click 'Portfolio' for full details)</div>
+    </div>
+  `;
+}
+
+function showAIML(){
+  const cc = document.getElementById('centerContent');
+  cc.innerHTML = `
+    <h1 id="ccTitle" style="font-size:2.5rem">AI & MACHINE LEARNING</h1>
+    <div id="ccText">
+      <b>Technical Arsenal</b>
+      <p>Proficient in deploying <b>Python</b> (Pandas, Scikit-Learn) and <b>R</b> for predictive modeling.</p>
+      <br>
+      <b>Core Competencies</b>
+      <ul style="display:inline-block; text-align:left;">
+        <li>• Financial Forecasting (ARIMA/Time-Series)</li>
+        <li>• Purchasing Behavior Modeling</li>
+        <li>• Regression Analysis & KPI Design</li>
+        <li>• Automated Streamlit Dashboards</li>
+      </ul>
+    </div>
+  `;
+}
+
+function showHome(){
+  const cc = document.getElementById('centerContent');
+  cc.innerHTML = `<h1 id="ccTitle">KHWAJA AI</h1><p id="ccText"><b>AI & Business Analytics Strategist</b>Merging an MSc in Business Analytics & Finance with over 5 years of operational expertise. From streamlining diplomatic workflows to driving data-led strategies in retail, I bridge the gap between technical insights and executive decision-making. I specialize in optimizing processes, financial modeling, and delivering actionable intelligence using Python, SQL, and Power BI.</p>`;
+}
+
+function openOverlay(){ document.getElementById('analyzerOverlay').style.display = 'grid'; startSphere(); onResizeSphere(); }
+function closeOverlay(){ document.getElementById('analyzerOverlay').style.display = 'none'; stopSphere(); }
+
+/* Chart/File Logic (Standard) */
+let dataset1 = [], dataset2 = [];
+const el = id => document.getElementById(id);
+const setStatus = msg => el('status').textContent = msg;
+function setControlsEnabled(enabled){ ['x1','y1','chartType','vizBtn'].forEach(id=>{ if(el(id)) el(id).disabled=!enabled; }); }
+el('file1').addEventListener('change', e=> loadFile(e.target.files[0], 1));
+el('file2').addEventListener('change', e=> loadFile(e.target.files[0], 2));
+function loadFile(file, idx){ 
+  if(!file) return; 
+  setStatus(`Loading ${file.name}...`);
+  if(file.name.endsWith('.csv')){ Papa.parse(file, {header:true, dynamicTyping:true, complete: res => assignData(res.data, idx)}); }
+  else { setStatus("Excel parsing requires server or fuller library setup."); } 
+}
+function assignData(data, idx){ 
+  const clean = data.filter(r => Object.values(r).some(v=>v!==null));
+  if(idx===1) dataset1=clean; else dataset2=clean;
+  setStatus(`Loaded dataset ${idx} (${clean.length} rows)`);
+  if(dataset1.length || dataset2.length) { populateDropdowns(); setControlsEnabled(true); }
+}
+function populateDropdowns(){
+  const keys = Object.keys(dataset1[0] || dataset2[0] || {});
+  ['x1','y1'].forEach(id => { el(id).innerHTML = keys.map(k=>`<option>${k}</option>`).join(''); });
+}
+function plotData(){
+  const xKey = el('x1').value, yKey = el('y1').value, type = el('chartType').value;
+  const trace1 = { x: dataset1.map(r=>r[xKey]), y: dataset1.map(r=>r[yKey]), type: type==='scatter'?'scatter':type, mode:'markers' };
+  Plotly.newPlot('chart', [trace1], { paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0)', font:{color:'#fff'} });
+}
+
+/* 3D Sphere Logic */
 let sphereScene, sphereCamera, sphereRenderer, sphereMesh, sphereReq;
 function startSphere(){
   const wrap = document.getElementById('sphereWrap');
@@ -354,33 +489,6 @@ function startSphere(){
 function stopSphere(){ if(sphereReq) cancelAnimationFrame(sphereReq); }
 function onResizeSphere(){ if(sphereRenderer) { const w = el('sphereWrap').clientWidth, h = el('sphereWrap').clientHeight; sphereRenderer.setSize(w,h,false); sphereCamera.aspect=w/h; sphereCamera.updateProjectionMatrix(); } }
 addEventListener('resize', onResizeSphere);
-
-// Chart Logic (Placeholder)
-let dataset1 = [], dataset2 = [];
-const el = id => document.getElementById(id);
-const setStatus = msg => el('status').textContent = msg;
-el('file1').addEventListener('change', e=> loadFile(e.target.files[0], 1));
-el('file2').addEventListener('change', e=> loadFile(e.target.files[0], 2));
-function loadFile(file, idx){ 
-  if(!file) return; 
-  setStatus(`Loading ${file.name}...`);
-  if(file.name.endsWith('.csv')){ Papa.parse(file, {header:true, dynamicTyping:true, complete: res => assignData(res.data, idx)}); }
-}
-function assignData(data, idx){ 
-  const clean = data.filter(r => Object.values(r).some(v=>v!==null));
-  if(idx===1) dataset1=clean; else dataset2=clean;
-  setStatus(`Loaded dataset ${idx}`);
-  if(dataset1.length || dataset2.length) { 
-    ['x1','y1','chartType','vizBtn'].forEach(id=> el(id).disabled=false);
-    const keys = Object.keys(dataset1[0] || dataset2[0] || {});
-    ['x1','y1'].forEach(id => { el(id).innerHTML = keys.map(k=>`<option>${k}</option>`).join(''); });
-  }
-}
-function plotData(){
-  const xKey = el('x1').value, yKey = el('y1').value, type = el('chartType').value;
-  const trace1 = { x: dataset1.map(r=>r[xKey]), y: dataset1.map(r=>r[yKey]), type: type==='scatter'?'scatter':type, mode:'markers' };
-  Plotly.newPlot('chart', [trace1], { paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0)', font:{color:'#fff'} });
-}
 </script>
 
 </body>
