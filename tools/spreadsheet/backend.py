@@ -1,6 +1,6 @@
 # ============================================================
 # backend.py
-# BUSnX Enterprise – V10.0 (Universal Monolith)
+# BUSnX Enterprise – V10.2 (Stable Free Model)
 # ============================================================
 
 import os
@@ -27,13 +27,12 @@ except ImportError as e:
 warnings.filterwarnings("ignore")
 
 # --- 2. CONFIGURATION ---
-# Fix: Import directly from config (no "core." prefix)
 try:
     from config import API_KEY
     print("✅ System: Config Loaded.")
 except ImportError:
     import os
-    API_KEY = os.getenv("GOOGLE_API_KEY") # Fallback to environment variable
+    API_KEY = os.getenv("GOOGLE_API_KEY") 
     print("⚠️ Config file not found. Using Environment Variables.")
 
 # LOAD GEMINI
@@ -44,7 +43,7 @@ except ImportError:
     print("⚠️ Google AI Lib missing.")
 
 # --- 3. APP SETUP ---
-app = FastAPI(title="BUSnX Intelligence Engine", version="10.0.0")
+app = FastAPI(title="BUSnX Intelligence Engine", version="10.2.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -69,21 +68,18 @@ class DataSanitizer:
     @staticmethod
     def clean(df):
         if not isinstance(df, pd.DataFrame):
-            return pd.DataFrame(index=range(50), columns=[chr(65+i) for i in range(12)]).fillna("")
+            return pd.DataFrame()
         
         # Force headers to strings
         df.columns = df.columns.astype(str)
         # Clean ghost rows
         df = df.dropna(how='all', axis=0).dropna(how='all', axis=1)
-        
-        if df.empty:
-            return pd.DataFrame(index=range(50), columns=[chr(65+i) for i in range(12)]).fillna("")
-            
         return df.fillna("")
 
 class GridState:
     def __init__(self):
-        self.df = pd.DataFrame(index=range(50), columns=[chr(65+i) for i in range(12)]).fillna("")
+        # Default empty grid
+        self.df = pd.DataFrame(index=range(20), columns=[chr(65+i) for i in range(10)]).fillna("")
         self.loaded_files = set()
 
     def update(self, new_df, filename=None):
@@ -103,7 +99,8 @@ class BusinessAgent:
     def __init__(self):
         if API_KEY and genai:
             genai.configure(api_key=API_KEY)
-            self.model = genai.GenerativeModel('gemini-2.0-flash-exp')
+            # 🔥 CRITICAL FIX: Using the Stable, Free Model
+            self.model = genai.GenerativeModel('gemini-1.5-flash')
         else:
             self.model = None
 
@@ -126,8 +123,10 @@ class BusinessAgent:
             if not raw_text: return None
 
             try:
+                # Try standard CSV parsing
                 return pd.read_csv(StringIO(raw_text), sep=None, engine='python')
             except:
+                # Fallback
                 return pd.read_csv(StringIO(raw_text))
                 
         except Exception as e:
@@ -182,7 +181,7 @@ class ChatRequest(BaseModel):
     selection: dict | None = None
 
 @app.get("/")
-def health(): return {"status": "online", "ver": "10.0"}
+def health(): return {"status": "online", "ver": "10.2"}
 
 @app.get("/grid")
 def get_grid(): return state.get_payload()
@@ -202,6 +201,7 @@ async def upload_file(file: UploadFile = File(...)):
         if path.endswith(".csv"): df = pd.read_csv(path)
         elif path.endswith((".xls", ".xlsx")): df = pd.read_excel(path)
         elif path.lower().endswith(('.png', '.jpg', '.jpeg', '.webp')):
+            # AI OCR Trigger
             df = agent.process_image(path)
             if df is None: return {"error": "OCR failed to read text."}
         else:
