@@ -4,10 +4,10 @@
 import os
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
+# Try to load local .env file (for testing on your laptop)
 load_dotenv()
 
-# API Keys (Fetched securely)
+# API Keys (Fetched securely from Render or .env)
 API_KEY = os.getenv("GOOGLE_API_KEY")
 
 # UI Theme Colors
