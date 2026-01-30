@@ -1,6 +1,6 @@
 # ============================================================
 # backend.py
-# BUSnX Enterprise – V14.0 (Excel-Like Features)
+# BUSnX Enterprise – V14.0 (The "No-Fail" Engine)
 # ============================================================
 
 import os
@@ -12,7 +12,7 @@ import warnings
 import traceback
 from io import StringIO
 
-# --- IMPORTS ---
+# --- 1. IMPORTS ---
 try:
     from fastapi import FastAPI, UploadFile, File
     from fastapi.middleware.cors import CORSMiddleware
@@ -21,23 +21,28 @@ try:
     import pandas as pd
     import numpy as np
 except ImportError as e:
+    print(f"❌ CRITICAL ERROR: Missing library. {e}")
     sys.exit(1)
 
 warnings.filterwarnings("ignore")
 
-# --- CONFIG ---
+# --- 2. CONFIGURATION ---
 try:
     from config import API_KEY
+    print("✅ System: Config Loaded.")
 except ImportError:
     import os
     API_KEY = os.getenv("GOOGLE_API_KEY") 
+    print("⚠️ Config file not found. Using Environment Variables.")
 
+# LOAD GEMINI
 try:
     import google.generativeai as genai
 except ImportError:
     genai = None
+    print("⚠️ Google AI Lib missing.")
 
-# --- APP SETUP ---
+# --- 3. APP SETUP ---
 app = FastAPI(title="BUSnX Intelligence Engine", version="14.0.0")
 
 app.add_middleware(
@@ -48,13 +53,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# FILESYSTEM
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
 for d in [UPLOAD_DIR]:
     try: os.makedirs(d, exist_ok=True)
     except: pass
 
-# --- MODEL SELECTOR ---
+# ============================================================
+# 🧠 INTELLIGENT MODEL SELECTOR
+# ============================================================
 def get_best_available_model():
     if not API_KEY or not genai: return None
     try:
@@ -66,6 +74,7 @@ def get_best_available_model():
                     all_models.append(m.name)
         except: return "gemini-1.5-flash"
 
+        # Priority: 2.0 Flash -> 1.5 Pro -> 1.5 Flash
         preferences = ['gemini-2.0-flash', 'gemini-1.5-pro', 'gemini-1.5-flash', 'gemini-pro']
         for pref in preferences:
             for model_name in all_models:
@@ -76,12 +85,17 @@ def get_best_available_model():
 
 CURRENT_MODEL_NAME = get_best_available_model()
 
-# --- LOGIC CORE ---
+# ============================================================
+# 🧠 LOGIC CORE
+# ============================================================
+
 class DataSanitizer:
     @staticmethod
     def clean(df):
         if not isinstance(df, pd.DataFrame): return pd.DataFrame()
         df.columns = df.columns.astype(str)
+        # Remove completely empty rows/cols
+        df = df.dropna(how='all', axis=0).dropna(how='all', axis=1)
         return df.fillna("")
 
 class GridState:
@@ -89,7 +103,7 @@ class GridState:
         self.reset()
 
     def reset(self):
-        # Create empty 20x10 grid
+        # Create empty 20x12 grid (Excel Style)
         self.df = pd.DataFrame(index=range(20), columns=[chr(65+i) for i in range(12)]).fillna("")
         self.loaded_files = set()
 
@@ -115,38 +129,53 @@ class BusinessAgent:
             self.model = None
 
     def process_image(self, image_path):
-        if not self.model: raise Exception("AI Not Ready")
+        """OCR Engine with Parsing Safety Net"""
+        if not self.model: raise Exception("AI Setup Failed")
+
         try:
             file_ref = genai.upload_file(image_path)
             prompt = """
-            Extract tabular data from this image.
-            Output purely as CSV. No formatting.
+            Analyze this image. Extract ALL tabular data found.
+            Output strictly as RAW CSV format.
+            NO markdown formatting. NO preamble.
+            Use comma separators.
             """
             result = self.model.generate_content([file_ref, prompt])
-            raw = result.text.replace("```csv", "").replace("```", "").strip()
-            if not raw: raise Exception("Empty AI Response")
+            raw_text = result.text.replace("```csv", "").replace("```", "").strip()
             
-            try: return pd.read_csv(StringIO(raw), sep=None, engine='python')
-            except: 
-                try: return pd.read_csv(StringIO(raw), sep=",", engine='python', on_bad_lines='skip')
-                except: return pd.DataFrame([x.split(',') for x in raw.split('\n')])
+            if not raw_text: raise Exception("AI returned empty text.")
+
+            # 🔥 ROBUST PARSING LOGIC
+            try:
+                # Attempt 1: Standard
+                return pd.read_csv(StringIO(raw_text), sep=None, engine='python')
+            except:
+                try:
+                    # Attempt 2: Forgiving (Skip bad lines)
+                    return pd.read_csv(StringIO(raw_text), sep=",", engine='python', on_bad_lines='skip')
+                except:
+                    # Attempt 3: Raw fallback
+                    lines = raw_text.split('\n')
+                    data = [l.split(',') for l in lines]
+                    return pd.DataFrame(data)
+
         except Exception as e:
-            raise Exception(f"AI Error: {str(e)}")
+            raise Exception(f"AI Error ({CURRENT_MODEL_NAME}): {str(e)}")
 
     def execute(self, user_query, selection=None):
         if not self.model: return "❌ AI Error: System not ready."
         df = state.df.copy()
         
-        # Inject selection context if available
-        sel_context = ""
+        # Inject selection context
+        sel_msg = ""
         if selection and selection.get('active'):
-            sel_context = f"USER SELECTION: Columns {selection.get('cols')}, Rows {selection.get('rows')}."
+            sel_msg = f"USER FOCUS: Columns {selection['cols']}, Rows {selection['rows']}."
 
         prompt = f"""
         You are BUSnX AI. DataFrame `df`.
         REQUEST: "{user_query}"
-        {sel_context}
-        RULES: If modifying data, reply with PYTHON code block ```python ... ```.
+        {sel_msg}
+        RULES: If data changes, reply with PYTHON code block ```python ... ```.
         """
         try:
             response = self.model.generate_content(prompt)
@@ -191,6 +220,7 @@ def chat(req: ChatRequest):
 async def upload_file(file: UploadFile = File(...)):
     path = os.path.join(UPLOAD_DIR, file.filename)
     with open(path, "wb") as buffer: shutil.copyfileobj(file.file, buffer)
+    
     try:
         df = None
         if path.endswith(".csv"): df = pd.read_csv(path)
@@ -199,6 +229,7 @@ async def upload_file(file: UploadFile = File(...)):
             try: df = agent.process_image(path)
             except Exception as ocr_err: return {"error": str(ocr_err)}
         else: return {"error": "Unsupported file"}
+
         state.update(df, file.filename)
         return {"message": "Loaded", "grid_update": state.get_payload()}
     except Exception as e: return {"error": f"System Error: {str(e)}"}
