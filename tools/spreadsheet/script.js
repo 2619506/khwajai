@@ -1,29 +1,30 @@
 /* ============================================================
-   Khwaja AI - Data Forge Engine (v3.0 - Hybrid AI)
-   Connects HTML Frontend to Python FastAPI Backend
+   Khwaja AI - Data Forge Engine (v4.0 - Production Fix)
+   Replicates BUSnX React Architecture in Vanilla JS
    ============================================================ */
 
 const API_URL = "http://localhost:8000";
 let isBackendOnline = false;
 
-// --- STATE ---
+// --- GLOBAL STATE ---
 let appState = {
-    files: [],
-    activeData: [],
-    columns: [],
+    files: [],       // Metadata for the "My Data" view
+    activeData: [],  // The actual rows (Array of Objects)
+    columns: [],     // The headers
     fileName: "Untitled"
 };
 
 // --- 1. INITIALIZATION ---
 document.addEventListener("DOMContentLoaded", () => {
     checkBackendHealth();
-    setInterval(checkBackendHealth, 5000); // Check connection every 5s
+    setInterval(checkBackendHealth, 5000);
 });
 
 async function checkBackendHealth() {
     try {
         const res = await fetch(`${API_URL}/`);
         if (res.ok) {
+            if(!isBackendOnline) addAiMsg("System connected to Python Neural Engine.");
             isBackendOnline = true;
             updateStatus("online");
         }
@@ -42,18 +43,23 @@ function updateStatus(status) {
     }
 }
 
-// --- 2. VIEW NAVIGATION ---
+// --- 2. VIEW CONTROLLER ---
 function switchView(viewId) {
+    // Hide all
     document.querySelectorAll('.view').forEach(el => el.style.display = 'none');
     document.querySelectorAll('.menu-btn').forEach(el => el.classList.remove('active'));
+    
+    // Show target
     document.getElementById(viewId).style.display = 'block';
     
-    // Highlight button
+    // Update Menu
     const btnMap = { 'import-view': 0, 'storage-view': 1, 'workspace-view': 2, 'viz-view': 3 };
     const btns = document.querySelectorAll('.menu-btn');
     if (btns[btnMap[viewId]]) btns[btnMap[viewId]].classList.add('active');
 
+    // Trigger renders
     if (viewId === 'storage-view') renderFileList();
+    if (viewId === 'workspace-view') renderGrid(); // Force re-render when entering workspace
 }
 
 // --- 3. FILE INGESTION ---
@@ -71,110 +77,100 @@ dropZone.addEventListener('drop', (e) => {
 fileInput.addEventListener('change', (e) => handleUpload(e.target.files));
 
 async function handleUpload(fileList) {
+    if (!fileList || fileList.length === 0) return;
     const file = fileList[0];
-    if (!file) return;
 
-    // UI Feedback
-    addAiMsg(`Processing <strong>${file.name}</strong>...`);
-    
-    // DECISION: Local or Backend?
-    const isImage = file.type.startsWith('image/');
-    
+    addAiMsg(`Ingesting <strong>${file.name}</strong>...`);
+
+    // Prevent Duplicates in File List
+    const exists = appState.files.some(f => f.name === file.name);
+    if (!exists) {
+        appState.files.push({
+            name: file.name,
+            size: (file.size / 1024).toFixed(1) + ' KB',
+            type: file.name.split('.').pop().toUpperCase(),
+            rawFile: file // Keep reference for local fallback
+        });
+        document.getElementById('fileCount').innerText = appState.files.length;
+    }
+
+    // PROCESSING LOGIC
     if (isBackendOnline) {
-        // --- PATH A: SEND TO PYTHON (OCR & AI) ---
-        addAiMsg("🚀 Sending to Python Engine for intelligent extraction...");
-        
+        // --- BACKEND MODE (Preferred) ---
         const formData = new FormData();
         formData.append('file', file);
 
         try {
-            const response = await fetch(`${API_URL}/upload`, {
-                method: 'POST',
-                body: formData
-            });
-            const result = await response.json();
+            addAiMsg("Sending to Python OCR/Parser...");
+            const res = await fetch(`${API_URL}/upload`, { method: 'POST', body: formData });
+            const json = await res.json();
 
-            if (result.error) {
-                addAiMsg(`❌ Server Error: ${result.error}`);
-            } else if (result.grid_update) {
-                // SUCCESS: Python returns structured data
-                loadDataFromBackend(result.grid_update, file.name);
-                addAiMsg("✅ Data extracted and structured successfully.");
+            if (json.error) {
+                addAiMsg(`❌ Python Error: ${json.error}`);
+            } else if (json.grid_update) {
+                loadIntoState(json.grid_update.data, json.grid_update.columns, file.name);
+                addAiMsg("✅ Extraction Complete. Data loaded.");
             }
-        } catch (err) {
-            addAiMsg(`❌ Connection Failed: ${err.message}`);
+        } catch (e) {
+            addAiMsg(`❌ Upload Failed: ${e.message}`);
         }
-
     } else {
-        // --- PATH B: LOCAL FALLBACK (CSV/Excel Only) ---
-        if (isImage) {
-            alert("⚠️ Image OCR requires Python Backend. Please run 'backend.py'.");
+        // --- LOCAL MODE (Fallback) ---
+        if (file.type.startsWith('image/')) {
+            alert("⚠️ Image OCR requires the Python Backend to be running!");
             return;
         }
-        addAiMsg("⚠️ Python Offline. Using Local Parsing.");
         parseLocalFile(file);
     }
 }
 
-// --- 4. DATA LOADING & RENDERING ---
+// --- 4. CORE STATE MANAGEMENT ---
+function loadIntoState(data, columns, fileName) {
+    if (!data || data.length === 0) {
+        addAiMsg("⚠️ Warning: Extracted dataset is empty.");
+        return;
+    }
 
-// Load data formatted by Python Backend
-function loadDataFromBackend(gridPayload, name) {
-    appState.columns = gridPayload.columns;
-    appState.activeData = gridPayload.data; // Array of dicts: [{'Col1': Val, 'Col2': Val}...]
-    appState.fileName = name;
+    appState.activeData = data;
+    appState.columns = columns;
+    appState.fileName = fileName;
 
-    finalizeLoad();
+    // Enable Buttons
+    document.getElementById('processBtn').disabled = false;
+    document.getElementById('vizBtn').disabled = false;
+    
+    // Update Header
+    document.getElementById('activeFileName').innerText = fileName;
+    document.getElementById('rowCount').innerText = `${data.length} rows`;
+
+    // Auto-switch to workspace
+    switchView('workspace-view');
 }
 
-// Fallback: Parse CSV/Excel locally
+// Local Parser (SheetJS)
 function parseLocalFile(file) {
     const reader = new FileReader();
     reader.onload = (e) => {
         const data = new Uint8Array(e.target.result);
         const workbook = XLSX.read(data, {type: 'array'});
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
-        
-        // Raw JSON (Array of Arrays)
-        const raw = XLSX.utils.sheet_to_json(sheet, {header: 1});
-        
-        if (raw.length > 0) {
-            appState.columns = raw[0]; // First row as header
-            // Convert rest to objects for consistency with backend format
-            appState.activeData = raw.slice(1).map(row => {
+        const json = XLSX.utils.sheet_to_json(sheet, {header: 1}); // Array of Arrays
+
+        if (json.length > 0) {
+            const cols = json[0].map(c => String(c)); // Force string headers
+            // Convert Array-of-Arrays to Array-of-Objects to match Python format
+            const rows = json.slice(1).map(row => {
                 let obj = {};
-                raw[0].forEach((col, i) => obj[col] = row[i] || "");
+                cols.forEach((col, i) => obj[col] = row[i] || "");
                 return obj;
             });
-            appState.fileName = file.name;
-            finalizeLoad();
+            loadIntoState(rows, cols, file.name);
         }
     };
     reader.readAsArrayBuffer(file);
 }
 
-function finalizeLoad() {
-    // 1. Add to File List (Visual only)
-    appState.files.push({
-        name: appState.fileName,
-        rows: appState.activeData.length,
-        cols: appState.columns.length
-    });
-    document.getElementById('fileCount').innerText = appState.files.length;
-
-    // 2. Render Workspace
-    renderGrid();
-    
-    // 3. Enable UI
-    document.getElementById('activeFileName').innerText = appState.fileName;
-    document.getElementById('rowCount').innerText = `${appState.activeData.length} rows`;
-    document.getElementById('processBtn').disabled = false;
-    document.getElementById('vizBtn').disabled = false;
-
-    switchView('workspace-view');
-}
-
-// --- 5. GRID RENDERER (Professional Shape) ---
+// --- 5. GRID RENDERER (The Fix) ---
 function renderGrid() {
     const thead = document.querySelector('#dataTable thead');
     const tbody = document.querySelector('#dataTable tbody');
@@ -184,9 +180,9 @@ function renderGrid() {
     const cols = appState.columns;
     const rows = appState.activeData;
 
-    if (cols.length === 0) return;
+    if (!cols || cols.length === 0) return;
 
-    // HEADER
+    // 1. HEADERS
     let headerRow = '<tr><th class="row-num">#</th>';
     cols.forEach(col => {
         headerRow += `<th>${col}</th>`;
@@ -194,101 +190,134 @@ function renderGrid() {
     headerRow += '</tr>';
     thead.innerHTML = headerRow;
 
-    // BODY (Limit render for performance)
-    const renderLimit = 1000;
+    // 2. BODY (Virtualized/Limited for performance)
+    const limit = 1000; 
     let bodyHtml = '';
 
-    rows.slice(0, renderLimit).forEach((rowObj, index) => {
-        bodyHtml += `<tr><td class="row-num">${index + 1}</td>`;
+    rows.slice(0, limit).forEach((row, i) => {
+        bodyHtml += `<tr><td class="row-num">${i + 1}</td>`;
         cols.forEach(col => {
-            const val = rowObj[col] !== undefined ? rowObj[col] : "";
-            // Check if value is number for styling
-            const isNum = !isNaN(parseFloat(val)) && isFinite(val);
-            const alignStyle = isNum ? 'style="text-align:right; color:#a7f3d0;"' : '';
+            // Safe Access: row[col] handles dictionary format from Python
+            let val = row[col]; 
+            if (val === undefined || val === null) val = "";
             
-            bodyHtml += `<td ${alignStyle} onclick="selectCell(this, '${val}')">${val}</td>`;
+            // Numeric Styling
+            const isNum = !isNaN(parseFloat(val)) && isFinite(val);
+            const style = isNum ? 'style="text-align:right; color:#a7f3d0;"' : '';
+            
+            bodyHtml += `<td ${style} onclick="toggleCell(this, '${val}')">${val}</td>`;
         });
         bodyHtml += '</tr>';
     });
     tbody.innerHTML = bodyHtml;
 }
 
-// --- 6. UTILS (Storage View) ---
+// --- 6. FILE STORAGE VIEW ---
 function renderFileList() {
     const list = document.getElementById('fileList');
     list.innerHTML = '';
+    
     if (appState.files.length === 0) {
-        list.innerHTML = `<div class="empty-state"><p>No data loaded.</p></div>`;
+        list.innerHTML = `<div class="empty-state"><p>No files loaded.</p></div>`;
         return;
     }
+
     appState.files.forEach(f => {
         const card = document.createElement('div');
         card.className = 'file-card';
+        // IMPORTANT: Clicking card re-loads that specific file
+        card.onclick = () => {
+            if(f.rawFile) parseLocalFile(f.rawFile); // Reload local
+            else addAiMsg("⚠️ Please re-upload to view (Session storage limitation).");
+        };
+        
         card.innerHTML = `
             <div class="file-icon"><i class="fas fa-table"></i></div>
             <div class="file-info">
                 <h4>${f.name}</h4>
-                <span>${f.rows} Rows • ${f.cols} Cols</span>
+                <span>${f.type} • ${f.size}</span>
             </div>
         `;
-        card.onclick = () => {
-            // In a real app, we would fetch specific file data again.
-            // Here we assume the last loaded is active for simplicity.
-            switchView('workspace-view');
-        };
         list.appendChild(card);
     });
 }
 
-// --- 7. AI ASSISTANT ---
+// --- 7. UTILS & AI ---
 function addAiMsg(html) {
     const chat = document.getElementById('chatHistory');
-    const div = document.createElement('div');
-    div.className = 'msg ai';
-    div.innerHTML = html;
-    chat.appendChild(div);
+    chat.innerHTML += `<div class="msg ai">${html}</div>`;
     chat.scrollTop = chat.scrollHeight;
 }
 
 function handleChat() {
     const input = document.getElementById('userQuery');
-    const text = input.value;
-    if(!text) return;
+    const txt = input.value;
+    if (!txt) return;
 
-    // Show User Msg
-    const chat = document.getElementById('chatHistory');
-    chat.innerHTML += `<div class="msg user">${text}</div>`;
+    // UI Update
+    document.getElementById('chatHistory').innerHTML += `<div class="msg user">${txt}</div>`;
     input.value = '';
 
-    // Send to Backend Logic
-    if(isBackendOnline) {
-        // Future: Implement chat endpoint in backend.py
-        setTimeout(() => addAiMsg("Analyzing grid context... (Backend connected)"), 600);
+    if (isBackendOnline) {
+        // Send to Python AI
+        fetch(`${API_URL}/chat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: txt })
+        })
+        .then(res => res.json())
+        .then(data => {
+            addAiMsg(data.response);
+            if (data.grid_update) {
+                loadIntoState(data.grid_update.data, data.grid_update.columns, appState.fileName);
+            }
+        })
+        .catch(err => addAiMsg("❌ Backend Error"));
     } else {
-        setTimeout(() => addAiMsg("I am running locally. Start Python backend for deep analysis."), 600);
+        setTimeout(() => addAiMsg("I am running locally. Connect Python backend for full AI capabilities."), 500);
     }
 }
 
-// --- 8. MATH STATS ---
-let selection = [];
-function selectCell(el, val) {
-    el.classList.toggle('selected');
+// --- 8. MATH & AUTO CLEAN ---
+let selectedValues = [];
+
+function toggleCell(cell, val) {
+    cell.classList.toggle('selected');
     const num = parseFloat(val);
     if (!isNaN(num)) {
-        if (el.classList.contains('selected')) selection.push(num);
+        if (cell.classList.contains('selected')) selectedValues.push(num);
         else {
-            const idx = selection.indexOf(num);
-            if (idx > -1) selection.splice(idx, 1);
+            const idx = selectedValues.indexOf(num);
+            if (idx > -1) selectedValues.splice(idx, 1);
         }
     }
     updateStats();
 }
 
 function updateStats() {
-    const sum = selection.reduce((a, b) => a + b, 0);
-    const avg = selection.length ? (sum / selection.length).toFixed(2) : 0;
+    const sum = selectedValues.reduce((a, b) => a + b, 0);
+    const avg = selectedValues.length ? (sum / selectedValues.length) : 0;
     
-    document.getElementById('selCount').innerText = selection.length;
-    document.getElementById('selSum').innerText = sum.toLocaleString();
-    document.getElementById('selAvg').innerText = avg;
+    document.getElementById('selCount').innerText = selectedValues.length;
+    document.getElementById('selSum').innerText = sum.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});
+    document.getElementById('selAvg').innerText = avg.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});
+}
+
+function runAutoClean() {
+    if (isBackendOnline) {
+        handleChat("Clean this data, remove empty rows and standardize formats.");
+    } else {
+        // Simple Local Clean
+        addAiMsg("Running local auto-clean...");
+        appState.activeData = appState.activeData.filter(row => Object.values(row).some(x => x !== "" && x !== null));
+        renderGrid();
+        addAiMsg("Removed empty rows locally.");
+    }
+}
+
+function exportCurrentData() {
+    const ws = XLSX.utils.json_to_sheet(appState.activeData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Data");
+    XLSX.writeFile(wb, `Cleaned_${appState.fileName}.xlsx`);
 }
