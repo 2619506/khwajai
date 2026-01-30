@@ -1,6 +1,6 @@
 # ============================================================
 # backend.py
-# BUSnX Enterprise – V11.0 (Auto-Switching AI + Debug Mode)
+# BUSnX Enterprise – V12.0 (Self-Healing Model Discovery)
 # ============================================================
 
 import os
@@ -43,7 +43,7 @@ except ImportError:
     print("⚠️ Google AI Lib missing.")
 
 # --- 3. APP SETUP ---
-app = FastAPI(title="BUSnX Intelligence Engine", version="11.0.0")
+app = FastAPI(title="BUSnX Intelligence Engine", version="12.0.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -61,6 +61,63 @@ for d in [UPLOAD_DIR]:
     except: pass
 
 # ============================================================
+# 🧠 INTELLIGENT MODEL SELECTOR
+# ============================================================
+
+def get_best_available_model():
+    """
+    Asks Google API for list of available models and picks the best one.
+    This prevents 404 errors when model names change.
+    """
+    if not API_KEY or not genai:
+        return None
+
+    try:
+        genai.configure(api_key=API_KEY)
+        
+        # 1. Get all models that support 'generateContent'
+        all_models = []
+        try:
+            for m in genai.list_models():
+                if 'generateContent' in m.supported_generation_methods:
+                    all_models.append(m.name)
+        except Exception as list_err:
+            print(f"⚠️ Could not list models: {list_err}. Defaulting.")
+            return "gemini-1.5-flash"
+        
+        print(f"🔎 Available Models for your Key: {all_models}")
+
+        # 2. Priority List (We prioritize 2.0 Flash based on your account)
+        preferences = [
+            'gemini-2.0-flash', # Your confirmed model
+            'gemini-1.5-flash', # Fallback
+            'gemini-1.5-pro',
+            'gemini-pro'
+        ]
+
+        # 3. Find the first match
+        for pref in preferences:
+            for model_name in all_models:
+                if pref in model_name:
+                    # Clean up the name (remove 'models/' prefix)
+                    clean_name = model_name.replace("models/", "")
+                    print(f"✅ Selected AI Model: {clean_name}")
+                    return clean_name
+        
+        # 4. Fallback: If no preference matches, take the first valid one
+        if all_models:
+            return all_models[0].replace("models/", "")
+            
+        return "gemini-1.5-flash" # Absolute fallback
+        
+    except Exception as e:
+        print(f"⚠️ Model Discovery Failed: {e}")
+        return "gemini-1.5-flash"
+
+# Initialize Model Selection
+CURRENT_MODEL_NAME = get_best_available_model()
+
+# ============================================================
 # 🧠 LOGIC CORE
 # ============================================================
 
@@ -69,10 +126,7 @@ class DataSanitizer:
     def clean(df):
         if not isinstance(df, pd.DataFrame):
             return pd.DataFrame()
-        
-        # Force headers to strings
         df.columns = df.columns.astype(str)
-        # Clean ghost rows
         df = df.dropna(how='all', axis=0).dropna(how='all', axis=1)
         return df.fillna("")
 
@@ -97,84 +151,56 @@ state = GridState()
 class BusinessAgent:
     def __init__(self):
         self.api_key_status = "Missing"
-        if API_KEY and genai:
+        if API_KEY and genai and CURRENT_MODEL_NAME:
             genai.configure(api_key=API_KEY)
             self.api_key_status = "Active"
+            self.model = genai.GenerativeModel(CURRENT_MODEL_NAME)
         else:
-            self.api_key_status = "Missing"
+            self.api_key_status = "Missing or No Model Found"
+            self.model = None
 
     def process_image(self, image_path):
-        """
-        OCR Engine with Auto-Fallback.
-        Tries 3 different models before giving up.
-        """
-        if self.api_key_status == "Missing":
-            raise Exception("Google API Key is missing on Server.")
+        """OCR Engine"""
+        if not self.model: 
+            raise Exception(f"AI Setup Failed. Key Status: {self.api_key_status}")
 
-        # LIST OF MODELS TO TRY (In order of preference)
-        # 1. Flash (Fastest/Cheapest)
-        # 2. Flash-8b (Backup)
-        # 3. Pro (Strongest)
-        models_to_try = ['gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro']
-        
-        last_error = ""
-
-        for model_name in models_to_try:
-            try:
-                print(f"🔄 Attempting OCR with model: {model_name}...")
-                model = genai.GenerativeModel(model_name)
-                
-                file_ref = genai.upload_file(image_path)
-                prompt = """
-                Analyze this image. Extract ALL tabular data found.
-                Output strictly as RAW CSV format.
-                NO markdown formatting (no ```csv).
-                NO preamble.
-                Use comma separators.
-                If headers are missing, use generic A,B,C.
-                """
-                result = model.generate_content([file_ref, prompt])
-                raw_text = result.text.replace("```csv", "").replace("```", "").strip()
-                
-                if not raw_text: 
-                    raise Exception("Model returned empty text.")
-
-                try:
-                    return pd.read_csv(StringIO(raw_text), sep=None, engine='python')
-                except:
-                    return pd.read_csv(StringIO(raw_text))
+        try:
+            file_ref = genai.upload_file(image_path)
+            prompt = """
+            Analyze this image. Extract ALL tabular data found.
+            Output strictly as RAW CSV format.
+            NO markdown formatting. NO preamble.
+            Use comma separators.
+            """
+            result = self.model.generate_content([file_ref, prompt])
+            raw_text = result.text.replace("```csv", "").replace("```", "").strip()
             
-            except Exception as e:
-                print(f"⚠️ {model_name} failed: {e}")
-                last_error = str(e)
-                continue # Try next model
+            if not raw_text: raise Exception("AI returned empty text.")
 
-        # If we reach here, all models failed
-        raise Exception(f"All AI models failed. Last error: {last_error}")
+            try:
+                return pd.read_csv(StringIO(raw_text), sep=None, engine='python')
+            except:
+                return pd.read_csv(StringIO(raw_text))
+                
+        except Exception as e:
+            # Add specific error about model to help debug
+            raise Exception(f"AI Error ({CURRENT_MODEL_NAME}): {str(e)}")
 
     def execute(self, user_query, selection=None):
         """AI Code Execution"""
-        if self.api_key_status == "Missing": return "❌ AI Error: API Key missing."
+        if not self.model: return "❌ AI Error: System not ready."
 
         df = state.df.copy()
         rows, cols = df.shape
         
-        # Use stable model for Logic
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        
         prompt = f"""
-        You are BUSnX AI.
-        GRID: {rows}x{cols}.
+        You are BUSnX AI. DataFrame `df`.
         REQUEST: "{user_query}"
-        
-        RULES:
-        1. **Action:** If data change, reply PYTHON code.
-        2. **Format:** Wrap code in ```python ... ```.
-        3. **Variable:** The dataframe is named `df`.
+        RULES: If data changes, reply with PYTHON code block ```python ... ```.
         """
 
         try:
-            response = model.generate_content(prompt)
+            response = self.model.generate_content(prompt)
             text_response = response.text.strip()
 
             if "```python" in text_response:
@@ -203,7 +229,13 @@ class ChatRequest(BaseModel):
     selection: dict | None = None
 
 @app.get("/")
-def health(): return {"status": "online", "ver": "11.0", "ai_key": agent.api_key_status}
+def health(): 
+    return {
+        "status": "online", 
+        "ver": "12.0", 
+        "ai_model": CURRENT_MODEL_NAME, # See exactly which model was picked
+        "key_status": agent.api_key_status
+    }
 
 @app.get("/grid")
 def get_grid(): return state.get_payload()
@@ -223,18 +255,16 @@ async def upload_file(file: UploadFile = File(...)):
         if path.endswith(".csv"): df = pd.read_csv(path)
         elif path.endswith((".xls", ".xlsx")): df = pd.read_excel(path)
         elif path.lower().endswith(('.png', '.jpg', '.jpeg', '.webp')):
-            # CRITICAL CHANGE: We now catch the REAL error and send it to UI
             try:
                 df = agent.process_image(path)
             except Exception as ocr_err:
-                return {"error": f"AI Error: {str(ocr_err)}"}
+                return {"error": str(ocr_err)}
         else:
             return {"error": "Unsupported file"}
 
         state.update(df, file.filename)
         return {"message": "Loaded", "grid_update": state.get_payload()}
     except Exception as e:
-        # Catch-all for non-AI errors (like pandas failing)
         return {"error": f"System Error: {str(e)}"}
 
 if __name__ == "__main__":
