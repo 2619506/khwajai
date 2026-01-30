@@ -1,37 +1,43 @@
 /* ============================================================
-   Khwaja AI - Data Forge Engine (v6.0 - React Architecture Port)
-   Strictly replicates App.tsx logic in Vanilla JS
+   Khwaja AI - Data Forge Engine (v15.0 - Excel Experience)
+   Features: Drag Select, Header Select, AI Context, New Sheet
    ============================================================ */
 
-// ⬇️ IMPORTANT: CONNECTS TO YOUR RENDER CLOUD ⬇️
-const API_URL = "https://khwaja-ai-backend.onrender.com";
+const API_URL = "[https://khwaja-ai-backend.onrender.com](https://khwaja-ai-backend.onrender.com)";
 let isBackendOnline = false;
 
-// --- GLOBAL STATE (Replicating React 'useState') ---
+// --- STATE ---
 let appState = {
-    files: [],       // Metadata for "My Data" view
-    activeData: [],  // Grid Rows (Array of Objects)
-    columns: [],     // Grid Headers (Array of Strings)
-    fileName: "Untitled"
+    files: [],
+    activeData: [],
+    columns: [],
+    fileName: "Untitled",
+    selection: {
+        isDragging: false,
+        start: null, // {r: 0, c: 0}
+        end: null,
+        active: false
+    }
 };
 
-// --- 1. LIFECYCLE (Replicating 'useEffect') ---
+// --- INIT ---
 document.addEventListener("DOMContentLoaded", () => {
     checkBackendHealth();
-    // Replicates the React Polling Interval (PING_INTERVAL = 5000)
-    setInterval(syncGridState, 5000); 
+    setInterval(syncGridState, 5000); // Polling for updates
+    
+    // Global Mouse Up to stop dragging
+    document.addEventListener('mouseup', () => {
+        appState.selection.isDragging = false;
+    });
 });
 
 async function checkBackendHealth() {
     try {
         const res = await fetch(`${API_URL}/`);
-        if (res.ok) {
-            if(!isBackendOnline) {
-                isBackendOnline = true;
-                updateStatus("online");
-                // Fetch initial data immediately on connect
-                syncGridState(); 
-            }
+        if (res.ok && !isBackendOnline) {
+            isBackendOnline = true;
+            updateStatus("online");
+            syncGridState(); 
         }
     } catch (e) {
         isBackendOnline = false;
@@ -39,132 +45,87 @@ async function checkBackendHealth() {
     }
 }
 
-// --- 2. DATA SYNC (The Missing Link) ---
-// This function acts like your React 'fetchGridData'
 async function syncGridState() {
     if (!isBackendOnline) return;
-
     try {
         const res = await fetch(`${API_URL}/grid`);
         const json = await res.json();
-
-        // Only update if data is different (Prevents UI flickering)
-        if (json.data && json.data.length > 0) {
-            // Check if we actually have new data to avoid re-rendering constantly
-            if (JSON.stringify(json.columns) !== JSON.stringify(appState.columns) || 
-                json.data.length !== appState.activeData.length) {
-                
-                appState.activeData = json.data;
-                appState.columns = json.columns;
-                
-                // If we are in the workspace, refresh the grid
-                const workspace = document.getElementById('workspace-view');
-                if (workspace.style.display !== 'none') {
-                    renderGrid();
-                    document.getElementById('rowCount').innerText = `${appState.activeData.length} rows`;
-                }
+        if (json.data && (JSON.stringify(json.columns) !== JSON.stringify(appState.columns) || json.data.length !== appState.activeData.length)) {
+            appState.activeData = json.data;
+            appState.columns = json.columns;
+            if (document.getElementById('workspace-view').style.display !== 'none') {
+                renderGrid();
+                updateInfo();
             }
         }
-    } catch (e) {
-        console.error("Sync error:", e);
-    }
+    } catch (e) { console.error(e); }
 }
 
 function updateStatus(status) {
     const el = document.querySelector('.connection-status');
-    if (status === 'online') {
-        el.innerHTML = '<span class="dot pulse" style="background:#4ade80"></span> Engine: <strong>Online (Cloud)</strong>';
-    } else {
-        el.innerHTML = '<span class="dot" style="background:#ef4444"></span> Engine: <strong>Offline</strong>';
-    }
+    el.innerHTML = status === 'online' 
+        ? '<span class="dot pulse" style="background:#4ade80"></span> Engine: <strong>Online</strong>' 
+        : '<span class="dot" style="background:#ef4444"></span> Engine: <strong>Offline</strong>';
 }
 
-// --- 3. VIEW CONTROLLER ---
+// --- VIEW NAVIGATION ---
 function switchView(viewId) {
     document.querySelectorAll('.view').forEach(el => el.style.display = 'none');
-    document.querySelectorAll('.menu-btn').forEach(el => el.classList.remove('active'));
-    
     document.getElementById(viewId).style.display = 'block';
-    
-    const btnMap = { 'import-view': 0, 'storage-view': 1, 'workspace-view': 2, 'viz-view': 3 };
-    const btns = document.querySelectorAll('.menu-btn');
-    if (btns[btnMap[viewId]]) btns[btnMap[viewId]].classList.add('active');
-
-    if (viewId === 'storage-view') renderFileList();
-    if (viewId === 'workspace-view') renderGrid(); 
+    if(viewId === 'workspace-view') renderGrid();
 }
 
-// --- 4. FILE UPLOAD (Fixes Duplicate Issue) ---
-const dropZone = document.getElementById('dropZone');
-const fileInput = document.getElementById('fileInput');
-
-dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.style.borderColor = '#4ade80'; });
-dropZone.addEventListener('dragleave', (e) => { e.preventDefault(); dropZone.style.borderColor = '#1e293b'; });
-dropZone.addEventListener('drop', (e) => {
-    e.preventDefault();
-    dropZone.style.borderColor = '#1e293b';
-    handleUpload(e.dataTransfer.files);
-});
-
-fileInput.addEventListener('change', (e) => handleUpload(e.target.files));
-
-async function handleUpload(fileList) {
-    if (!fileList || fileList.length === 0) return;
-    const file = fileList[0];
-
-    addAiMsg(`Ingesting <strong>${file.name}</strong>...`);
-
-    // FIX 1: STRICT DUPLICATE CHECK
-    // Only add to the UI list if it doesn't exist yet
-    const exists = appState.files.some(f => f.name === file.name);
-    if (!exists) {
-        appState.files.push({
-            name: file.name,
-            size: (file.size / 1024).toFixed(1) + ' KB',
-            type: file.name.split('.').pop().toUpperCase()
-        });
-        document.getElementById('fileCount').innerText = appState.files.length;
+// --- NEW SHEET FUNCTION ---
+async function createNewSheet() {
+    if(!confirm("Create new blank sheet? Unsaved data will be lost.")) return;
+    
+    appState.activeData = [];
+    appState.columns = [];
+    appState.fileName = "New Sheet";
+    
+    if (isBackendOnline) {
+        // Reset Backend
+        await fetch(`${API_URL}/reset`, { method: 'POST' });
+        syncGridState();
+    } else {
+        // Local Reset
+        appState.activeData = []; 
+        renderGrid();
     }
+    switchView('workspace-view');
+    addAiMsg("✨ Created new blank workspace.");
+}
+
+// --- FILE UPLOAD ---
+async function handleUpload(fileList) {
+    if (!fileList.length) return;
+    const file = fileList[0];
+    addAiMsg(`Ingesting <strong>${file.name}</strong>...`);
 
     if (isBackendOnline) {
         const formData = new FormData();
         formData.append('file', file);
-
         try {
-            addAiMsg("🚀 Uploading to Cloud Engine...");
             const res = await fetch(`${API_URL}/upload`, { method: 'POST', body: formData });
             const json = await res.json();
-
-            if (json.error) {
-                addAiMsg(`❌ Python Error: ${json.error}`);
-            } else if (json.grid_update) {
-                // SUCCESS: Update Global State directly from response
+            if (json.grid_update) {
                 appState.activeData = json.grid_update.data;
                 appState.columns = json.grid_update.columns;
                 appState.fileName = file.name;
-                
-                finalizeLoad(); // Switch view and render
-                addAiMsg("✅ Data extracted & loaded.");
+                switchView('workspace-view');
+                renderGrid();
+                addAiMsg("✅ Data Loaded.");
+            } else {
+                addAiMsg(`❌ Error: ${json.error}`);
             }
-        } catch (e) {
-            addAiMsg(`❌ Connection Failed: ${e.message}`);
-        }
-    } else {
-        if (file.type.startsWith('image/')) {
-            alert("⚠️ Image OCR requires Cloud Engine.");
-            return;
-        }
+        } catch (e) { addAiMsg("❌ Upload Failed"); }
     }
 }
 
-function finalizeLoad() {
-    switchView('workspace-view');
-    renderGrid();
-    document.getElementById('activeFileName').innerText = appState.fileName;
-    document.getElementById('rowCount').innerText = `${appState.activeData.length} rows`;
-}
+// ============================================================
+// 🎮 EXCEL-LIKE GRID SYSTEM (The Magic)
+// ============================================================
 
-// --- 5. GRID RENDERER (Handling Objects like React) ---
 function renderGrid() {
     const thead = document.querySelector('#dataTable thead');
     const tbody = document.querySelector('#dataTable tbody');
@@ -173,139 +134,186 @@ function renderGrid() {
     const cols = appState.columns;
     const rows = appState.activeData;
 
-    // Safety check
-    if (!cols || cols.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px; color:#666;">Waiting for data...</td></tr>';
+    if (!cols.length) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px; color:#666;">Empty Grid</td></tr>';
         return;
     }
 
-    // 1. HEADERS
-    let headerRow = '<tr><th class="row-num">#</th>';
-    cols.forEach(col => headerRow += `<th>${col}</th>`);
-    headerRow += '</tr>';
-    thead.innerHTML = headerRow;
+    // --- HEADERS ---
+    let headerRow = document.createElement('tr');
+    
+    // Corner Cell (Select All)
+    let cornerTh = document.createElement('th');
+    cornerTh.className = 'row-num';
+    cornerTh.innerText = '◢';
+    cornerTh.onclick = () => selectRange(0, 0, rows.length - 1, cols.length - 1);
+    headerRow.appendChild(cornerTh);
 
-    // 2. BODY (Limit 500 rows for performance)
-    const limit = 500; 
-    let bodyHtml = '';
+    cols.forEach((col, cIndex) => {
+        let th = document.createElement('th');
+        th.innerText = col;
+        // CLICK HEADER -> Select Column
+        th.onclick = () => selectRange(0, cIndex, rows.length - 1, cIndex);
+        headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
 
-    rows.slice(0, limit).forEach((rowObj, i) => {
-        bodyHtml += `<tr><td class="row-num">${i + 1}</td>`;
-        cols.forEach(col => {
-            // FIX 2: Correctly access data from Object (Dictionary)
-            let val = rowObj[col]; 
-            if (val === undefined || val === null) val = "";
+    // --- BODY ---
+    rows.forEach((rowObj, rIndex) => {
+        let tr = document.createElement('tr');
+
+        // Row Number (Select Row)
+        let rowHeader = document.createElement('td');
+        rowHeader.className = 'row-num';
+        rowHeader.innerText = rIndex + 1;
+        rowHeader.onclick = () => selectRange(rIndex, 0, rIndex, cols.length - 1);
+        tr.appendChild(rowHeader);
+
+        cols.forEach((col, cIndex) => {
+            let td = document.createElement('td');
+            let val = rowObj[col] !== undefined ? rowObj[col] : "";
             
             // Numeric Styling
-            const isNum = !isNaN(parseFloat(val)) && isFinite(val);
-            const style = isNum ? 'style="text-align:right; color:#a7f3d0;"' : '';
-            
-            bodyHtml += `<td ${style} onclick="toggleCell(this, '${val}')">${val}</td>`;
+            if (!isNaN(parseFloat(val)) && isFinite(val)) {
+                td.style.textAlign = 'right';
+                td.style.color = '#a7f3d0';
+            }
+            td.innerText = val;
+
+            // --- DRAG EVENTS ---
+            td.dataset.r = rIndex;
+            td.dataset.c = cIndex;
+
+            td.onmousedown = (e) => {
+                appState.selection.isDragging = true;
+                appState.selection.start = {r: rIndex, c: cIndex};
+                appState.selection.end = {r: rIndex, c: cIndex};
+                // If Ctrl not pressed, clear previous
+                if (!e.ctrlKey) clearSelection();
+                updateSelectionVisuals();
+            };
+
+            td.onmouseover = () => {
+                if (appState.selection.isDragging) {
+                    appState.selection.end = {r: rIndex, c: cIndex};
+                    updateSelectionVisuals();
+                }
+            };
+
+            tr.appendChild(td);
         });
-        bodyHtml += '</tr>';
+        tbody.appendChild(tr);
     });
-    tbody.innerHTML = bodyHtml;
 }
 
-// --- 6. FILE STORAGE VIEW ---
-function renderFileList() {
-    const list = document.getElementById('fileList');
-    list.innerHTML = '';
+// --- SELECTION LOGIC ---
+function clearSelection() {
+    document.querySelectorAll('td.selected').forEach(el => el.classList.remove('selected'));
+    appState.selection.active = false;
+}
+
+function selectRange(r1, c1, r2, c2) {
+    clearSelection();
+    appState.selection.start = {r: r1, c: c1};
+    appState.selection.end = {r: r2, c: c2};
+    updateSelectionVisuals();
+}
+
+function updateSelectionVisuals() {
+    const s = appState.selection.start;
+    const e = appState.selection.end;
+    if (!s || !e) return;
+
+    // Normalize bounds
+    const minR = Math.min(s.r, e.r), maxR = Math.max(s.r, e.r);
+    const minC = Math.min(s.c, e.c), maxC = Math.max(s.c, e.c);
+
+    // Track values for stats
+    let values = [];
     
-    if (appState.files.length === 0) {
-        list.innerHTML = `<div class="empty-state"><p>No files loaded.</p></div>`;
-        return;
+    // Apply Class
+    const rows = document.querySelector('#dataTable tbody').children;
+    for (let i = 0; i < rows.length; i++) {
+        const cells = rows[i].children;
+        for (let j = 1; j < cells.length; j++) { // Skip row number col
+            const r = i, c = j - 1;
+            const cell = cells[j];
+            
+            if (r >= minR && r <= maxR && c >= minC && c <= maxC) {
+                cell.classList.add('selected');
+                const val = parseFloat(cell.innerText);
+                if (!isNaN(val)) values.push(val);
+            } else {
+                // Only remove if we are in a single drag mode (omitting complex ctrl+select for now)
+                cell.classList.remove('selected');
+            }
+        }
     }
-
-    appState.files.forEach(f => {
-        const card = document.createElement('div');
-        card.className = 'file-card';
-        // Clicking a file just takes you to workspace (Single session for now)
-        card.onclick = () => switchView('workspace-view');
-        
-        card.innerHTML = `
-            <div class="file-icon"><i class="fas fa-table"></i></div>
-            <div class="file-info">
-                <h4>${f.name}</h4>
-                <span>${f.type} • ${f.size}</span>
-            </div>
-        `;
-        list.appendChild(card);
-    });
+    
+    appState.selection.active = true;
+    updateStats(values);
 }
 
-// --- 7. UTILS & AI CHAT ---
-function addAiMsg(html) {
-    const chat = document.getElementById('chatHistory');
-    chat.innerHTML += `<div class="msg ai">${html}</div>`;
-    chat.scrollTop = chat.scrollHeight;
+function updateStats(values) {
+    const sum = values.reduce((a, b) => a + b, 0);
+    const avg = values.length ? (sum / values.length) : 0;
+    
+    document.getElementById('selCount').innerText = values.length;
+    document.getElementById('selSum').innerText = sum.toLocaleString(undefined, {maximumFractionDigits: 2});
+    document.getElementById('selAvg').innerText = avg.toLocaleString(undefined, {maximumFractionDigits: 2});
 }
 
+function updateInfo() {
+    document.getElementById('rowCount').innerText = `${appState.activeData.length} rows`;
+    document.getElementById('activeFileName').innerText = appState.fileName;
+}
+
+// --- AI CHAT ---
 function handleChat() {
     const input = document.getElementById('userQuery');
     const txt = input.value;
     if (!txt) return;
 
-    document.getElementById('chatHistory').innerHTML += `<div class="msg user">${txt}</div>`;
+    addAiMsg(txt, 'user'); // User msg
     input.value = '';
 
+    // Prepare Payload with Selection Context
+    const payload = { message: txt };
+    
+    if (appState.selection.active) {
+        const s = appState.selection.start;
+        const e = appState.selection.end;
+        // Send simplified range context (e.g., Rows 0-5, Cols 1-3)
+        payload.selection = {
+            active: true,
+            rows: `${Math.min(s.r, e.r)}-${Math.max(s.r, e.r)}`,
+            cols: appState.columns.slice(Math.min(s.c, e.c), Math.max(s.c, e.c) + 1).join(", ")
+        };
+    }
+
     if (isBackendOnline) {
-        // Send to Python AI
         fetch(`${API_URL}/chat`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: txt })
+            body: JSON.stringify(payload)
         })
         .then(res => res.json())
         .then(data => {
-            addAiMsg(data.response);
-            // If AI updated data, refresh grid
+            addAiMsg(data.response, 'ai');
             if (data.grid_update) {
                 appState.activeData = data.grid_update.data;
                 appState.columns = data.grid_update.columns;
                 renderGrid();
             }
         })
-        .catch(err => addAiMsg("❌ Backend Error"));
+        .catch(err => addAiMsg("❌ Backend Error", 'ai'));
     } else {
-        setTimeout(() => addAiMsg("I am running locally. Connect Python backend for full AI capabilities."), 500);
+        addAiMsg("Offline Mode: Connect Python backend for AI.", 'ai');
     }
 }
 
-// --- 8. MATH & STATS ---
-let selectedValues = [];
-
-function toggleCell(cell, val) {
-    cell.classList.toggle('selected');
-    const num = parseFloat(val);
-    if (!isNaN(num)) {
-        if (cell.classList.contains('selected')) selectedValues.push(num);
-        else {
-            const idx = selectedValues.indexOf(num);
-            if (idx > -1) selectedValues.splice(idx, 1);
-        }
-    }
-    updateStats();
-}
-
-function updateStats() {
-    const sum = selectedValues.reduce((a, b) => a + b, 0);
-    const avg = selectedValues.length ? (sum / selectedValues.length) : 0;
-    
-    document.getElementById('selCount').innerText = selectedValues.length;
-    document.getElementById('selSum').innerText = sum.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});
-    document.getElementById('selAvg').innerText = avg.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2});
-}
-
-function runAutoClean() {
-    if (isBackendOnline) {
-        handleChat("Clean this data, remove empty rows and standardize formats.");
-    }
-}
-
-function exportCurrentData() {
-    const ws = XLSX.utils.json_to_sheet(appState.activeData);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Data");
-    XLSX.writeFile(wb, `Cleaned_${appState.fileName}.xlsx`);
+function addAiMsg(html, type) {
+    const chat = document.getElementById('chatHistory');
+    chat.innerHTML += `<div class="msg ${type === 'user' ? 'user' : 'ai'}">${html}</div>`;
+    chat.scrollTop = chat.scrollHeight;
 }
