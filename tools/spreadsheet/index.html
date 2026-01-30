@@ -1,1 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khwaja AI | Smart Spreadsheet</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+</head>
+<body>
 
+    <nav class="tool-nav">
+        <div class="nav-left">
+            <a href="../../index.html" class="back-link"><i class="fas fa-arrow-left"></i> Home</a>
+            <span class="divider">/</span>
+            <span class="tool-name">AI+ Spreadsheet</span>
+        </div>
+        <div class="nav-right">
+            <span class="status-indicator online">Python Backend: Ready</span>
+        </div>
+    </nav>
+
+    <div class="toolbar">
+        <div class="tool-group">
+            <label class="file-btn">
+                <i class="fas fa-file-csv"></i> Import CSV
+                <input type="file" id="csvInput" accept=".csv,.xlsx" hidden>
+            </label>
+            <label class="file-btn ocr-btn">
+                <i class="fas fa-camera"></i> OCR Image Upload
+                <input type="file" id="imgInput" accept="image/*" hidden>
+            </label>
+        </div>
+        <div class="tool-group">
+            <button class="action-btn" onclick="runAIAnalysis()"><i class="fas fa-robot"></i> Run AI Analysis</button>
+            <button class="action-btn" onclick="exportData()"><i class="fas fa-download"></i> Export</button>
+        </div>
+    </div>
+
+    <div class="workspace">
+        <div class="spreadsheet-container">
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Date</th>
+                        <th>Category</th>
+                        <th>Description</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr>
+                        <td>001</td>
+                        <td>2026-01-28</td>
+                        <td>Finance</td>
+                        <td>Q1 Revenue Report</td>
+                        <td>$12,500</td>
+                        <td><span class="tag verified">Verified</span></td>
+                    </tr>
+                    <tr>
+                        <td>002</td>
+                        <td>2026-01-29</td>
+                        <td>Operations</td>
+                        <td>Logistics Update</td>
+                        <td>$4,200</td>
+                        <td><span class="tag pending">Pending</span></td>
+                    </tr>
+                    </tbody>
+            </table>
+        </div>
+
+        <div class="ai-sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fas fa-brain"></i> AI Insights</h3>
+            </div>
+            <div class="chat-area" id="aiOutput">
+                <div class="ai-msg">
+                    <p>System ready. Upload a document or image to begin OCR processing.</p>
+                </div>
+            </div>
+            <div class="input-area">
+                <input type="text" placeholder="Ask AI about this data..." id="queryInput">
+                <button onclick="sendToPython()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. Handle CSV Upload
+        document.getElementById('csvInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                const json = XLSX.utils.sheet_to_json(sheet, {header: 1});
+                renderTable(json);
+                addAiLog(`Loaded ${file.name} successfully.`);
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
+        // 2. Handle OCR Image Upload (Simulation)
+        document.getElementById('imgInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+
+            addAiLog(`Uploading ${file.name} to Python OCR Engine...`);
+            
+            // SIMULATING BACKEND CALL
+            setTimeout(() => {
+                addAiLog("OCR Processing Complete. Data extracted.");
+                // In real app: fetch('/api/ocr', { method: 'POST', body: formData })
+                
+                // Mock adding a row from "image"
+                const newRow = `<tr><td>003</td><td>2026-02-01</td><td>Receipt</td><td>OCR Extracted Item</td><td>$150.00</td><td><span class="tag new">New</span></td></tr>`;
+                document.getElementById('tableBody').insertAdjacentHTML('beforeend', newRow);
+            }, 2000);
+        });
+
+        // 3. Render Table Function
+        function renderTable(data) {
+            const thead = document.querySelector('#dataTable thead');
+            const tbody = document.querySelector('#dataTable tbody');
+            thead.innerHTML = '';
+            tbody.innerHTML = '';
+
+            // Headers
+            let headerRow = '<tr>';
+            data[0].forEach(cell => headerRow += `<th>${cell}</th>`);
+            headerRow += '</tr>';
+            thead.innerHTML = headerRow;
+
+            // Rows
+            data.slice(1).forEach(row => {
+                let htmlRow = '<tr>';
+                row.forEach(cell => htmlRow += `<td>${cell}</td>`);
+                htmlRow += '</tr>';
+                tbody.innerHTML += htmlRow;
+            });
+        }
+
+        // 4. Chat/Log Logic
+        function addAiLog(text) {
+            const div = document.createElement('div');
+            div.className = 'ai-msg';
+            div.innerHTML = `<p>${text}</p>`;
+            document.getElementById('aiOutput').appendChild(div);
+        }
+
+        function sendToPython() {
+            const val = document.getElementById('queryInput').value;
+            if(!val) return;
+            addAiLog(`<strong>You:</strong> ${val}`);
+            document.getElementById('queryInput').value = '';
+            
+            // Simulating Python Response
+            setTimeout(() => {
+                addAiLog(`<strong>AI:</strong> I am a static demo currently. Connect me to your Python Flask/FastAPI backend to process real queries!`);
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
