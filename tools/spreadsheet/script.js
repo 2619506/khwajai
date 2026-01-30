@@ -1,6 +1,6 @@
 /* ============================================================
-   Khwaja AI - Data Forge Engine (v4.0 - Production Fix)
-   Replicates BUSnX React Architecture in Vanilla JS
+   Khwaja AI - Data Forge Engine (v5.0 - Stability Fix)
+   Replicates BUSnX React Architecture & State Management
    ============================================================ */
 
 const API_URL = "http://localhost:8000";
@@ -8,29 +8,60 @@ let isBackendOnline = false;
 
 // --- GLOBAL STATE ---
 let appState = {
-    files: [],       // Metadata for the "My Data" view
-    activeData: [],  // The actual rows (Array of Objects)
-    columns: [],     // The headers
+    files: [],       // Metadata for "My Data" view
+    activeData: [],  // Grid Rows (Array of Objects)
+    columns: [],     // Grid Headers (Array of Strings)
     fileName: "Untitled"
 };
 
-// --- 1. INITIALIZATION ---
+// --- 1. INITIALIZATION (Like App.tsx useEffect) ---
 document.addEventListener("DOMContentLoaded", () => {
     checkBackendHealth();
-    setInterval(checkBackendHealth, 5000);
+    // Poll backend every 2s to sync state (like your React App)
+    setInterval(syncGridState, 2000); 
 });
 
 async function checkBackendHealth() {
     try {
         const res = await fetch(`${API_URL}/`);
         if (res.ok) {
-            if(!isBackendOnline) addAiMsg("System connected to Python Neural Engine.");
-            isBackendOnline = true;
-            updateStatus("online");
+            if(!isBackendOnline) {
+                isBackendOnline = true;
+                updateStatus("online");
+                // Fetch initial grid data immediately on connect
+                syncGridState(); 
+            }
         }
     } catch (e) {
         isBackendOnline = false;
         updateStatus("offline");
+    }
+}
+
+// Replicates fetchGridData from App.tsx
+async function syncGridState() {
+    if (!isBackendOnline) return;
+
+    try {
+        const res = await fetch(`${API_URL}/grid`);
+        const json = await res.json();
+
+        // Only update if data actually changed to avoid UI flickering
+        if (JSON.stringify(json.columns) !== JSON.stringify(appState.columns) || 
+            json.data.length !== appState.activeData.length) {
+            
+            appState.columns = json.columns || [];
+            appState.activeData = json.data || [];
+            
+            // If we have data, ensure we are in Workspace view
+            if (appState.activeData.length > 0) {
+                renderGrid();
+                updateStats();
+                document.getElementById('rowCount').innerText = `${appState.activeData.length} rows`;
+            }
+        }
+    } catch (e) {
+        console.error("Sync error:", e);
     }
 }
 
@@ -45,24 +76,19 @@ function updateStatus(status) {
 
 // --- 2. VIEW CONTROLLER ---
 function switchView(viewId) {
-    // Hide all
     document.querySelectorAll('.view').forEach(el => el.style.display = 'none');
     document.querySelectorAll('.menu-btn').forEach(el => el.classList.remove('active'));
-    
-    // Show target
     document.getElementById(viewId).style.display = 'block';
     
-    // Update Menu
     const btnMap = { 'import-view': 0, 'storage-view': 1, 'workspace-view': 2, 'viz-view': 3 };
     const btns = document.querySelectorAll('.menu-btn');
     if (btns[btnMap[viewId]]) btns[btnMap[viewId]].classList.add('active');
 
-    // Trigger renders
     if (viewId === 'storage-view') renderFileList();
-    if (viewId === 'workspace-view') renderGrid(); // Force re-render when entering workspace
+    if (viewId === 'workspace-view') renderGrid(); 
 }
 
-// --- 3. FILE INGESTION ---
+// --- 3. FILE INGESTION (Fixes Duplicate Issue) ---
 const dropZone = document.getElementById('dropZone');
 const fileInput = document.getElementById('fileInput');
 
@@ -82,105 +108,116 @@ async function handleUpload(fileList) {
 
     addAiMsg(`Ingesting <strong>${file.name}</strong>...`);
 
-    // Prevent Duplicates in File List
-    const exists = appState.files.some(f => f.name === file.name);
-    if (!exists) {
-        appState.files.push({
-            name: file.name,
-            size: (file.size / 1024).toFixed(1) + ' KB',
-            type: file.name.split('.').pop().toUpperCase(),
-            rawFile: file // Keep reference for local fallback
-        });
-        document.getElementById('fileCount').innerText = appState.files.length;
-    }
+    // FIX 1: Don't add to file list yet. Wait for processing.
+    // We only add to 'appState.files' once we confirm data is valid.
 
-    // PROCESSING LOGIC
     if (isBackendOnline) {
-        // --- BACKEND MODE (Preferred) ---
+        // --- BACKEND UPLOAD (Replicates handleFileUpload from App.tsx) ---
         const formData = new FormData();
         formData.append('file', file);
 
         try {
-            addAiMsg("Sending to Python OCR/Parser...");
             const res = await fetch(`${API_URL}/upload`, { method: 'POST', body: formData });
             const json = await res.json();
 
             if (json.error) {
                 addAiMsg(`❌ Python Error: ${json.error}`);
             } else if (json.grid_update) {
-                loadIntoState(json.grid_update.data, json.grid_update.columns, file.name);
-                addAiMsg("✅ Extraction Complete. Data loaded.");
+                // SUCCESS
+                addFileToList(file); // Add to UI list ONLY now
+                // Update State directly from Backend Response
+                appState.columns = json.grid_update.columns;
+                appState.activeData = json.grid_update.data;
+                appState.fileName = file.name;
+                
+                finalizeLoad();
+                addAiMsg("✅ Data extracted successfully.");
             }
         } catch (e) {
             addAiMsg(`❌ Upload Failed: ${e.message}`);
         }
     } else {
-        // --- LOCAL MODE (Fallback) ---
+        // --- LOCAL FALLBACK ---
         if (file.type.startsWith('image/')) {
-            alert("⚠️ Image OCR requires the Python Backend to be running!");
+            alert("⚠️ Image OCR requires 'backend.py' to be running!");
             return;
         }
+        addFileToList(file);
         parseLocalFile(file);
     }
 }
 
-// --- 4. CORE STATE MANAGEMENT ---
-function loadIntoState(data, columns, fileName) {
-    if (!data || data.length === 0) {
-        addAiMsg("⚠️ Warning: Extracted dataset is empty.");
-        return;
+// Helper to safely add file to list without duplicates
+function addFileToList(file) {
+    const exists = appState.files.some(f => f.name === file.name);
+    if (!exists) {
+        appState.files.push({
+            name: file.name,
+            size: (file.size / 1024).toFixed(1) + ' KB',
+            type: file.name.split('.').pop().toUpperCase(),
+            rawFile: file
+        });
+        document.getElementById('fileCount').innerText = appState.files.length;
     }
+}
 
-    appState.activeData = data;
-    appState.columns = columns;
-    appState.fileName = fileName;
-
+// --- 4. DATA LOADING ---
+function finalizeLoad() {
     // Enable Buttons
     document.getElementById('processBtn').disabled = false;
     document.getElementById('vizBtn').disabled = false;
     
     // Update Header
-    document.getElementById('activeFileName').innerText = fileName;
-    document.getElementById('rowCount').innerText = `${data.length} rows`;
+    document.getElementById('activeFileName').innerText = appState.fileName;
+    document.getElementById('rowCount').innerText = `${appState.activeData.length} rows`;
 
     // Auto-switch to workspace
     switchView('workspace-view');
+    renderGrid(); // Force render immediately
 }
 
-// Local Parser (SheetJS)
 function parseLocalFile(file) {
     const reader = new FileReader();
     reader.onload = (e) => {
         const data = new Uint8Array(e.target.result);
         const workbook = XLSX.read(data, {type: 'array'});
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
-        const json = XLSX.utils.sheet_to_json(sheet, {header: 1}); // Array of Arrays
+        const json = XLSX.utils.sheet_to_json(sheet, {header: 1});
 
         if (json.length > 0) {
-            const cols = json[0].map(c => String(c)); // Force string headers
-            // Convert Array-of-Arrays to Array-of-Objects to match Python format
+            const cols = json[0].map(c => String(c));
             const rows = json.slice(1).map(row => {
                 let obj = {};
                 cols.forEach((col, i) => obj[col] = row[i] || "");
                 return obj;
             });
-            loadIntoState(rows, cols, file.name);
+            
+            appState.columns = cols;
+            appState.activeData = rows;
+            appState.fileName = file.name;
+            finalizeLoad();
         }
     };
     reader.readAsArrayBuffer(file);
 }
 
-// --- 5. GRID RENDERER (The Fix) ---
+// --- 5. GRID RENDERER (Professional Table) ---
 function renderGrid() {
     const thead = document.querySelector('#dataTable thead');
     const tbody = document.querySelector('#dataTable tbody');
+    
+    // Clear current
     thead.innerHTML = '';
     tbody.innerHTML = '';
 
     const cols = appState.columns;
     const rows = appState.activeData;
 
-    if (!cols || cols.length === 0) return;
+    // Safety Check
+    if (!cols || cols.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px;">No data to display</td></tr>';
+        return;
+    }
 
     // 1. HEADERS
     let headerRow = '<tr><th class="row-num">#</th>';
@@ -190,18 +227,18 @@ function renderGrid() {
     headerRow += '</tr>';
     thead.innerHTML = headerRow;
 
-    // 2. BODY (Virtualized/Limited for performance)
-    const limit = 1000; 
+    // 2. BODY (Limit to 500 rows for DOM performance)
+    const limit = 500; 
     let bodyHtml = '';
 
-    rows.slice(0, limit).forEach((row, i) => {
+    rows.slice(0, limit).forEach((rowObj, i) => {
         bodyHtml += `<tr><td class="row-num">${i + 1}</td>`;
         cols.forEach(col => {
-            // Safe Access: row[col] handles dictionary format from Python
-            let val = row[col]; 
+            // Safe Access: matches Python's dict keys
+            let val = rowObj[col]; 
             if (val === undefined || val === null) val = "";
             
-            // Numeric Styling
+            // Numeric Styling (Green aligned right)
             const isNum = !isNaN(parseFloat(val)) && isFinite(val);
             const style = isNum ? 'style="text-align:right; color:#a7f3d0;"' : '';
             
@@ -225,10 +262,10 @@ function renderFileList() {
     appState.files.forEach(f => {
         const card = document.createElement('div');
         card.className = 'file-card';
-        // IMPORTANT: Clicking card re-loads that specific file
         card.onclick = () => {
-            if(f.rawFile) parseLocalFile(f.rawFile); // Reload local
-            else addAiMsg("⚠️ Please re-upload to view (Session storage limitation).");
+            // Restore context when clicking a file in storage
+            appState.fileName = f.name;
+            switchView('workspace-view');
         };
         
         card.innerHTML = `
@@ -254,12 +291,10 @@ function handleChat() {
     const txt = input.value;
     if (!txt) return;
 
-    // UI Update
     document.getElementById('chatHistory').innerHTML += `<div class="msg user">${txt}</div>`;
     input.value = '';
 
     if (isBackendOnline) {
-        // Send to Python AI
         fetch(`${API_URL}/chat`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -268,8 +303,11 @@ function handleChat() {
         .then(res => res.json())
         .then(data => {
             addAiMsg(data.response);
+            // If AI updated data (e.g. "Clean this"), refresh grid
             if (data.grid_update) {
-                loadIntoState(data.grid_update.data, data.grid_update.columns, appState.fileName);
+                appState.activeData = data.grid_update.data;
+                appState.columns = data.grid_update.columns;
+                renderGrid();
             }
         })
         .catch(err => addAiMsg("❌ Backend Error"));
@@ -278,7 +316,7 @@ function handleChat() {
     }
 }
 
-// --- 8. MATH & AUTO CLEAN ---
+// --- 8. MATH STATS ---
 let selectedValues = [];
 
 function toggleCell(cell, val) {
@@ -307,8 +345,6 @@ function runAutoClean() {
     if (isBackendOnline) {
         handleChat("Clean this data, remove empty rows and standardize formats.");
     } else {
-        // Simple Local Clean
-        addAiMsg("Running local auto-clean...");
         appState.activeData = appState.activeData.filter(row => Object.values(row).some(x => x !== "" && x !== null));
         renderGrid();
         addAiMsg("Removed empty rows locally.");
