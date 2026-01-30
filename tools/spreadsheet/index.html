@@ -70,7 +70,8 @@
                         <span class="rows-badge" id="rowCount">0 rows</span>
                     </div>
                     <div class="actions">
-                        <button class="tool-btn" onclick="runAutoClean()"><i class="fas fa-magic"></i> Auto-Clean</button>
+                        <button class="tool-btn" onclick="createNewSheet()"><i class="fas fa-plus"></i> New Sheet</button>
+                        <button class="tool-btn" id="processBtn" onclick="runAutoClean()" disabled><i class="fas fa-magic"></i> Auto-Clean</button>
                         <button class="tool-btn" onclick="exportCurrentData()"><i class="fas fa-download"></i> Export CSV</button>
                     </div>
                 </div>
