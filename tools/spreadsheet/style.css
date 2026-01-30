@@ -556,3 +556,29 @@ td.selected {
         padding: 15px;
     }
 }
+/* --- PROFESSIONAL GRID TWEAKS --- */
+th {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--border); /* Thicker header line */
+    background: #151921; /* Slightly darker header */
+    white-space: nowrap;
+}
+
+td {
+    border-right: 1px solid rgba(255,255,255,0.03); /* Faint vertical lines */
+    font-variant-numeric: tabular-nums; /* Monospaced numbers */
+}
+
+/* Scrollbar for table */
+.spreadsheet-wrapper::-webkit-scrollbar {
+    height: 10px;
+    width: 10px;
+}
+.spreadsheet-wrapper::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 5px;
+}
+.spreadsheet-wrapper::-webkit-scrollbar-corner {
+    background: #020617;
+}
