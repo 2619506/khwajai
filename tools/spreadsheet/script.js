@@ -1,32 +1,62 @@
 /* ============================================================
-   Khwaja AI - Data Forge Engine (v2.0)
-   Replicates the functionality of BUSnX (App.tsx)
+   Khwaja AI - Data Forge Engine (v3.0 - Hybrid AI)
+   Connects HTML Frontend to Python FastAPI Backend
    ============================================================ */
 
-// --- GLOBAL STATE ---
+const API_URL = "http://localhost:8000";
+let isBackendOnline = false;
+
+// --- STATE ---
 let appState = {
-    files: [],       // Stores file metadata
-    activeData: [],  // Current JSON data (Array of Objects)
-    columns: [],     // Current column headers
-    fileName: "",    // Current filename
-    selection: []    // Array of selected cell values
+    files: [],
+    activeData: [],
+    columns: [],
+    fileName: "Untitled"
 };
 
-// --- 1. INITIALIZATION & NAVIGATION ---
+// --- 1. INITIALIZATION ---
+document.addEventListener("DOMContentLoaded", () => {
+    checkBackendHealth();
+    setInterval(checkBackendHealth, 5000); // Check connection every 5s
+});
+
+async function checkBackendHealth() {
+    try {
+        const res = await fetch(`${API_URL}/`);
+        if (res.ok) {
+            isBackendOnline = true;
+            updateStatus("online");
+        }
+    } catch (e) {
+        isBackendOnline = false;
+        updateStatus("offline");
+    }
+}
+
+function updateStatus(status) {
+    const el = document.querySelector('.connection-status');
+    if (status === 'online') {
+        el.innerHTML = '<span class="dot pulse" style="background:#4ade80"></span> Engine: <strong>Online (Python)</strong>';
+    } else {
+        el.innerHTML = '<span class="dot" style="background:#ef4444"></span> Engine: <strong>Offline (Local Mode)</strong>';
+    }
+}
+
+// --- 2. VIEW NAVIGATION ---
 function switchView(viewId) {
     document.querySelectorAll('.view').forEach(el => el.style.display = 'none');
     document.querySelectorAll('.menu-btn').forEach(el => el.classList.remove('active'));
     document.getElementById(viewId).style.display = 'block';
     
-    // Auto-highlight button logic
-    const btnIndex = ['import-view', 'storage-view', 'workspace-view', 'viz-view'].indexOf(viewId);
-    if(btnIndex >= 0) document.querySelectorAll('.menu-btn')[btnIndex].classList.add('active');
+    // Highlight button
+    const btnMap = { 'import-view': 0, 'storage-view': 1, 'workspace-view': 2, 'viz-view': 3 };
+    const btns = document.querySelectorAll('.menu-btn');
+    if (btns[btnMap[viewId]]) btns[btnMap[viewId]].classList.add('active');
 
-    if(viewId === 'storage-view') renderFileList();
-    if(viewId === 'viz-view') renderChart();
+    if (viewId === 'storage-view') renderFileList();
 }
 
-// --- 2. FILE INGESTION (Drop & Click) ---
+// --- 3. FILE INGESTION ---
 const dropZone = document.getElementById('dropZone');
 const fileInput = document.getElementById('fileInput');
 
@@ -35,272 +65,230 @@ dropZone.addEventListener('dragleave', (e) => { e.preventDefault(); dropZone.sty
 dropZone.addEventListener('drop', (e) => {
     e.preventDefault();
     dropZone.style.borderColor = '#1e293b';
-    processFiles(e.dataTransfer.files);
+    handleUpload(e.dataTransfer.files);
 });
 
-fileInput.addEventListener('change', (e) => processFiles(e.target.files));
+fileInput.addEventListener('change', (e) => handleUpload(e.target.files));
 
-function processFiles(fileList) {
-    Array.from(fileList).forEach(file => {
-        // We just store the FILE OBJECT now. We parse it when "Opened".
-        appState.files.push({
-            id: Date.now() + Math.random(),
-            fileObj: file,
-            name: file.name,
-            size: (file.size/1024).toFixed(1) + ' KB',
-            type: file.name.split('.').pop().toUpperCase()
-        });
-    });
+async function handleUpload(fileList) {
+    const file = fileList[0];
+    if (!file) return;
+
+    // UI Feedback
+    addAiMsg(`Processing <strong>${file.name}</strong>...`);
     
-    updateFileCount();
-    switchView('storage-view');
-    addAiMsg(`Ingested ${fileList.length} files. Open them in "My Data".`);
-}
-
-function updateFileCount() {
-    document.getElementById('fileCount').innerText = appState.files.length;
-}
-
-// --- 3. STORAGE VIEW (File Listing) ---
-function renderFileList() {
-    const list = document.getElementById('fileList');
-    list.innerHTML = '';
+    // DECISION: Local or Backend?
+    const isImage = file.type.startsWith('image/');
     
-    if (appState.files.length === 0) {
-        list.innerHTML = `<div class="empty-state" style="text-align:center; color:#666; margin-top:50px;"><p>No files found.</p></div>`;
-        return;
+    if (isBackendOnline) {
+        // --- PATH A: SEND TO PYTHON (OCR & AI) ---
+        addAiMsg("🚀 Sending to Python Engine for intelligent extraction...");
+        
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const response = await fetch(`${API_URL}/upload`, {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+
+            if (result.error) {
+                addAiMsg(`❌ Server Error: ${result.error}`);
+            } else if (result.grid_update) {
+                // SUCCESS: Python returns structured data
+                loadDataFromBackend(result.grid_update, file.name);
+                addAiMsg("✅ Data extracted and structured successfully.");
+            }
+        } catch (err) {
+            addAiMsg(`❌ Connection Failed: ${err.message}`);
+        }
+
+    } else {
+        // --- PATH B: LOCAL FALLBACK (CSV/Excel Only) ---
+        if (isImage) {
+            alert("⚠️ Image OCR requires Python Backend. Please run 'backend.py'.");
+            return;
+        }
+        addAiMsg("⚠️ Python Offline. Using Local Parsing.");
+        parseLocalFile(file);
     }
-
-    appState.files.forEach(f => {
-        const card = document.createElement('div');
-        card.className = 'file-card';
-        card.onclick = () => loadFile(f);
-        card.innerHTML = `
-            <div class="file-icon"><i class="fas fa-file-csv"></i></div>
-            <div class="file-info">
-                <h4>${f.name}</h4>
-                <span>${f.type} • ${f.size}</span>
-            </div>
-        `;
-        list.appendChild(card);
-    });
 }
 
-// --- 4. CORE: PARSING & WORKSPACE ---
-function loadFile(fileData) {
+// --- 4. DATA LOADING & RENDERING ---
+
+// Load data formatted by Python Backend
+function loadDataFromBackend(gridPayload, name) {
+    appState.columns = gridPayload.columns;
+    appState.activeData = gridPayload.data; // Array of dicts: [{'Col1': Val, 'Col2': Val}...]
+    appState.fileName = name;
+
+    finalizeLoad();
+}
+
+// Fallback: Parse CSV/Excel locally
+function parseLocalFile(file) {
     const reader = new FileReader();
-    
     reader.onload = (e) => {
         const data = new Uint8Array(e.target.result);
         const workbook = XLSX.read(data, {type: 'array'});
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
         
-        // Get first sheet
-        const sheetName = workbook.SheetNames[0];
-        const sheet = workbook.Sheets[sheetName];
+        // Raw JSON (Array of Arrays)
+        const raw = XLSX.utils.sheet_to_json(sheet, {header: 1});
         
-        // Parse to JSON (Header: 1 means array of arrays)
-        const jsonData = XLSX.utils.sheet_to_json(sheet, {header: 1});
-        
-        if(jsonData.length === 0) { alert("Empty file!"); return; }
-
-        appState.activeData = jsonData; // Full data (Rows + Header)
-        appState.columns = jsonData[0]; // First row is header
-        appState.fileName = fileData.name;
-
-        renderGrid();
-        
-        // Enable tabs
-        document.getElementById('processBtn').disabled = false;
-        document.getElementById('vizBtn').disabled = false;
-        
-        // Update UI
-        document.getElementById('activeFileName').innerText = fileData.name;
-        document.getElementById('rowCount').innerText = `${jsonData.length - 1} rows`; // minus header
-        
-        switchView('workspace-view');
-        addAiMsg(`Loaded <strong>${fileData.name}</strong> into Workspace.`);
+        if (raw.length > 0) {
+            appState.columns = raw[0]; // First row as header
+            // Convert rest to objects for consistency with backend format
+            appState.activeData = raw.slice(1).map(row => {
+                let obj = {};
+                raw[0].forEach((col, i) => obj[col] = row[i] || "");
+                return obj;
+            });
+            appState.fileName = file.name;
+            finalizeLoad();
+        }
     };
-    
-    reader.readAsArrayBuffer(fileData.fileObj);
+    reader.readAsArrayBuffer(file);
 }
 
+function finalizeLoad() {
+    // 1. Add to File List (Visual only)
+    appState.files.push({
+        name: appState.fileName,
+        rows: appState.activeData.length,
+        cols: appState.columns.length
+    });
+    document.getElementById('fileCount').innerText = appState.files.length;
+
+    // 2. Render Workspace
+    renderGrid();
+    
+    // 3. Enable UI
+    document.getElementById('activeFileName').innerText = appState.fileName;
+    document.getElementById('rowCount').innerText = `${appState.activeData.length} rows`;
+    document.getElementById('processBtn').disabled = false;
+    document.getElementById('vizBtn').disabled = false;
+
+    switchView('workspace-view');
+}
+
+// --- 5. GRID RENDERER (Professional Shape) ---
 function renderGrid() {
     const thead = document.querySelector('#dataTable thead');
     const tbody = document.querySelector('#dataTable tbody');
     thead.innerHTML = '';
     tbody.innerHTML = '';
 
-    const data = appState.activeData;
-    if(!data || data.length === 0) return;
+    const cols = appState.columns;
+    const rows = appState.activeData;
 
-    // 1. Render Headers
-    let headerHtml = '<tr><th class="row-num">#</th>'; // Add Row Index Column
-    data[0].forEach((col, idx) => {
-        headerHtml += `<th onclick="selectColumn(${idx})">${col || `Col ${idx}`}</th>`;
+    if (cols.length === 0) return;
+
+    // HEADER
+    let headerRow = '<tr><th class="row-num">#</th>';
+    cols.forEach(col => {
+        headerRow += `<th>${col}</th>`;
     });
-    headerHtml += '</tr>';
-    thead.innerHTML = headerHtml;
+    headerRow += '</tr>';
+    thead.innerHTML = headerRow;
 
-    // 2. Render Rows (Lazy load logic could go here, for now rendering first 500)
-    const previewLimit = 500; 
+    // BODY (Limit render for performance)
+    const renderLimit = 1000;
     let bodyHtml = '';
-    
-    for (let i = 1; i < Math.min(data.length, previewLimit); i++) {
-        const row = data[i];
-        bodyHtml += `<tr><td class="row-num">${i}</td>`;
-        
-        // Ensure row aligns with headers
-        for(let j = 0; j < data[0].length; j++) {
-            const val = row[j] !== undefined ? row[j] : "";
-            // Add onclick for cell selection
-            bodyHtml += `<td onclick="selectCell(this, '${val}')" class="grid-cell">${val}</td>`;
-        }
+
+    rows.slice(0, renderLimit).forEach((rowObj, index) => {
+        bodyHtml += `<tr><td class="row-num">${index + 1}</td>`;
+        cols.forEach(col => {
+            const val = rowObj[col] !== undefined ? rowObj[col] : "";
+            // Check if value is number for styling
+            const isNum = !isNaN(parseFloat(val)) && isFinite(val);
+            const alignStyle = isNum ? 'style="text-align:right; color:#a7f3d0;"' : '';
+            
+            bodyHtml += `<td ${alignStyle} onclick="selectCell(this, '${val}')">${val}</td>`;
+        });
         bodyHtml += '</tr>';
-    }
+    });
     tbody.innerHTML = bodyHtml;
 }
 
-// --- 5. CELL SELECTION & MATH LOGIC ---
-function selectCell(cell, value) {
-    // Basic single/multi select logic simulation
-    // For simplicity: toggle selection class
-    if(cell.classList.contains('selected')) {
-        cell.classList.remove('selected');
-        // Remove from selection array
-        const index = appState.selection.indexOf(value);
-        if (index > -1) appState.selection.splice(index, 1);
-    } else {
-        cell.classList.add('selected');
-        appState.selection.push(value);
+// --- 6. UTILS (Storage View) ---
+function renderFileList() {
+    const list = document.getElementById('fileList');
+    list.innerHTML = '';
+    if (appState.files.length === 0) {
+        list.innerHTML = `<div class="empty-state"><p>No data loaded.</p></div>`;
+        return;
     }
-    calculateStats();
-}
-
-function calculateStats() {
-    const vals = appState.selection;
-    const count = vals.length;
-    let sum = 0;
-    let numCount = 0;
-
-    vals.forEach(v => {
-        const n = parseFloat(v);
-        if(!isNaN(n)) {
-            sum += n;
-            numCount++;
-        }
-    });
-
-    const avg = numCount > 0 ? (sum / numCount).toFixed(2) : 0;
-
-    document.getElementById('selCount').innerText = count;
-    document.getElementById('selSum').innerText = sum.toFixed(2);
-    document.getElementById('selAvg').innerText = avg;
-}
-
-// --- 6. AUTO CLEAN & EXPORT ---
-function runAutoClean() {
-    addAiMsg("Analyzing data integrity...");
-    // Simulation: Remove empty rows
-    const originalLen = appState.activeData.length;
-    appState.activeData = appState.activeData.filter(row => row.length > 0 && row.some(cell => cell !== ""));
-    const newLen = appState.activeData.length;
-    
-    renderGrid();
-    addAiMsg(`Cleaned dataset. Removed ${originalLen - newLen} empty rows.`);
-}
-
-function exportCurrentData() {
-    const ws = XLSX.utils.aoa_to_sheet(appState.activeData);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
-    XLSX.writeFile(wb, `Cleaned_${appState.fileName}`);
-    addAiMsg("File exported successfully.");
-}
-
-// --- 7. VISUALIZATION (Chart.js) ---
-function renderChart() {
-    const ctx = document.getElementById('mainChart').getContext('2d');
-    
-    // Auto-detect numeric column
-    const data = appState.activeData;
-    if(data.length < 2) return;
-
-    let labelCol = 0;
-    let valueCol = -1;
-
-    // Find first numeric column
-    for(let j=0; j<data[1].length; j++) {
-        if(!isNaN(parseFloat(data[1][j]))) {
-            valueCol = j;
-            break;
-        }
-    }
-
-    if(valueCol === -1) { 
-        addAiMsg("Could not find numeric data to visualize."); 
-        return; 
-    }
-
-    const labels = data.slice(1, 15).map(row => row[labelCol]); // Top 15 rows
-    const values = data.slice(1, 15).map(row => parseFloat(row[valueCol]));
-
-    if(window.myChart) window.myChart.destroy(); // Destroy old chart
-
-    window.myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: data[0][valueCol],
-                data: values,
-                backgroundColor: '#4ade80',
-                borderColor: '#4ade80',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: { beginAtZero: true, grid: { color: '#333' } },
-                x: { grid: { color: '#333' } }
-            },
-            plugins: {
-                legend: { labels: { color: '#fff' } }
-            }
-        }
+    appState.files.forEach(f => {
+        const card = document.createElement('div');
+        card.className = 'file-card';
+        card.innerHTML = `
+            <div class="file-icon"><i class="fas fa-table"></i></div>
+            <div class="file-info">
+                <h4>${f.name}</h4>
+                <span>${f.rows} Rows • ${f.cols} Cols</span>
+            </div>
+        `;
+        card.onclick = () => {
+            // In a real app, we would fetch specific file data again.
+            // Here we assume the last loaded is active for simplicity.
+            switchView('workspace-view');
+        };
+        list.appendChild(card);
     });
 }
 
-// --- 8. AI CHAT ---
-function addAiMsg(text) {
+// --- 7. AI ASSISTANT ---
+function addAiMsg(html) {
     const chat = document.getElementById('chatHistory');
     const div = document.createElement('div');
     div.className = 'msg ai';
-    div.innerHTML = text;
+    div.innerHTML = html;
     chat.appendChild(div);
     chat.scrollTop = chat.scrollHeight;
 }
 
 function handleChat() {
     const input = document.getElementById('userQuery');
-    const txt = input.value;
-    if(!txt) return;
-    
-    // User msg
+    const text = input.value;
+    if(!text) return;
+
+    // Show User Msg
     const chat = document.getElementById('chatHistory');
-    chat.innerHTML += `<div class="msg user">${txt}</div>`;
+    chat.innerHTML += `<div class="msg user">${text}</div>`;
     input.value = '';
 
-    // Simple keyword logic for demo
-    setTimeout(() => {
-        if(txt.toLowerCase().includes('clean')) {
-            runAutoClean();
-            addAiMsg("I've triggered the Auto-Clean protocol.");
-        } else if (txt.toLowerCase().includes('count')) {
-            addAiMsg(`This dataset has ${appState.activeData.length - 1} data rows.`);
-        } else {
-            addAiMsg("I'm analyzing the data context... (Connect Python backend for deep insight)");
+    // Send to Backend Logic
+    if(isBackendOnline) {
+        // Future: Implement chat endpoint in backend.py
+        setTimeout(() => addAiMsg("Analyzing grid context... (Backend connected)"), 600);
+    } else {
+        setTimeout(() => addAiMsg("I am running locally. Start Python backend for deep analysis."), 600);
+    }
+}
+
+// --- 8. MATH STATS ---
+let selection = [];
+function selectCell(el, val) {
+    el.classList.toggle('selected');
+    const num = parseFloat(val);
+    if (!isNaN(num)) {
+        if (el.classList.contains('selected')) selection.push(num);
+        else {
+            const idx = selection.indexOf(num);
+            if (idx > -1) selection.splice(idx, 1);
         }
-    }, 600);
+    }
+    updateStats();
+}
+
+function updateStats() {
+    const sum = selection.reduce((a, b) => a + b, 0);
+    const avg = selection.length ? (sum / selection.length).toFixed(2) : 0;
+    
+    document.getElementById('selCount').innerText = selection.length;
+    document.getElementById('selSum').innerText = sum.toLocaleString();
+    document.getElementById('selAvg').innerText = avg;
 }
