@@ -3,169 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Khwaja AI | Smart Spreadsheet</title>
+    <title>Khwaja AI | Data Forge</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-    <nav class="tool-nav">
-        <div class="nav-left">
-            <a href="../../index.html" class="back-link"><i class="fas fa-arrow-left"></i> Home</a>
-            <span class="divider">/</span>
-            <span class="tool-name">AI+ Spreadsheet</span>
-        </div>
-        <div class="nav-right">
-            <span class="status-indicator online">Python Backend: Ready</span>
-        </div>
-    </nav>
-
-    <div class="toolbar">
-        <div class="tool-group">
-            <label class="file-btn">
-                <i class="fas fa-file-csv"></i> Import CSV
-                <input type="file" id="csvInput" accept=".csv,.xlsx" hidden>
-            </label>
-            <label class="file-btn ocr-btn">
-                <i class="fas fa-camera"></i> OCR Image Upload
-                <input type="file" id="imgInput" accept="image/*" hidden>
-            </label>
-        </div>
-        <div class="tool-group">
-            <button class="action-btn" onclick="runAIAnalysis()"><i class="fas fa-robot"></i> Run AI Analysis</button>
-            <button class="action-btn" onclick="exportData()"><i class="fas fa-download"></i> Export</button>
-        </div>
-    </div>
-
-    <div class="workspace">
-        <div class="spreadsheet-container">
-            <table id="dataTable">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Date</th>
-                        <th>Category</th>
-                        <th>Description</th>
-                        <th>Amount</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    <tr>
-                        <td>001</td>
-                        <td>2026-01-28</td>
-                        <td>Finance</td>
-                        <td>Q1 Revenue Report</td>
-                        <td>$12,500</td>
-                        <td><span class="tag verified">Verified</span></td>
-                    </tr>
-                    <tr>
-                        <td>002</td>
-                        <td>2026-01-29</td>
-                        <td>Operations</td>
-                        <td>Logistics Update</td>
-                        <td>$4,200</td>
-                        <td><span class="tag pending">Pending</span></td>
-                    </tr>
-                    </tbody>
-            </table>
-        </div>
-
-        <div class="ai-sidebar">
-            <div class="sidebar-header">
-                <h3><i class="fas fa-brain"></i> AI Insights</h3>
+    <div class="app-container">
+        
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="fas fa-satellite-dish"></i> <span>Data Forge</span>
             </div>
-            <div class="chat-area" id="aiOutput">
-                <div class="ai-msg">
-                    <p>System ready. Upload a document or image to begin OCR processing.</p>
+            
+            <nav class="menu">
+                <button class="menu-btn active" onclick="switchView('import-view')">
+                    <i class="fas fa-cloud-upload-alt"></i> Import
+                </button>
+                <button class="menu-btn" onclick="switchView('storage-view')">
+                    <i class="fas fa-database"></i> My Data <span class="badge" id="fileCount">0</span>
+                </button>
+                <button class="menu-btn" disabled id="processBtn" onclick="switchView('workspace-view')">
+                    <i class="fas fa-magic"></i> Pre-Process
+                </button>
+                <button class="menu-btn" disabled id="vizBtn" onclick="switchView('viz-view')">
+                    <i class="fas fa-chart-pie"></i> Visualize
+                </button>
+            </nav>
+
+            <div class="connection-status">
+                <span class="dot pulse"></span> Python Engine: <strong>Online</strong>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            
+            <section id="import-view" class="view active">
+                <div class="header">
+                    <h1>Ingest Data</h1>
+                    <p>Upload CSVs, Excel files, or Images for OCR processing.</p>
+                </div>
+                
+                <div class="drop-zone" id="dropZone">
+                    <div class="icon-box">
+                        <i class="fas fa-file-import"></i>
+                    </div>
+                    <h3>Drag & Drop files here</h3>
+                    <p>or</p>
+                    <label class="upload-btn">
+                        Browse Files
+                        <input type="file" id="fileInput" multiple accept=".csv,.xlsx,.png,.jpg,.jpeg" hidden>
+                    </label>
+                    <p class="formats">Supports: CSV, XLSX, JPG (OCR)</p>
+                </div>
+            </section>
+
+            <section id="storage-view" class="view" style="display:none;">
+                <div class="header">
+                    <h1>Data Vault</h1>
+                    <p>Manage your imported raw datasets.</p>
+                </div>
+                <div class="file-grid" id="fileList">
+                    <div class="empty-state">
+                        <i class="fas fa-folder-open"></i>
+                        <p>No datasets found. Go to Import.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="workspace-view" class="view" style="display:none;">
+                <div class="toolbar">
+                    <div class="file-info">
+                        <i class="fas fa-table"></i> <span id="activeFileName">No File Selected</span>
+                    </div>
+                    <div class="actions">
+                        <button class="tool-btn" onclick="aiAutoClean()"><i class="fas fa-sparkles"></i> AI Auto-Clean</button>
+                        <button class="tool-btn"><i class="fas fa-filter"></i> Filter</button>
+                        <button class="tool-btn primary" onclick="finalizeData()">Save & Visualize <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+                
+                <div class="spreadsheet-wrapper">
+                    <table id="dataTable">
+                        <thead></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="viz-view" class="view" style="display:none;">
+                <div class="header">
+                    <h1>Data Visualization</h1>
+                    <p>AI-Generated Insights</p>
+                </div>
+                <div class="chart-container">
+                    <canvas id="mainChart"></canvas>
+                </div>
+            </section>
+
+        </main>
+
+        <aside class="ai-panel">
+            <div class="ai-header">
+                <i class="fas fa-robot"></i> Khwaja AI
+            </div>
+            <div class="chat-history" id="chatHistory">
+                <div class="msg ai">
+                    Hello! I'm ready to process your data. Upload a file to begin.
                 </div>
             </div>
-            <div class="input-area">
-                <input type="text" placeholder="Ask AI about this data..." id="queryInput">
-                <button onclick="sendToPython()"><i class="fas fa-paper-plane"></i></button>
+            <div class="chat-input">
+                <input type="text" placeholder="Ask about your data..." id="userQuery">
+                <button onclick="sendChat()"><i class="fas fa-paper-plane"></i></button>
             </div>
-        </div>
+        </aside>
+
     </div>
 
-    <script>
-        // 1. Handle CSV Upload
-        document.getElementById('csvInput').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if(!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const data = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(data, {type: 'array'});
-                const sheet = workbook.Sheets[workbook.SheetNames[0]];
-                const json = XLSX.utils.sheet_to_json(sheet, {header: 1});
-                renderTable(json);
-                addAiLog(`Loaded ${file.name} successfully.`);
-            };
-            reader.readAsArrayBuffer(file);
-        });
-
-        // 2. Handle OCR Image Upload (Simulation)
-        document.getElementById('imgInput').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if(!file) return;
-
-            addAiLog(`Uploading ${file.name} to Python OCR Engine...`);
-            
-            // SIMULATING BACKEND CALL
-            setTimeout(() => {
-                addAiLog("OCR Processing Complete. Data extracted.");
-                // In real app: fetch('/api/ocr', { method: 'POST', body: formData })
-                
-                // Mock adding a row from "image"
-                const newRow = `<tr><td>003</td><td>2026-02-01</td><td>Receipt</td><td>OCR Extracted Item</td><td>$150.00</td><td><span class="tag new">New</span></td></tr>`;
-                document.getElementById('tableBody').insertAdjacentHTML('beforeend', newRow);
-            }, 2000);
-        });
-
-        // 3. Render Table Function
-        function renderTable(data) {
-            const thead = document.querySelector('#dataTable thead');
-            const tbody = document.querySelector('#dataTable tbody');
-            thead.innerHTML = '';
-            tbody.innerHTML = '';
-
-            // Headers
-            let headerRow = '<tr>';
-            data[0].forEach(cell => headerRow += `<th>${cell}</th>`);
-            headerRow += '</tr>';
-            thead.innerHTML = headerRow;
-
-            // Rows
-            data.slice(1).forEach(row => {
-                let htmlRow = '<tr>';
-                row.forEach(cell => htmlRow += `<td>${cell}</td>`);
-                htmlRow += '</tr>';
-                tbody.innerHTML += htmlRow;
-            });
-        }
-
-        // 4. Chat/Log Logic
-        function addAiLog(text) {
-            const div = document.createElement('div');
-            div.className = 'ai-msg';
-            div.innerHTML = `<p>${text}</p>`;
-            document.getElementById('aiOutput').appendChild(div);
-        }
-
-        function sendToPython() {
-            const val = document.getElementById('queryInput').value;
-            if(!val) return;
-            addAiLog(`<strong>You:</strong> ${val}`);
-            document.getElementById('queryInput').value = '';
-            
-            // Simulating Python Response
-            setTimeout(() => {
-                addAiLog(`<strong>AI:</strong> I am a static demo currently. Connect me to your Python Flask/FastAPI backend to process real queries!`);
-            }, 1000);
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
