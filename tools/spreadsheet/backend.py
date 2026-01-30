@@ -1,6 +1,6 @@
 # ============================================================
 # backend.py
-# BUSnX Enterprise – V10.2 (Stable Free Model)
+# BUSnX Enterprise – V11.0 (Auto-Switching AI + Debug Mode)
 # ============================================================
 
 import os
@@ -43,7 +43,7 @@ except ImportError:
     print("⚠️ Google AI Lib missing.")
 
 # --- 3. APP SETUP ---
-app = FastAPI(title="BUSnX Intelligence Engine", version="10.2.0")
+app = FastAPI(title="BUSnX Intelligence Engine", version="11.0.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -78,7 +78,6 @@ class DataSanitizer:
 
 class GridState:
     def __init__(self):
-        # Default empty grid
         self.df = pd.DataFrame(index=range(20), columns=[chr(65+i) for i in range(10)]).fillna("")
         self.loaded_files = set()
 
@@ -97,48 +96,71 @@ state = GridState()
 
 class BusinessAgent:
     def __init__(self):
+        self.api_key_status = "Missing"
         if API_KEY and genai:
             genai.configure(api_key=API_KEY)
-            # 🔥 CRITICAL FIX: Using the Stable, Free Model
-            self.model = genai.GenerativeModel('gemini-1.5-flash')
+            self.api_key_status = "Active"
         else:
-            self.model = None
+            self.api_key_status = "Missing"
 
     def process_image(self, image_path):
-        """OCR Engine: Image -> CSV"""
-        if not self.model: return None
-        try:
-            file_ref = genai.upload_file(image_path)
-            prompt = """
-            Analyze this image. Extract ALL tabular data found.
-            Output strictly as RAW CSV format.
-            NO markdown formatting (no ```csv).
-            NO preamble.
-            Use comma separators.
-            If headers are missing, use generic A,B,C.
-            """
-            result = self.model.generate_content([file_ref, prompt])
-            raw_text = result.text.replace("```csv", "").replace("```", "").strip()
-            
-            if not raw_text: return None
+        """
+        OCR Engine with Auto-Fallback.
+        Tries 3 different models before giving up.
+        """
+        if self.api_key_status == "Missing":
+            raise Exception("Google API Key is missing on Server.")
 
+        # LIST OF MODELS TO TRY (In order of preference)
+        # 1. Flash (Fastest/Cheapest)
+        # 2. Flash-8b (Backup)
+        # 3. Pro (Strongest)
+        models_to_try = ['gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro']
+        
+        last_error = ""
+
+        for model_name in models_to_try:
             try:
-                # Try standard CSV parsing
-                return pd.read_csv(StringIO(raw_text), sep=None, engine='python')
-            except:
-                # Fallback
-                return pd.read_csv(StringIO(raw_text))
+                print(f"🔄 Attempting OCR with model: {model_name}...")
+                model = genai.GenerativeModel(model_name)
                 
-        except Exception as e:
-            print(f"OCR Error: {e}")
-            return None
+                file_ref = genai.upload_file(image_path)
+                prompt = """
+                Analyze this image. Extract ALL tabular data found.
+                Output strictly as RAW CSV format.
+                NO markdown formatting (no ```csv).
+                NO preamble.
+                Use comma separators.
+                If headers are missing, use generic A,B,C.
+                """
+                result = model.generate_content([file_ref, prompt])
+                raw_text = result.text.replace("```csv", "").replace("```", "").strip()
+                
+                if not raw_text: 
+                    raise Exception("Model returned empty text.")
+
+                try:
+                    return pd.read_csv(StringIO(raw_text), sep=None, engine='python')
+                except:
+                    return pd.read_csv(StringIO(raw_text))
+            
+            except Exception as e:
+                print(f"⚠️ {model_name} failed: {e}")
+                last_error = str(e)
+                continue # Try next model
+
+        # If we reach here, all models failed
+        raise Exception(f"All AI models failed. Last error: {last_error}")
 
     def execute(self, user_query, selection=None):
         """AI Code Execution"""
-        if not self.model: return "❌ AI Error: API Key missing or Invalid."
+        if self.api_key_status == "Missing": return "❌ AI Error: API Key missing."
 
         df = state.df.copy()
         rows, cols = df.shape
+        
+        # Use stable model for Logic
+        model = genai.GenerativeModel('gemini-1.5-flash')
         
         prompt = f"""
         You are BUSnX AI.
@@ -152,7 +174,7 @@ class BusinessAgent:
         """
 
         try:
-            response = self.model.generate_content(prompt)
+            response = model.generate_content(prompt)
             text_response = response.text.strip()
 
             if "```python" in text_response:
@@ -181,7 +203,7 @@ class ChatRequest(BaseModel):
     selection: dict | None = None
 
 @app.get("/")
-def health(): return {"status": "online", "ver": "10.2"}
+def health(): return {"status": "online", "ver": "11.0", "ai_key": agent.api_key_status}
 
 @app.get("/grid")
 def get_grid(): return state.get_payload()
@@ -201,16 +223,19 @@ async def upload_file(file: UploadFile = File(...)):
         if path.endswith(".csv"): df = pd.read_csv(path)
         elif path.endswith((".xls", ".xlsx")): df = pd.read_excel(path)
         elif path.lower().endswith(('.png', '.jpg', '.jpeg', '.webp')):
-            # AI OCR Trigger
-            df = agent.process_image(path)
-            if df is None: return {"error": "OCR failed to read text."}
+            # CRITICAL CHANGE: We now catch the REAL error and send it to UI
+            try:
+                df = agent.process_image(path)
+            except Exception as ocr_err:
+                return {"error": f"AI Error: {str(ocr_err)}"}
         else:
             return {"error": "Unsupported file"}
 
         state.update(df, file.filename)
         return {"message": "Loaded", "grid_update": state.get_payload()}
     except Exception as e:
-        return {"error": str(e)}
+        # Catch-all for non-AI errors (like pandas failing)
+        return {"error": f"System Error: {str(e)}"}
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
