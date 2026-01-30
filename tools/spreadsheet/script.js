@@ -1,6 +1,5 @@
 /* ============================================================
    Khwaja AI - Data Forge Engine (v15.0 - Excel Experience)
-   Features: Drag Select, Header Select, AI Context, New Sheet
    ============================================================ */
 
 const API_URL = "[https://khwaja-ai-backend.onrender.com](https://khwaja-ai-backend.onrender.com)";
@@ -14,7 +13,7 @@ let appState = {
     fileName: "Untitled",
     selection: {
         isDragging: false,
-        start: null, // {r: 0, c: 0}
+        start: null, // {r:0, c:0}
         end: null,
         active: false
     }
@@ -23,9 +22,9 @@ let appState = {
 // --- INIT ---
 document.addEventListener("DOMContentLoaded", () => {
     checkBackendHealth();
-    setInterval(syncGridState, 5000); // Polling for updates
+    setInterval(syncGridState, 4000); 
     
-    // Global Mouse Up to stop dragging
+    // Stop dragging anywhere on page
     document.addEventListener('mouseup', () => {
         appState.selection.isDragging = false;
     });
@@ -50,10 +49,15 @@ async function syncGridState() {
     try {
         const res = await fetch(`${API_URL}/grid`);
         const json = await res.json();
+        
+        // Only update if changed
         if (json.data && (JSON.stringify(json.columns) !== JSON.stringify(appState.columns) || json.data.length !== appState.activeData.length)) {
             appState.activeData = json.data;
             appState.columns = json.columns;
-            if (document.getElementById('workspace-view').style.display !== 'none') {
+            
+            // If in workspace, re-render
+            const ws = document.getElementById('workspace-view');
+            if (ws && ws.style.display !== 'none') {
                 renderGrid();
                 updateInfo();
             }
@@ -68,35 +72,41 @@ function updateStatus(status) {
         : '<span class="dot" style="background:#ef4444"></span> Engine: <strong>Offline</strong>';
 }
 
-// --- VIEW NAVIGATION ---
 function switchView(viewId) {
     document.querySelectorAll('.view').forEach(el => el.style.display = 'none');
     document.getElementById(viewId).style.display = 'block';
     if(viewId === 'workspace-view') renderGrid();
 }
 
-// --- NEW SHEET FUNCTION ---
+// --- NEW SHEET ---
 async function createNewSheet() {
-    if(!confirm("Create new blank sheet? Unsaved data will be lost.")) return;
+    if(!confirm("Start a fresh sheet? Unsaved data will be lost.")) return;
     
     appState.activeData = [];
     appState.columns = [];
     appState.fileName = "New Sheet";
     
     if (isBackendOnline) {
-        // Reset Backend
         await fetch(`${API_URL}/reset`, { method: 'POST' });
         syncGridState();
     } else {
-        // Local Reset
-        appState.activeData = []; 
         renderGrid();
     }
     switchView('workspace-view');
     addAiMsg("✨ Created new blank workspace.");
 }
 
-// --- FILE UPLOAD ---
+// --- UPLOAD ---
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+
+if(dropZone) {
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.style.borderColor = '#4ade80'; });
+    dropZone.addEventListener('dragleave', (e) => { e.preventDefault(); dropZone.style.borderColor = '#1e293b'; });
+    dropZone.addEventListener('drop', (e) => { e.preventDefault(); handleUpload(e.dataTransfer.files); });
+}
+if(fileInput) fileInput.addEventListener('change', (e) => handleUpload(e.target.files));
+
 async function handleUpload(fileList) {
     if (!fileList.length) return;
     const file = fileList[0];
@@ -123,9 +133,8 @@ async function handleUpload(fileList) {
 }
 
 // ============================================================
-// 🎮 EXCEL-LIKE GRID SYSTEM (The Magic)
+// 🎮 EXCEL GRID LOGIC
 // ============================================================
-
 function renderGrid() {
     const thead = document.querySelector('#dataTable thead');
     const tbody = document.querySelector('#dataTable tbody');
@@ -141,8 +150,6 @@ function renderGrid() {
 
     // --- HEADERS ---
     let headerRow = document.createElement('tr');
-    
-    // Corner Cell (Select All)
     let cornerTh = document.createElement('th');
     cornerTh.className = 'row-num';
     cornerTh.innerText = '◢';
@@ -159,10 +166,10 @@ function renderGrid() {
     thead.appendChild(headerRow);
 
     // --- BODY ---
-    rows.forEach((rowObj, rIndex) => {
+    rows.slice(0, 500).forEach((rowObj, rIndex) => {
         let tr = document.createElement('tr');
 
-        // Row Number (Select Row)
+        // ROW HEADER
         let rowHeader = document.createElement('td');
         rowHeader.className = 'row-num';
         rowHeader.innerText = rIndex + 1;
@@ -173,26 +180,20 @@ function renderGrid() {
             let td = document.createElement('td');
             let val = rowObj[col] !== undefined ? rowObj[col] : "";
             
-            // Numeric Styling
             if (!isNaN(parseFloat(val)) && isFinite(val)) {
                 td.style.textAlign = 'right';
                 td.style.color = '#a7f3d0';
             }
             td.innerText = val;
 
-            // --- DRAG EVENTS ---
-            td.dataset.r = rIndex;
-            td.dataset.c = cIndex;
-
+            // DRAG LOGIC
             td.onmousedown = (e) => {
                 appState.selection.isDragging = true;
                 appState.selection.start = {r: rIndex, c: cIndex};
                 appState.selection.end = {r: rIndex, c: cIndex};
-                // If Ctrl not pressed, clear previous
                 if (!e.ctrlKey) clearSelection();
                 updateSelectionVisuals();
             };
-
             td.onmouseover = () => {
                 if (appState.selection.isDragging) {
                     appState.selection.end = {r: rIndex, c: cIndex};
@@ -206,7 +207,6 @@ function renderGrid() {
     });
 }
 
-// --- SELECTION LOGIC ---
 function clearSelection() {
     document.querySelectorAll('td.selected').forEach(el => el.classList.remove('selected'));
     appState.selection.active = false;
@@ -224,32 +224,25 @@ function updateSelectionVisuals() {
     const e = appState.selection.end;
     if (!s || !e) return;
 
-    // Normalize bounds
     const minR = Math.min(s.r, e.r), maxR = Math.max(s.r, e.r);
     const minC = Math.min(s.c, e.c), maxC = Math.max(s.c, e.c);
-
-    // Track values for stats
     let values = [];
-    
-    // Apply Class
+
     const rows = document.querySelector('#dataTable tbody').children;
     for (let i = 0; i < rows.length; i++) {
         const cells = rows[i].children;
-        for (let j = 1; j < cells.length; j++) { // Skip row number col
+        for (let j = 1; j < cells.length; j++) { 
             const r = i, c = j - 1;
             const cell = cells[j];
-            
             if (r >= minR && r <= maxR && c >= minC && c <= maxC) {
                 cell.classList.add('selected');
                 const val = parseFloat(cell.innerText);
                 if (!isNaN(val)) values.push(val);
             } else {
-                // Only remove if we are in a single drag mode (omitting complex ctrl+select for now)
                 cell.classList.remove('selected');
             }
         }
     }
-    
     appState.selection.active = true;
     updateStats(values);
 }
@@ -257,10 +250,9 @@ function updateSelectionVisuals() {
 function updateStats(values) {
     const sum = values.reduce((a, b) => a + b, 0);
     const avg = values.length ? (sum / values.length) : 0;
-    
     document.getElementById('selCount').innerText = values.length;
-    document.getElementById('selSum').innerText = sum.toLocaleString(undefined, {maximumFractionDigits: 2});
-    document.getElementById('selAvg').innerText = avg.toLocaleString(undefined, {maximumFractionDigits: 2});
+    document.getElementById('selSum').innerText = sum.toLocaleString();
+    document.getElementById('selAvg').innerText = avg.toFixed(2);
 }
 
 function updateInfo() {
@@ -268,22 +260,19 @@ function updateInfo() {
     document.getElementById('activeFileName').innerText = appState.fileName;
 }
 
-// --- AI CHAT ---
+// --- CHAT ---
 function handleChat() {
     const input = document.getElementById('userQuery');
     const txt = input.value;
     if (!txt) return;
 
-    addAiMsg(txt, 'user'); // User msg
+    addAiMsg(txt, 'user'); 
     input.value = '';
 
-    // Prepare Payload with Selection Context
     const payload = { message: txt };
-    
     if (appState.selection.active) {
         const s = appState.selection.start;
         const e = appState.selection.end;
-        // Send simplified range context (e.g., Rows 0-5, Cols 1-3)
         payload.selection = {
             active: true,
             rows: `${Math.min(s.r, e.r)}-${Math.max(s.r, e.r)}`,
@@ -308,12 +297,16 @@ function handleChat() {
         })
         .catch(err => addAiMsg("❌ Backend Error", 'ai'));
     } else {
-        addAiMsg("Offline Mode: Connect Python backend for AI.", 'ai');
+        addAiMsg("Offline Mode: AI not available.", 'ai');
     }
 }
 
 function addAiMsg(html, type) {
     const chat = document.getElementById('chatHistory');
-    chat.innerHTML += `<div class="msg ${type === 'user' ? 'user' : 'ai'}">${html}</div>`;
+    chat.innerHTML += `<div class="msg ${type || 'ai'}">${html}</div>`;
     chat.scrollTop = chat.scrollHeight;
+}
+
+function runAutoClean() {
+    if(isBackendOnline) handleChat(); // Send empty prompt to trigger clean suggestion
 }
