@@ -274,32 +274,34 @@
 <div id="analyzerOverlay" class="overlay" aria-hidden="true">
   <div class="panel" role="dialog">
     <div class="panel-header">
-      <div style="display:flex;align-items:center;gap:10px"><span>🛸</span><span style="font-weight:bold;letter-spacing:1px">Khwaja AI Analyzer</span></div>
+      <div style="display:flex;align-items:center;gap:10px"><span>🛸</span><span style="font-weight:bold;letter-spacing:1px">Khwaja AI Tools</span></div>
       <button class="close-btn" onclick="closeOverlay()">✕</button>
     </div>
     <div class="panel-body">
+      
       <div class="controls">
-        <div class="card">
-          <h3>1. Data Upload</h3>
-          <label>Dataset 1 (CSV/Excel)</label><input id="file1" type="file" accept=".csv,.xlsx,.xls" />
-          <label>Dataset 2 (CSV/Excel)</label><input id="file2" type="file" accept=".csv,.xlsx,.xls" />
+        
+        <div class="card" style="border-color: #4ade80; background: rgba(74, 222, 128, 0.05);">
+          <h3 style="color:#4ade80">🚀 NEW: AI+ Spreadsheet</h3>
+          <p style="font-size:0.8rem; color:#cbd5e1; margin-bottom:10px;">
+            Next-gen data tool. Upload CSVs or use OCR to convert images to data tables instantly.
+          </p>
+          <button class="btn" style="background:#059669; border:none;" onclick="window.location.href='tools/spreadsheet/index.html'">
+            Launch Tool <i class="fas fa-external-link-alt"></i>
+          </button>
         </div>
+
         <div class="card">
-          <h3>2. Configuration</h3>
-          <label>X-Axis</label> <select id="x1" disabled></select>
-          <label>Y-Axis</label> <select id="y1" disabled></select>
-          <label>Chart Type</label>
-          <select id="chartType" disabled>
-            <option value="scatter">Scatter</option><option value="line">Line</option><option value="bar">Bar</option>
-            <option value="area">Area</option><option value="pie">Pie</option><option value="heatmap">Heatmap</option>
-          </select>
+          <h3>Legacy Analyzer</h3>
+          <p style="font-size:0.8rem; color:#94a3b8; margin-bottom:10px;">
+            Basic plotting and dataset comparison tool.
+          </p>
+          <label>Dataset 1</label><input id="file1" type="file" accept=".csv,.xlsx,.xls" />
+          <label>Dataset 2</label><input id="file2" type="file" accept=".csv,.xlsx,.xls" />
+          <button id="vizBtn" class="btn" style="margin-top:10px;" onclick="plotData()" disabled>Visualize Data</button>
         </div>
-        <div class="card">
-          <h3>3. Action</h3>
-          <button id="vizBtn" class="btn" onclick="plotData()" disabled>Visualize Data</button>
-        </div>
-        <div class="card">Status: <span id="status">Waiting for files...</span></div>
       </div>
+
       <div class="chart-wrap">
         <div id="sphereWrap"><canvas id="sphere"></canvas></div>
         <div id="chart"></div>
@@ -459,3 +461,4 @@ addEventListener('resize', onResizeSphere);
 
 </body>
 </html>
+
