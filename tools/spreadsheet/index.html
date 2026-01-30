@@ -18,7 +18,6 @@
             <div class="brand">
                 <i class="fas fa-satellite-dish"></i> <span>Data Forge</span>
             </div>
-            
             <nav class="menu">
                 <button class="menu-btn active" onclick="switchView('import-view')">
                     <i class="fas fa-cloud-upload-alt"></i> Import
@@ -27,15 +26,14 @@
                     <i class="fas fa-database"></i> My Data <span class="badge" id="fileCount">0</span>
                 </button>
                 <button class="menu-btn" disabled id="processBtn" onclick="switchView('workspace-view')">
-                    <i class="fas fa-magic"></i> Pre-Process
+                    <i class="fas fa-table"></i> Workspace
                 </button>
                 <button class="menu-btn" disabled id="vizBtn" onclick="switchView('viz-view')">
                     <i class="fas fa-chart-pie"></i> Visualize
                 </button>
             </nav>
-
             <div class="connection-status">
-                <span class="dot pulse"></span> Python Engine: <strong>Online</strong>
+                <span class="dot pulse"></span> Engine: <strong>Local JS</strong>
             </div>
         </aside>
 
@@ -44,62 +42,56 @@
             <section id="import-view" class="view active">
                 <div class="header">
                     <h1>Ingest Data</h1>
-                    <p>Upload CSVs, Excel files, or Images for OCR processing.</p>
+                    <p>Upload CSVs, Excel files, or Images to parse into the grid.</p>
                 </div>
-                
                 <div class="drop-zone" id="dropZone">
-                    <div class="icon-box">
-                        <i class="fas fa-file-import"></i>
-                    </div>
+                    <div class="icon-box"><i class="fas fa-file-import"></i></div>
                     <h3>Drag & Drop files here</h3>
                     <p>or</p>
                     <label class="upload-btn">
                         Browse Files
-                        <input type="file" id="fileInput" multiple accept=".csv,.xlsx,.png,.jpg,.jpeg" hidden>
+                        <input type="file" id="fileInput" multiple accept=".csv,.xlsx,.xls,.png,.jpg,.jpeg" hidden>
                     </label>
-                    <p class="formats">Supports: CSV, XLSX, JPG (OCR)</p>
+                    <p class="formats">Supports: CSV, XLSX, XLS</p>
                 </div>
             </section>
 
             <section id="storage-view" class="view" style="display:none;">
-                <div class="header">
-                    <h1>Data Vault</h1>
-                    <p>Manage your imported raw datasets.</p>
-                </div>
+                <div class="header"><h1>Data Vault</h1><p>Select a dataset to load into the workspace.</p></div>
                 <div class="file-grid" id="fileList">
-                    <div class="empty-state">
-                        <i class="fas fa-folder-open"></i>
-                        <p>No datasets found. Go to Import.</p>
-                    </div>
+                    <div class="empty-state"><p>No files uploaded yet.</p></div>
                 </div>
             </section>
 
             <section id="workspace-view" class="view" style="display:none;">
                 <div class="toolbar">
                     <div class="file-info">
-                        <i class="fas fa-table"></i> <span id="activeFileName">No File Selected</span>
+                        <i class="fas fa-file-alt"></i> <strong id="activeFileName">Untitled</strong>
+                        <span class="rows-badge" id="rowCount">0 rows</span>
                     </div>
                     <div class="actions">
-                        <button class="tool-btn" onclick="aiAutoClean()"><i class="fas fa-sparkles"></i> AI Auto-Clean</button>
-                        <button class="tool-btn"><i class="fas fa-filter"></i> Filter</button>
-                        <button class="tool-btn primary" onclick="finalizeData()">Save & Visualize <i class="fas fa-arrow-right"></i></button>
+                        <button class="tool-btn" onclick="runAutoClean()"><i class="fas fa-magic"></i> Auto-Clean</button>
+                        <button class="tool-btn" onclick="exportCurrentData()"><i class="fas fa-download"></i> Export CSV</button>
                     </div>
                 </div>
                 
                 <div class="spreadsheet-wrapper">
                     <table id="dataTable">
                         <thead></thead>
-                        <tbody></tbody>
+                        <tbody id="tableBody"></tbody>
                     </table>
+                </div>
+
+                <div class="status-bar">
+                    <div class="stat-item">Selected: <span id="selCount">0</span></div>
+                    <div class="stat-item">Sum: <span id="selSum">0</span></div>
+                    <div class="stat-item">Avg: <span id="selAvg">0</span></div>
                 </div>
             </section>
 
             <section id="viz-view" class="view" style="display:none;">
-                <div class="header">
-                    <h1>Data Visualization</h1>
-                    <p>AI-Generated Insights</p>
-                </div>
-                <div class="chart-container">
+                <div class="header"><h1>Data Visualization</h1><p>Visual insights generated from your active dataset.</p></div>
+                <div class="chart-container" style="height: 60vh;">
                     <canvas id="mainChart"></canvas>
                 </div>
             </section>
@@ -107,17 +99,13 @@
         </main>
 
         <aside class="ai-panel">
-            <div class="ai-header">
-                <i class="fas fa-robot"></i> Khwaja AI
-            </div>
+            <div class="ai-header"><i class="fas fa-robot"></i> Khwaja AI</div>
             <div class="chat-history" id="chatHistory">
-                <div class="msg ai">
-                    Hello! I'm ready to process your data. Upload a file to begin.
-                </div>
+                <div class="msg ai">Ready. Upload data to begin analysis.</div>
             </div>
             <div class="chat-input">
-                <input type="text" placeholder="Ask about your data..." id="userQuery">
-                <button onclick="sendChat()"><i class="fas fa-paper-plane"></i></button>
+                <input type="text" placeholder="Ask about data..." id="userQuery">
+                <button onclick="handleChat()"><i class="fas fa-paper-plane"></i></button>
             </div>
         </aside>
 
