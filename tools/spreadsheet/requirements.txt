@@ -3,6 +3,6 @@ uvicorn
 python-multipart
 pandas
 numpy
-google-generativeai
+google-generativeai>=0.8.0
 python-dotenv
 openpyxl
