@@ -7,9 +7,11 @@ import os
 import sys
 
 # 🔥 FIX: Robust Config Import
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-try: from core.config import API_KEY
-except: API_KEY = None
+try: 
+    from config import API_KEY
+except: 
+    import os
+    API_KEY = os.getenv("GOOGLE_API_KEY")
 
 os.environ["GRPC_VERBOSITY"] = "ERROR"
 os.environ["GLOG_minloglevel"] = "2"
