@@ -3,7 +3,7 @@
    Replicates BUSnX React Architecture & State Management
    ============================================================ */
 
-const API_URL = "http://localhost:8000";
+const API_URL = "https://khwaja-ai-backend.onrender.com";
 let isBackendOnline = false;
 
 // --- GLOBAL STATE ---
