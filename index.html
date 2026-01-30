@@ -35,7 +35,6 @@
   /* 1. EARTH (Main) */
   .earth-surface {
     border-radius: 50%;
-    /* Rich Earth Gradient */
     background: radial-gradient(
       circle at 35% 35%, 
       #4ade80 0%,      /* Highlight */
@@ -50,18 +49,18 @@
       0 0 40px rgba(14, 165, 233, 0.15);
     border: none;
     position: relative;
+    cursor: pointer; /* Indicates clickable to return home */
   }
 
   /* 2. MOON (Satellites) */
   .moon-surface {
     border-radius: 50%;
-    /* Natural Moon Grey Gradient */
     background: radial-gradient(
       circle at 30% 30%, 
-      #e2e8f0 0%,      /* Highlight */
-      #94a3b8 30%,     /* Grey */
-      #64748b 60%,     /* Shadow Edge */
-      #1e293b 90%,     /* Dark Side */
+      #e2e8f0 0%,      
+      #94a3b8 30%,     
+      #64748b 60%,     
+      #1e293b 90%,     
       #020617 100%
     );
     box-shadow: 
@@ -70,8 +69,6 @@
     border: 1px solid rgba(255,255,255,0.1);
     cursor: pointer;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    
-    /* Text Color: Black for visibility on grey */
     color: #0f172a !important; 
     text-shadow: 0 1px 1px rgba(255,255,255,0.5);
   }
@@ -100,8 +97,6 @@
     cursor: pointer;
     transition: transform 0.3s;
     animation: pulseSun 4s ease-in-out infinite;
-    
-    /* Dark Text for Visibility */
     color: #451a03; 
     font-family: 'Orbitron', sans-serif; font-size: 0.85rem; font-weight: 900; 
     text-shadow: 0 1px 2px rgba(255,255,255,0.5);
@@ -117,7 +112,7 @@
     z-index: 10;
   }
 
-  /* SATELLITE MOON POSITIONING (With Gaps) */
+  /* SATELLITE MOON POSITIONING */
   .satellite {
     position: absolute;
     width: 90px; height: 90px;
@@ -127,32 +122,11 @@
     text-transform: uppercase;
   }
 
-  /* GAP LOGIC:
-     -110px ensures a ~20px gap from the main sphere (90px moon width)
-  */
-  
-  /* 1. Tools: Left Side */
-  .pos-tools {
-    top: 50%;
-    left: -110px; 
-    transform: translateY(-50%);
-  }
+  .pos-tools { top: 50%; left: -110px; transform: translateY(-50%); }
+  .pos-ai { top: 50%; right: -110px; transform: translateY(-50%); }
+  .pos-projects { bottom: -110px; left: 50%; transform: translateX(-50%); }
 
-  /* 2. AI & ML: Right Side */
-  .pos-ai {
-    top: 50%;
-    right: -110px; 
-    transform: translateY(-50%);
-  }
-
-  /* 3. Projects: Bottom Center */
-  .pos-projects {
-    bottom: -110px; 
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  /* --- PORTFOLIO (Top Right) --- */
+  /* PORTFOLIO (Top Right) */
   .portfolio-orbit {
     position: fixed; top: 8%; right: 8%;
     width: 120px; height: 120px;
@@ -160,41 +134,50 @@
     display: flex; justify-content: center; align-items: center;
   }
 
-  /* --- CENTER TEXT --- */
+  /* --- CENTER TEXT (Fixed for Mobile) --- */
   .center-content {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-    width: 80%; height: 80%;
+    width: 80%; 
+    height: 80%;
     display: flex; flex-direction: column; justify-content: center; align-items: center;
-    pointer-events: none; text-align: center; z-index: 30;
+    pointer-events: none; /* Allows click-through to parent (.wheel) */
+    text-align: center; z-index: 30;
   }
 
   #ccTitle {
-    margin: 0 0 15px 0;
+    margin: 0 0 10px 0;
     font-family: 'Orbitron', sans-serif;
-    font-size: clamp(2.2rem, 5vw, 3.2rem); 
+    font-size: clamp(1.8rem, 4vw, 3.2rem); /* Slightly smaller base for mobile */
     font-weight: 900; letter-spacing: 2px;
     color: #ffffff;
     text-shadow: 0 4px 15px rgba(0,0,0,0.6);
   }
 
   #ccText {
-    color: #f1f5f9; font-size: clamp(0.85rem, 1.4vh, 1.0rem);
-    line-height: 1.6; font-weight: 400;
-    text-wrap: balance; width: 100%; max-width: 420px; 
+    color: #f1f5f9; 
+    font-size: clamp(0.7rem, 1.2vh, 1.0rem); /* Dynamic resizing */
+    line-height: 1.5; 
+    font-weight: 400;
+    text-wrap: balance; 
+    width: 100%; max-width: 420px; 
     text-shadow: 0 2px 5px rgba(0,0,0,0.9);
+    
+    /* Mobile Constraints */
+    overflow: hidden;
+    padding: 0 10px;
   }
   
   #ccText b {
-    color: #86efac; font-weight: 700; display: block; margin-bottom: 8px;
+    color: #86efac; font-weight: 700; display: block; margin-bottom: 6px;
     font-size: 1.1em; letter-spacing: 1px; text-transform: uppercase;
-    border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 6px;
     display: inline-block;
   }
   
-  #ccText ul { text-align: left; padding-left: 20px; margin-top: 5px; font-size: 0.9em; }
+  #ccText ul { text-align: left; padding-left: 15px; margin-top: 5px; font-size: 0.9em; }
   #ccText li { margin-bottom: 4px; }
 
-  /* --- CHATBOT DOCK (Bottom Left) --- */
+  /* --- CHATBOT DOCK --- */
   .assistant-wrap {
     position: fixed; left: 30px; bottom: 30px; width: 60px; height: 60px;
     z-index: 9999; pointer-events: none;
@@ -229,18 +212,27 @@
     .chart-wrap { height: 50vh; } 
     #sphereWrap { display: none; }
     
-    /* Make Earth smaller on mobile to allow space for moons */
-    .wheel { width: 60vw; height: 60vw; }
+    /* Make Earth smaller on mobile to keep text inside */
+    .wheel { width: 85vw; height: 85vw; } /* Slightly bigger for touch targets */
+    
+    /* Shrink the moon satellites */
     .satellite { width: 65px; height: 65px; font-size: 0.5rem; }
     
-    /* Mobile Spacing: Closer but still gapped */
-    .pos-tools { left: -75px; }
-    .pos-ai { right: -75px; }
-    .pos-projects { bottom: -75px; }
+    /* Pull moons closer to prevent overflow */
+    .pos-tools { left: -35px; }
+    .pos-ai { right: -35px; }
+    .pos-projects { bottom: -35px; }
     
     .portfolio-orbit { top: 20px; right: 20px; width: 80px; height: 80px; font-size: 0.6rem; }
-    #ccTitle { font-size: 1.8rem; }
-    #ccText { font-size: 0.75rem; line-height: 1.3; }
+    
+    /* Text Auto-Resize for Mobile */
+    #ccTitle { font-size: 1.5rem; margin-bottom: 5px; }
+    #ccText { 
+        font-size: 0.7rem; 
+        line-height: 1.2; 
+        padding: 0 15px; /* Extra padding inside globe */
+    }
+    #ccText b { font-size: 0.9rem; margin-bottom: 4px; }
   }
 </style>
 </head>
@@ -248,17 +240,17 @@
 
 <canvas id="stars"></canvas>
 
-<div class="wheel earth-surface" id="wheel">
+<div class="wheel earth-surface" id="wheel" onclick="showHome()">
   
-  <div class="satellite moon-surface pos-tools" onclick="openOverlay()">
+  <div class="satellite moon-surface pos-tools" onclick="event.stopPropagation(); openOverlay()">
     Tools
   </div>
 
-  <div class="satellite moon-surface pos-ai" onclick="showAIML()">
+  <div class="satellite moon-surface pos-ai" onclick="event.stopPropagation(); showAIML()">
     AI & ML
   </div>
 
-  <div class="satellite moon-surface pos-projects" onclick="showProjects()">
+  <div class="satellite moon-surface pos-projects" onclick="event.stopPropagation(); showProjects()">
     Projects
   </div>
 
@@ -381,7 +373,7 @@ function showProjects(){
         <li style="margin-bottom:10px;"><b>🍄 Sustainable Production (AREA)</b> Managed an £80k donor-funded project, coordinating field teams and streamlining reporting workflows by 50%.</li>
         <li><b>📈 Financial Forecasting (Uni. Dundee)</b> Developed equity price forecasting models using MATLAB & R, improving predictive accuracy through back-testing.</li>
       </ul>
-      <div style="text-align:center; margin-top:10px; font-size:0.8rem; color:#94a3b8;">(Click 'Portfolio' for full details)</div>
+      <div style="text-align:center; margin-top:10px; font-size:0.8rem; color:#f8fafc;">(Click Earth to return)</div>
     </div>
   `;
 }
@@ -401,6 +393,7 @@ function showAIML(){
         <li>• Regression Analysis & KPI Design</li>
         <li>• Automated Streamlit Dashboards</li>
       </ul>
+      <div style="text-align:center; margin-top:10px; font-size:0.8rem; color:#f8fafc;">(Click Earth to return)</div>
     </div>
   `;
 }
