@@ -582,3 +582,21 @@ td {
 .spreadsheet-wrapper::-webkit-scrollbar-corner {
     background: #020617;
 }
+/* --- EXCEL-LIKE SELECTION STYLES --- */
+td.selected {
+    background-color: rgba(59, 130, 246, 0.3) !important; /* Blue tint */
+    border: 1px solid #60a5fa !important; /* Blue border */
+    position: relative;
+}
+
+/* Row/Column Header Selection */
+th:hover, .row-num:hover {
+    background-color: #334155;
+    color: #fff;
+    cursor: pointer;
+}
+
+/* Disable text selection while dragging to prevent highlighting text */
+table {
+    user-select: none;
+}
