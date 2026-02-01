@@ -443,4 +443,5 @@ async def upload(file: UploadFile = File(...), mode: str = Form("replace")):
     except Exception as e: return {"error": str(e)}
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=PORT)
+    # Hugging Face expects port 7860
+    uvicorn.run(app, host="0.0.0.0", port=7860)
