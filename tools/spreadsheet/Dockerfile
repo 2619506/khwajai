@@ -15,4 +15,4 @@ COPY . .
 RUN mkdir -p /code/data_sources && chmod 777 /code/data_sources
 
 # Run the app on port 7860 (Hugging Face default)
-CMD ["uvicorn", "backend:app", "--host", "0.0.0.0", "--port", "7860"]
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "7860"]
