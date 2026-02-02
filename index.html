@@ -10,47 +10,199 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <script type="importmap">
-  { "imports": { "three": "https://unpkg.com/three@0.158.0/build/three.module.js" } }
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.158.0/build/three.module.js"
+    }
+  }
 </script>
 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;600&display=swap');
 
-  :root{ --neon-white: #f8fafc; --deep-space: #000000; }
-  * { box-sizing:border-box; }
-  html, body { height:100%; margin: 0; overflow: hidden; background: #020617; color: var(--neon-white); font-family: 'Outfit', sans-serif; letter-spacing: 0.5px; }
-  canvas#stars { position:fixed; inset:0; z-index:-3; }
+  :root{
+    --neon-white: #f8fafc;
+    --deep-space: #000000;
+  }
 
-  /* PLANETS */
-  .earth-surface { border-radius: 50%; background: radial-gradient(circle at 35% 35%, #4ade80 0%, #059669 25%, #0369a1 50%, #0f172a 85%, #020617 100%); box-shadow: inset 10px 10px 60px rgba(255,255,255,0.15), inset -20px -20px 80px rgba(0,0,0,0.95), 0 0 40px rgba(14, 165, 233, 0.15); border: none; position: relative; cursor: pointer; }
-  .moon-surface { border-radius: 50%; background: radial-gradient(circle at 30% 30%, #e2e8f0 0%, #94a3b8 30%, #64748b 60%, #1e293b 90%, #020617 100%); box-shadow: inset 2px 2px 10px rgba(255,255,255,0.3), 0 0 15px rgba(255, 255, 255, 0.1); border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease; color: #0f172a !important; text-shadow: 0 1px 1px rgba(255,255,255,0.5); }
-  .moon-surface:hover { transform: scale(1.15); box-shadow: 0 0 25px rgba(255, 255, 255, 0.3); z-index: 50; }
-  .sun-surface { border-radius: 50%; background: radial-gradient(circle at 30% 30%, #fff7ed 0%, #fcd34d 20%, #f59e0b 50%, #ea580c 85%, #7c2d12 100%); box-shadow: inset 0 0 20px rgba(255,255,255,0.8), 0 0 60px rgba(251, 191, 36, 0.6), 0 0 100px rgba(245, 158, 11, 0.3); cursor: pointer; transition: transform 0.3s; animation: pulseSun 4s ease-in-out infinite; color: #451a03; font-family: 'Orbitron', sans-serif; font-size: 0.85rem; font-weight: 900; text-shadow: 0 1px 2px rgba(255,255,255,0.5); }
+  * { box-sizing:border-box; }
+  html, body { height:100%; }
+  body {
+    margin: 0; overflow: hidden; background: #020617; 
+    color: var(--neon-white);
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: 0.5px;
+  }
+
+  /* FIX: STAR BACKGROUND VISIBILITY */
+  /* Changed z-index from -3 to 0 so it sits on top of the body background but behind the Earth */
+  canvas#stars { 
+    position: fixed; 
+    inset: 0; 
+    z-index: 0; 
+    pointer-events: none; 
+  }
+
+  /* --- PLANET TEXTURES --- */
+  
+  /* 1. EARTH (Main) */
+  .earth-surface {
+    border-radius: 50%;
+    background: radial-gradient(
+      circle at 35% 35%, 
+      #4ade80 0%,      /* Highlight */
+      #059669 25%,     /* Land */
+      #0369a1 50%,     /* Ocean */
+      #0f172a 85%,     /* Deep Ocean */
+      #020617 100%     /* Shadow */
+    );
+    box-shadow: 
+      inset 10px 10px 60px rgba(255,255,255,0.15), 
+      inset -20px -20px 80px rgba(0,0,0,0.95),
+      0 0 40px rgba(14, 165, 233, 0.15);
+    border: none;
+    position: relative;
+    cursor: pointer;
+  }
+
+  /* 2. MOON (Satellites) */
+  .moon-surface {
+    border-radius: 50%;
+    background: radial-gradient(
+      circle at 30% 30%, 
+      #e2e8f0 0%,      
+      #94a3b8 30%,     
+      #64748b 60%,     
+      #1e293b 90%,     
+      #020617 100%
+    );
+    box-shadow: 
+      inset 2px 2px 10px rgba(255,255,255,0.3), 
+      0 0 15px rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255,255,255,0.1);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    color: #0f172a !important; 
+    text-shadow: 0 1px 1px rgba(255,255,255,0.5);
+  }
+  
+  .moon-surface:hover {
+    transform: scale(1.15);
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.3);
+    z-index: 50;
+  }
+
+  /* 3. SUN (Portfolio) */
+  .sun-surface {
+    border-radius: 50%;
+    background: radial-gradient(
+      circle at 30% 30%, 
+      #fff7ed 0%,      
+      #fcd34d 20%,     
+      #f59e0b 50%,     
+      #ea580c 85%,     
+      #7c2d12 100%     
+    );
+    box-shadow: 
+      inset 0 0 20px rgba(255,255,255,0.8),
+      0 0 60px rgba(251, 191, 36, 0.6),
+      0 0 100px rgba(245, 158, 11, 0.3);
+    cursor: pointer;
+    transition: transform 0.3s;
+    animation: pulseSun 4s ease-in-out infinite;
+    color: #451a03; 
+    font-family: 'Orbitron', sans-serif; font-size: 0.85rem; font-weight: 900; 
+    text-shadow: 0 1px 2px rgba(255,255,255,0.5);
+  }
   .sun-surface:hover { transform: scale(1.15); box-shadow: 0 0 80px rgba(251, 191, 36, 0.9); }
   @keyframes pulseSun { 0%,100%{ box-shadow: 0 0 60px rgba(251, 191, 36, 0.6); } 50%{ box-shadow: 0 0 90px rgba(251, 191, 36, 0.8); } }
 
-  /* LAYOUT */
-  .wheel { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: min(60vw, 500px); height: min(60vw, 500px); z-index: 10; }
-  .satellite { position: absolute; width: 90px; height: 90px; z-index: 20; display: flex; justify-content: center; align-items: center; text-align: center; font-family: 'Orbitron', sans-serif; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; }
+
+  /* --- MAIN LAYOUT --- */
+  .wheel {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    width: min(60vw, 500px); height: min(60vw, 500px);
+    z-index: 10;
+  }
+
+  /* SATELLITE MOON POSITIONING */
+  .satellite {
+    position: absolute;
+    width: 90px; height: 90px;
+    z-index: 20;
+    display: flex; justify-content: center; align-items: center; text-align: center;
+    font-family: 'Orbitron', sans-serif; font-size: 0.65rem; font-weight: 800;
+    text-transform: uppercase;
+  }
+
   .pos-tools { top: 50%; left: -110px; transform: translateY(-50%); }
   .pos-ai { top: 50%; right: -110px; transform: translateY(-50%); }
   .pos-projects { bottom: -110px; left: 50%; transform: translateX(-50%); }
-  .portfolio-orbit { position: fixed; top: 8%; right: 8%; width: 120px; height: 120px; z-index: 100; display: flex; justify-content: center; align-items: center; }
 
-  /* CONTENT */
-  .center-content { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 80%; height: 80%; display: flex; flex-direction: column; justify-content: center; align-items: center; pointer-events: none; text-align: center; z-index: 30; }
-  #ccTitle { margin: 0 0 10px 0; font-family: 'Orbitron', sans-serif; font-size: clamp(1.8rem, 4vw, 3.2rem); font-weight: 900; letter-spacing: 2px; color: #ffffff; text-shadow: 0 4px 15px rgba(0,0,0,0.6); }
-  #ccText { color: #f1f5f9; font-size: clamp(0.7rem, 1.2vh, 1.0rem); line-height: 1.5; font-weight: 400; text-wrap: balance; width: 100%; max-width: 420px; text-shadow: 0 2px 5px rgba(0,0,0,0.9); overflow: hidden; padding: 0 10px; }
-  #ccText b { color: #86efac; font-weight: 700; display: block; margin-bottom: 6px; font-size: 1.1em; letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 6px; display: inline-block; }
+  /* PORTFOLIO (Top Right) */
+  .portfolio-orbit {
+    position: fixed; top: 8%; right: 8%;
+    width: 120px; height: 120px;
+    z-index: 100;
+    display: flex; justify-content: center; align-items: center;
+  }
+
+  /* --- CENTER TEXT --- */
+  .center-content {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    width: 80%; 
+    height: 80%;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    pointer-events: none; /* Allows click-through to parent (.wheel) */
+    text-align: center; z-index: 30;
+  }
+
+  #ccTitle {
+    margin: 0 0 10px 0;
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 3.2rem); 
+    font-weight: 900; letter-spacing: 2px;
+    color: #ffffff;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.6);
+  }
+
+  #ccText {
+    color: #f1f5f9; 
+    font-size: clamp(0.7rem, 1.2vh, 1.0rem); 
+    line-height: 1.5; 
+    font-weight: 400;
+    text-wrap: balance; 
+    width: 100%; max-width: 420px; 
+    text-shadow: 0 2px 5px rgba(0,0,0,0.9);
+    overflow: hidden;
+    padding: 0 10px;
+  }
+  
+  #ccText b {
+    color: #86efac; font-weight: 700; display: block; margin-bottom: 6px;
+    font-size: 1.1em; letter-spacing: 1px; text-transform: uppercase;
+    border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 6px;
+    display: inline-block;
+  }
+  
   #ccText ul { text-align: left; padding-left: 15px; margin-top: 5px; font-size: 0.9em; }
   #ccText li { margin-bottom: 4px; }
 
-  /* DOCK */
-  .assistant-wrap { position: fixed; left: 30px; bottom: 30px; width: 60px; height: 60px; z-index: 9999; pointer-events: none; }
-  .assistant-wrap::before { content: ""; position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at center, rgba(34, 197, 94, 0.8) 0%, rgba(21, 128, 61, 0.4) 40%, transparent 100%); box-shadow: 0 0 20px rgba(34, 197, 94, 0.6); animation: pulseGlow 4s ease-in-out infinite; z-index: -1; pointer-events: none; }
+  /* --- CHATBOT DOCK --- */
+  .assistant-wrap {
+    position: fixed; left: 30px; bottom: 30px; width: 60px; height: 60px;
+    z-index: 9999; pointer-events: none;
+  }
+  .assistant-wrap::before {
+    content: ""; position: absolute; inset: 0; border-radius: 50%;
+    background: radial-gradient(circle at center, rgba(34, 197, 94, 0.8) 0%, rgba(21, 128, 61, 0.4) 40%, transparent 100%);
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.6);
+    animation: pulseGlow 4s ease-in-out infinite;
+    z-index: -1; pointer-events: none;
+  }
   @keyframes pulseGlow { 0%,100%{opacity:0.8; transform:scale(1);} 50%{opacity:1; transform:scale(1.1);} }
 
-  /* OVERLAY */
+  /* OVERLAY STYLES */
   .overlay { position: fixed; inset: 0; display: none; place-items: center; z-index: 500; background: radial-gradient(ellipse at center, rgba(15, 23, 42, 0.95) 0%, rgba(2, 6, 23, 0.98) 80%); animation: fadeIn 300ms ease-out; }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   .panel { width: min(1200px, 92vw); height: min(78vh, 820px); border: 1px solid rgba(255,255,255,0.1); background: linear-gradient(180deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98)); border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.8); backdrop-filter: blur(15px); position: relative; overflow: hidden; }
@@ -67,11 +219,17 @@
   
   /* RESPONSIVE */
   @media (max-width: 980px){ 
-    .panel-body { grid-template-columns: 1fr; height: auto; } .chart-wrap { height: 50vh; } #sphereWrap { display: none; }
-    .wheel { width: 85vw; height: 85vw; } .satellite { width: 65px; height: 65px; font-size: 0.5rem; }
-    .pos-tools { left: -35px; } .pos-ai { right: -35px; } .pos-projects { bottom: -35px; }
+    .panel-body { grid-template-columns: 1fr; height: auto; } 
+    .chart-wrap { height: 50vh; } 
+    #sphereWrap { display: none; }
+    .wheel { width: 85vw; height: 85vw; } 
+    .satellite { width: 65px; height: 65px; font-size: 0.5rem; }
+    .pos-tools { left: -35px; }
+    .pos-ai { right: -35px; }
+    .pos-projects { bottom: -35px; }
     .portfolio-orbit { top: 20px; right: 20px; width: 80px; height: 80px; font-size: 0.6rem; }
-    #ccTitle { font-size: 1.5rem; margin-bottom: 5px; } #ccText { font-size: 0.7rem; line-height: 1.2; padding: 0 15px; }
+    #ccTitle { font-size: 1.5rem; margin-bottom: 5px; }
+    #ccText { font-size: 0.7rem; line-height: 1.2; padding: 0 15px; }
     #ccText b { font-size: 0.9rem; margin-bottom: 4px; }
   }
 </style>
@@ -86,11 +244,14 @@
   <div class="satellite moon-surface pos-projects" onclick="event.stopPropagation(); showProjects()">Projects</div>
   <div class="center-content" id="centerContent">
     <h1 id="ccTitle">KHWAJA AI</h1>
-    <p id="ccText"><b>Financial AI & Business Analytics Strategist</b>Merging an MSc in Business Analytics & Finance...</p>
+    <p id="ccText">
+      <b>Financial AI & Business Analytics Strategist</b>
+      Merging an MSc in Business Analytics & Finance with over 5 years of operational expertise. From streamlining diplomatic workflows to driving data-led strategies in retail, I bridge the gap between technical insights and executive decision-making. I specialize in optimizing processes, financial modeling, and delivering actionable intelligence using Python, SQL, and Power BI.
+    </p>
   </div>
 </div>
 
-<div class="portfolio-orbit sun-surface" onclick="window.open('/portfolio/', '_blank')">Portfolio</div>
+<div class="portfolio-orbit sun-surface" onclick="window.open('https://github.com/2619506/khwajai', '_blank')">Portfolio</div>
 <div class="assistant-wrap"><div class="assistant-hole"></div></div>
 
 <div id="analyzerOverlay" class="overlay" aria-hidden="true">
@@ -126,59 +287,191 @@
 </div>
 
 <div id="appContainer" style="display:none; position:fixed; inset:0; z-index:2000; background:#0f172a;">
-  <button onclick="closeEmbeddedApp()" style="position:absolute; top:10px; right:10px; z-index:2001; background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.7); border:1px solid rgba(255,255,255,0.2); padding:6px 12px; border-radius:6px; cursor:pointer; font-size:14px; backdrop-filter:blur(4px);">✕ Close Tool</button>
+  <button onclick="closeEmbeddedApp()" style="position:absolute; top:10px; right:10px; z-index:2001; background:rgba(0,0,0,0.5); color:rgba(255,255,255,0.7); border:1px solid rgba(255,255,255,0.2); padding:5px 10px; border-radius:4px; cursor:pointer; font-size:12px;">✕</button>
   
   <iframe src="https://khwajai-spreadsheet.hf.space/?embed=true" style="width:100%; height:100vh; border:none; overflow:hidden;" allow="clipboard-read; clipboard-write; fullscreen;"></iframe>
 </div>
 
 <script>
-// FIX 3: NAVIGATION LOGIC
 function openEmbeddedApp() {
   document.getElementById('analyzerOverlay').style.display = 'none';
   document.getElementById('appContainer').style.display = 'block';
 }
 function closeEmbeddedApp() {
   document.getElementById('appContainer').style.display = 'none';
-  // Optionally re-open the menu:
-  // document.getElementById('analyzerOverlay').style.display = 'grid'; 
+}
+</script>
+
+<script>
+(function(){
+  if(!window.chatbase || window.chatbase("getState")!=="initialized"){
+    window.chatbase=(...arguments)=>{ if(!window.chatbase.q){window.chatbase.q=[]} window.chatbase.q.push(arguments) };
+    window.chatbase=new Proxy(window.chatbase,{ get(target,prop){ if(prop==="q"){return target.q} return(...args)=>target(prop,...args) } });
+  }
+  const onLoad=function(){
+    const script=document.createElement("script");
+    script.src="https://www.chatbase.co/embed.min.js";
+    script.id="85-fKKKuG65obFx8ejTz3";
+    script.domain="www.chatbase.co";
+    document.body.appendChild(script);
+  };
+  if(document.readyState==="complete"){onLoad()} else { window.addEventListener("load", onLoad) }
+})();
+window.addEventListener("load", function(){
+  setTimeout(()=>{
+    const bubble = document.querySelector("#chatbase-bubble, iframe[src*='chatbase']");
+    if(bubble){
+      bubble.style.position = "absolute"; bubble.style.bottom = "50%"; bubble.style.left = "50%";
+      bubble.style.transform = "translate(-50%, 50%) scale(0.9)"; bubble.style.zIndex = "12";
+      document.querySelector(".assistant-wrap").appendChild(bubble);
+    }
+  }, 2500);
+});
+</script>
+
+<script>
+const canvas = document.getElementById('stars');
+const ctx = canvas.getContext('2d');
+let stars = [], meteors = [];
+function resizeCanvas(){ canvas.width = innerWidth; canvas.height = innerHeight; }
+resizeCanvas(); addEventListener('resize', resizeCanvas);
+function createStars(count){ stars=[]; for(let i=0;i<count;i++){ stars.push({ x:Math.random()*canvas.width, y:Math.random()*canvas.height, speed:Math.random()*0.2+0.05, size:Math.random()*1.5 }); } }
+function createMeteors(count){ meteors=[]; for(let i=0;i<count;i++){ meteors.push({ x:Math.random()*canvas.width, y:Math.random()*canvas.height, speedX:-(Math.random()*4+2), speedY:Math.random()*2+1, length:Math.random()*50+30 }); } }
+function drawStars(){ 
+  ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = '#ffffff'; 
+  for(const s of stars){ ctx.beginPath(); ctx.arc(s.x,s.y,s.size,0,Math.PI*2); ctx.fill(); s.y+=s.speed; if(s.y>canvas.height){s.y=0;s.x=Math.random()*canvas.width;} } 
+  ctx.strokeStyle = '#ffffff'; ctx.lineWidth=0.8;
+  for(const m of meteors){ ctx.beginPath(); ctx.moveTo(m.x,m.y); ctx.lineTo(m.x+m.length*m.speedX/10, m.y+m.length*m.speedY/10); ctx.stroke(); m.x+=m.speedX; m.y+=m.speedY; if(m.x<-100||m.y>canvas.height+100){m.x=canvas.width+Math.random()*200;m.y=Math.random()*canvas.height/2;} } 
+}
+createStars(300); createMeteors(3);
+(function animate(){ drawStars(); requestAnimationFrame(animate); })();
+</script>
+
+<script>
+const wheel = document.getElementById('wheel');
+document.addEventListener('mousemove', e=>{ 
+  const centerX = innerWidth/2; const offsetX = e.clientX - centerX; 
+  const rotation = offsetX/40; 
+  wheel.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`; 
+});
+
+function showProjects(){
+  document.getElementById('centerContent').innerHTML = `
+    <h1 id="ccTitle" style="font-size:2.5rem">KEY PROJECTS</h1>
+    <div id="ccText" style="text-align:left; font-size:0.9rem;">
+      <ul style="list-style-type:none; padding:0;">
+        <li style="margin-bottom:10px;"><b>🛍️ iOutlet Revenue Analysis</b> Analyzed 32,000+ sales transactions (£8.9M) to identify seasonal trends and built Python dashboards for reporting.</li>
+        <li style="margin-bottom:10px;"><b>🍄 Sustainable Production (AREA)</b> Managed an £80k donor-funded project, coordinating field teams and streamlining reporting workflows by 50%.</li>
+        <li><b>📈 Financial Forecasting (Uni. Dundee)</b> Developed equity price forecasting models using MATLAB & R, improving predictive accuracy through back-testing.</li>
+      </ul>
+      <div style="text-align:center; margin-top:10px; font-size:0.8rem; color:#f8fafc;">(Click Earth to return)</div>
+    </div>`;
 }
 
-/* Chatbase Logic */
-(function(){ if(!window.chatbase||window.chatbase("getState")!=="initialized"){ window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)}; window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}}); } const onLoad=function(){ const script=document.createElement("script"); script.src="https://www.chatbase.co/embed.min.js"; script.id="85-fKKKuG65obFx8ejTz3"; script.domain="www.chatbase.co"; document.body.appendChild(script); }; if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)} })();
-window.addEventListener("load", function(){ setTimeout(()=>{ const bubble = document.querySelector("#chatbase-bubble, iframe[src*='chatbase']"); if(bubble){ bubble.style.position = "absolute"; bubble.style.bottom = "50%"; bubble.style.left = "50%"; bubble.style.transform = "translate(-50%, 50%) scale(0.9)"; bubble.style.zIndex = "12"; document.querySelector(".assistant-wrap").appendChild(bubble); } }, 2500); });
+function showAIML(){
+  document.getElementById('centerContent').innerHTML = `
+    <h1 id="ccTitle" style="font-size:2.5rem">AI & MACHINE LEARNING</h1>
+    <div id="ccText">
+      <b>Technical Arsenal</b>
+      <p>Proficient in deploying <b>Python</b> (Pandas, Scikit-Learn) and <b>R</b> for predictive modeling.</p>
+      <br>
+      <b>Core Competencies</b>
+      <ul style="display:inline-block; text-align:left;">
+        <li>• Financial Forecasting (ARIMA/Time-Series)</li>
+        <li>• Purchasing Behavior Modeling</li>
+        <li>• Regression Analysis & KPI Design</li>
+        <li>• Automated Streamlit Dashboards</li>
+      </ul>
+      <div style="text-align:center; margin-top:10px; font-size:0.8rem; color:#f8fafc;">(Click Earth to return)</div>
+    </div>`;
+}
 
-/* Starfield Logic */
-const canvas = document.getElementById('stars'); const ctx = canvas.getContext('2d'); let stars=[], meteors=[];
-function resizeCanvas(){ canvas.width=innerWidth; canvas.height=innerHeight; } resizeCanvas(); addEventListener('resize', resizeCanvas);
-function createStars(count){ stars=[]; for(let i=0;i<count;i++) stars.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,speed:Math.random()*0.2+0.05,size:Math.random()*1.5}); }
-function createMeteors(count){ meteors=[]; for(let i=0;i<count;i++) meteors.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,speedX:-(Math.random()*4+2),speedY:Math.random()*2+1,length:Math.random()*50+30}); }
-function drawStars(){ ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle='#ffffff'; for(const s of stars){ctx.beginPath();ctx.arc(s.x,s.y,s.size,0,Math.PI*2);ctx.fill();s.y+=s.speed;if(s.y>canvas.height){s.y=0;s.x=Math.random()*canvas.width;}} ctx.strokeStyle='#ffffff';ctx.lineWidth=0.8; for(const m of meteors){ctx.beginPath();ctx.moveTo(m.x,m.y);ctx.lineTo(m.x+m.length*m.speedX/10,m.y+m.length*m.speedY/10);ctx.stroke();m.x+=m.speedX;m.y+=m.speedY;if(m.x<-100||m.y>canvas.height+100){m.x=canvas.width+Math.random()*200;m.y=Math.random()*canvas.height/2;}} }
-createStars(300); createMeteors(3); (function animate(){drawStars();requestAnimationFrame(animate);})();
+function showHome(){
+  document.getElementById('centerContent').innerHTML = `<h1 id="ccTitle">KHWAJA AI</h1><p id="ccText"><b>Financial AI & Business Analytics Strategist</b>Merging an MSc in Business Analytics & Finance with over 5 years of operational expertise. From streamlining diplomatic workflows to driving data-led strategies in retail, I bridge the gap between technical insights and executive decision-making. I specialize in optimizing processes, financial modeling, and delivering actionable intelligence using Python, SQL, and Power BI.</p>`;
+}
 
-/* UI Logic */
-const wheel = document.getElementById('wheel'); document.addEventListener('mousemove', e=>{ const centerX = innerWidth/2; const offsetX = e.clientX - centerX; const rotation = offsetX/40; wheel.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`; });
-function showHome(){ document.getElementById('centerContent').innerHTML = `<h1 id="ccTitle">KHWAJA AI</h1><p id="ccText"><b>Financial AI & Business Analytics Strategist</b>Merging an MSc in Business Analytics & Finance...</p>`; }
-function showProjects(){ document.getElementById('centerContent').innerHTML = `<h1 id="ccTitle" style="font-size:2.5rem">KEY PROJECTS</h1><div id="ccText" style="text-align:left; font-size:0.9rem;"><ul style="list-style-type:none; padding:0;"><li style="margin-bottom:10px;"><b>🛍️ iOutlet Revenue Analysis</b> Analyzed 32,000+ sales transactions...</li><li><b>📈 Financial Forecasting</b> Developed equity price forecasting models...</li></ul></div>`; }
-function showAIML(){ document.getElementById('centerContent').innerHTML = `<h1 id="ccTitle" style="font-size:2.5rem">AI & MACHINE LEARNING</h1><div id="ccText"><b>Technical Arsenal</b><p>Proficient in deploying <b>Python</b>...</p></div>`; }
 function openOverlay(){ document.getElementById('analyzerOverlay').style.display = 'grid'; startSphere(); onResizeSphere(); }
 function closeOverlay(){ document.getElementById('analyzerOverlay').style.display = 'none'; stopSphere(); }
 
-/* Chart/File Logic */
-let dataset1=[], dataset2=[]; const el=id=>document.getElementById(id); const setStatus=msg=>{}; function setControlsEnabled(enabled){ ['x1','y1','chartType','vizBtn'].forEach(id=>{if(el(id))el(id).disabled=!enabled;}); }
-el('file1').addEventListener('change', e=>loadFile(e.target.files[0],1)); el('file2').addEventListener('change', e=>loadFile(e.target.files[0],2));
-function loadFile(file, idx){ if(!file)return; if(file.name.endsWith('.csv')){ Papa.parse(file,{header:true,dynamicTyping:true,complete:res=>assignData(res.data,idx)}); } else { console.log("Excel/Image parsing requires server."); } }
-function assignData(data, idx){ const clean = data.filter(r=>Object.values(r).some(v=>v!==null)); if(idx===1)dataset1=clean; else dataset2=clean; if(dataset1.length||dataset2.length){populateDropdowns();setControlsEnabled(true);} }
-function populateDropdowns(){ const keys=Object.keys(dataset1[0]||dataset2[0]||{}); ['x1','y1'].forEach(id=>{el(id).innerHTML=keys.map(k=>`<option>${k}</option>`).join('');}); }
-function plotData(){ const xKey=el('x1').value, yKey=el('y1').value, type=el('chartType').value; const trace1={x:dataset1.map(r=>r[xKey]),y:dataset1.map(r=>r[yKey]),type:type==='scatter'?'scatter':type,mode:'markers'}; Plotly.newPlot('chart',[trace1],{paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',font:{color:'#fff'}}); }
+let dataset1 = [], dataset2 = [];
+const el = id => document.getElementById(id);
+const setStatus = msg => {}; 
+function setControlsEnabled(enabled){ ['x1','y1','chartType','vizBtn'].forEach(id=>{ if(el(id)) el(id).disabled=!enabled; }); }
+el('file1').addEventListener('change', e=> loadFile(e.target.files[0], 1));
+el('file2').addEventListener('change', e=> loadFile(e.target.files[0], 2));
+function loadFile(file, idx){ 
+  if(!file) return; 
+  if(file.name.endsWith('.csv')){ Papa.parse(file, {header:true, dynamicTyping:true, complete: res => assignData(res.data, idx)}); }
+  else { console.log("Excel/Image parsing requires server."); } 
+}
+function assignData(data, idx){ 
+  const clean = data.filter(r => Object.values(r).some(v=>v!==null));
+  if(idx===1) dataset1=clean; else dataset2=clean;
+  if(dataset1.length || dataset2.length) { populateDropdowns(); setControlsEnabled(true); }
+}
+function populateDropdowns(){
+  const keys = Object.keys(dataset1[0] || dataset2[0] || {});
+  ['x1','y1'].forEach(id => { el(id).innerHTML = keys.map(k=>`<option>${k}</option>`).join(''); });
+}
+function plotData(){
+  const xKey = el('x1').value, yKey = el('y1').value, type = el('chartType').value;
+  const trace1 = { x: dataset1.map(r=>r[xKey]), y: dataset1.map(r=>r[yKey]), type: type==='scatter'?'scatter':type, mode:'markers' };
+  Plotly.newPlot('chart', [trace1], { paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0)', font:{color:'#fff'} });
+}
 </script>
 
 <script type="module">
 import * as THREE from 'three';
+
 let sphereScene, sphereCamera, sphereRenderer, sphereMesh, sphereReq;
-window.startSphere = function(){ const wrap=document.getElementById('sphereWrap'); const canvas=document.getElementById('sphere'); if(!wrap||!canvas)return; sphereScene=new THREE.Scene(); const w=wrap.clientWidth, h=wrap.clientHeight; sphereCamera=new THREE.PerspectiveCamera(35,w/h,0.1,1000); sphereCamera.position.z=6; sphereRenderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true}); sphereRenderer.setSize(w,h,false); const geo=new THREE.SphereGeometry(2.2,48,48); const mat=new THREE.MeshPhongMaterial({color:0x94a3b8,emissive:0x0f172a,shininess:30,transparent:true,opacity:0.6,wireframe:true}); sphereMesh=new THREE.Mesh(geo,mat); sphereScene.add(sphereMesh); const glow=new THREE.PointLight(0xffffff,1,50); glow.position.set(4,4,6); sphereScene.add(glow); const animate=()=>{if(sphereMesh)sphereMesh.rotation.y+=0.0025; sphereRenderer.render(sphereScene,sphereCamera); sphereReq=requestAnimationFrame(animate);}; animate(); }
-window.stopSphere = function(){ if(sphereReq) cancelAnimationFrame(sphereReq); }
-window.onResizeSphere = function(){ if(sphereRenderer){ const wrap=document.getElementById('sphereWrap'); if(!wrap)return; const w=wrap.clientWidth, h=wrap.clientHeight; sphereRenderer.setSize(w,h,false); sphereCamera.aspect=w/h; sphereCamera.updateProjectionMatrix(); } }
+
+// Expose start/stop to global window so the UI buttons work
+window.startSphere = function(){
+  const wrap = document.getElementById('sphereWrap');
+  const canvas = document.getElementById('sphere');
+  if(!wrap || !canvas) return;
+
+  sphereScene = new THREE.Scene();
+  const w = wrap.clientWidth, h = wrap.clientHeight;
+  sphereCamera = new THREE.PerspectiveCamera(35, w/h, 0.1, 1000); 
+  sphereCamera.position.z = 6;
+
+  sphereRenderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+  sphereRenderer.setSize(w,h,false);
+
+  const geo = new THREE.SphereGeometry(2.2, 48, 48);
+  const mat = new THREE.MeshPhongMaterial({ color: 0x94a3b8, emissive: 0x0f172a, shininess: 30, transparent:true, opacity:0.6, wireframe:true });
+  sphereMesh = new THREE.Mesh(geo, mat); 
+  sphereScene.add(sphereMesh);
+
+  const glow = new THREE.PointLight(0xffffff, 1, 50); 
+  glow.position.set(4,4,6); 
+  sphereScene.add(glow);
+
+  const animate = ()=>{ 
+    if(sphereMesh) sphereMesh.rotation.y += 0.0025; 
+    sphereRenderer.render(sphereScene, sphereCamera); 
+    sphereReq = requestAnimationFrame(animate); 
+  };
+  animate();
+}
+
+window.stopSphere = function(){ 
+  if(sphereReq) cancelAnimationFrame(sphereReq); 
+}
+
+window.onResizeSphere = function(){ 
+  if(sphereRenderer) { 
+    const wrap = document.getElementById('sphereWrap');
+    if(!wrap) return;
+    const w = wrap.clientWidth, h = wrap.clientHeight; 
+    sphereRenderer.setSize(w,h,false); 
+    sphereCamera.aspect=w/h; 
+    sphereCamera.updateProjectionMatrix(); 
+  } 
+}
 window.addEventListener('resize', window.onResizeSphere);
 </script>
+
 </body>
 </html>
