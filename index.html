@@ -44,11 +44,6 @@
   #ccText ul { text-align: left; padding-left: 15px; margin-top: 5px; font-size: 0.9em; }
   #ccText li { margin-bottom: 4px; }
 
-  /* CHAT DOCK (Visibility Toggle) */
-  .assistant-wrap { position: fixed; left: 30px; bottom: 30px; width: 60px; height: 60px; z-index: 9999; transition: opacity 0.3s ease; }
-  .chat-hidden { display: none !important; opacity: 0; pointer-events: none; }
-
-  /* OVERLAYS */
   .overlay { position: fixed; inset: 0; display: none; place-items: center; z-index: 500; background: radial-gradient(ellipse at center, rgba(15, 23, 42, 0.95) 0%, rgba(2, 6, 23, 0.98) 80%); animation: fadeIn 300ms ease-out; }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   .panel { width: min(1200px, 92vw); height: min(78vh, 820px); border: 1px solid rgba(255,255,255,0.1); background: linear-gradient(180deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98)); border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.8); backdrop-filter: blur(15px); position: relative; overflow: hidden; }
@@ -99,7 +94,6 @@
 </div>
 
 <div class="portfolio-orbit sun-surface" onclick="window.open('/portfolio/', '_blank')">Portfolio</div>
-<div class="assistant-wrap"><div class="assistant-hole"></div></div>
 
 <div id="analyzerOverlay" class="overlay" aria-hidden="true">
   <div class="panel" role="dialog">
@@ -132,80 +126,37 @@
 </div>
 
 <script>
-// Toggle Chat Visibility
-function toggleChat(show) {
-    const chat = document.querySelector('.assistant-wrap');
-    if(chat) {
-        if(show) chat.classList.remove('chat-hidden');
-        else chat.classList.add('chat-hidden');
-    }
-}
-
 function openEmbeddedApp() {
     document.getElementById('analyzerOverlay').style.display = 'none';
     document.getElementById('appContainer').style.display = 'block';
-    toggleChat(false); // HIDE CHAT
     history.pushState({}, "", "/tools/spreadsheet");
 }
 
 function openOverlay(){ 
     document.getElementById('analyzerOverlay').style.display = 'grid'; 
     startSphere(); onResizeSphere(); 
-    toggleChat(false); // HIDE CHAT
     history.pushState({}, "", "/tools");
 }
-
 function closeOverlay(){ 
     document.getElementById('analyzerOverlay').style.display = 'none'; 
     stopSphere(); 
-    toggleChat(true); // SHOW CHAT
     history.pushState({}, "", "/");
 }
 
 function showProjects(){
-  toggleChat(false);
   history.pushState({}, "", "/projects");
   document.getElementById('centerContent').innerHTML = `<h1 id="ccTitle" style="font-size:2.5rem">KEY PROJECTS</h1><div id="ccText" style="text-align:left; font-size:0.9rem;"><ul style="list-style-type:none; padding:0;"><li style="margin-bottom:10px;"><b>🛍️ iOutlet Revenue Analysis</b> Analyzed 32,000+ sales transactions (£8.9M) to identify seasonal trends and built Python dashboards for reporting.</li><li style="margin-bottom:10px;"><b>🍄 Sustainable Production (AREA)</b> Managed an £80k donor-funded project, coordinating field teams and streamlining reporting workflows by 50%.</li><li><b>📈 Financial Forecasting (Uni. Dundee)</b> Developed equity price forecasting models using MATLAB & R, improving predictive accuracy through back-testing.</li></ul><div style="text-align:center; margin-top:10px; font-size:0.8rem; color:#f8fafc;">(Click Earth to return)</div></div>`;
 }
 
 function showAIML(){
-  toggleChat(false);
   history.pushState({}, "", "/ai-ml");
   document.getElementById('centerContent').innerHTML = `<h1 id="ccTitle" style="font-size:2.5rem">AI & MACHINE LEARNING</h1><div id="ccText"><b>Technical Arsenal</b><p>Proficient in deploying <b>Python</b> (Pandas, Scikit-Learn) and <b>R</b> for predictive modeling.</p><br><b>Core Competencies</b><ul style="display:inline-block; text-align:left;"><li>• Financial Forecasting (ARIMA/Time-Series)</li><li>• Purchasing Behavior Modeling</li><li>• Regression Analysis & KPI Design</li><li>• Automated Streamlit Dashboards</li></ul><div style="text-align:center; margin-top:10px; font-size:0.8rem; color:#f8fafc;">(Click Earth to return)</div></div>`;
 }
 
 function showHome(){
-  toggleChat(true);
   history.pushState({}, "", "/");
   document.getElementById('centerContent').innerHTML = `<h1 id="ccTitle">KHWAJA AI</h1><p id="ccText"><b>Financial AI & Business Analytics Strategist</b>Merging an MSc in Business Analytics & Finance with over 5 years of operational expertise. From streamlining diplomatic workflows to driving data-led strategies in retail, I bridge the gap between technical insights and executive decision-making. I specialize in optimizing processes, financial modeling, and delivering actionable intelligence using Python, SQL, and Power BI.</p>`;
 }
-</script>
-
-<script>
-(function(){
-  if(!window.chatbase || window.chatbase("getState")!=="initialized"){
-    window.chatbase=(...arguments)=>{ if(!window.chatbase.q){window.chatbase.q=[]} window.chatbase.q.push(arguments) };
-    window.chatbase=new Proxy(window.chatbase,{ get(target,prop){ if(prop==="q"){return target.q} return(...args)=>target(prop,...args) } });
-  }
-  const onLoad=function(){
-    const script=document.createElement("script");
-    script.src="https://www.chatbase.co/embed.min.js";
-    script.id="85-fKKKuG65obFx8ejTz3";
-    script.domain="www.chatbase.co";
-    document.body.appendChild(script);
-  };
-  if(document.readyState==="complete"){onLoad()} else { window.addEventListener("load", onLoad) }
-})();
-window.addEventListener("load", function(){
-  setTimeout(()=>{
-    const bubble = document.querySelector("#chatbase-bubble, iframe[src*='chatbase']");
-    if(bubble){
-      bubble.style.position = "absolute"; bubble.style.bottom = "50%"; bubble.style.left = "50%";
-      bubble.style.transform = "translate(-50%, 50%) scale(0.9)"; bubble.style.zIndex = "12";
-      document.querySelector(".assistant-wrap").appendChild(bubble);
-    }
-  }, 2500);
-});
 </script>
 
 <script>
