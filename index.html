@@ -34,7 +34,6 @@
     letter-spacing: 0.5px;
   }
 
-  /* FIX: STAR BACKGROUND VISIBILITY */
   canvas#stars { 
     position: fixed; 
     inset: 0; 
@@ -42,8 +41,6 @@
     pointer-events: none; 
   }
 
-  /* --- PLANET TEXTURES --- */
-  
   .earth-surface {
     border-radius: 50%;
     background: radial-gradient(circle at 35% 35%, #4ade80 0%, #059669 25%, #0369a1 50%, #0f172a 85%, #020617 100%);
@@ -70,7 +67,6 @@
   .sun-surface:hover { transform: scale(1.15); box-shadow: 0 0 80px rgba(251, 191, 36, 0.9); }
   @keyframes pulseSun { 0%,100%{ box-shadow: 0 0 60px rgba(251, 191, 36, 0.6); } 50%{ box-shadow: 0 0 90px rgba(251, 191, 36, 0.8); } }
 
-  /* --- MAIN LAYOUT --- */
   .wheel { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: min(60vw, 500px); height: min(60vw, 500px); z-index: 10; }
   .satellite { position: absolute; width: 90px; height: 90px; z-index: 20; display: flex; justify-content: center; align-items: center; text-align: center; font-family: 'Orbitron', sans-serif; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; }
   .pos-tools { top: 50%; left: -110px; transform: translateY(-50%); }
@@ -78,7 +74,6 @@
   .pos-projects { bottom: -110px; left: 50%; transform: translateX(-50%); }
   .portfolio-orbit { position: fixed; top: 8%; right: 8%; width: 120px; height: 120px; z-index: 100; display: flex; justify-content: center; align-items: center; }
 
-  /* --- CENTER TEXT --- */
   .center-content { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 80%; height: 80%; display: flex; flex-direction: column; justify-content: center; align-items: center; pointer-events: none; text-align: center; z-index: 30; }
   #ccTitle { margin: 0 0 10px 0; font-family: 'Orbitron', sans-serif; font-size: clamp(1.8rem, 4vw, 3.2rem); font-weight: 900; letter-spacing: 2px; color: #ffffff; text-shadow: 0 4px 15px rgba(0,0,0,0.6); }
   #ccText { color: #f1f5f9; font-size: clamp(0.7rem, 1.2vh, 1.0rem); line-height: 1.5; font-weight: 400; text-wrap: balance; width: 100%; max-width: 420px; text-shadow: 0 2px 5px rgba(0,0,0,0.9); overflow: hidden; padding: 0 10px; }
@@ -86,12 +81,11 @@
   #ccText ul { text-align: left; padding-left: 15px; margin-top: 5px; font-size: 0.9em; }
   #ccText li { margin-bottom: 4px; }
 
-  /* --- CHATBOT DOCK --- */
-  .assistant-wrap { position: fixed; left: 30px; bottom: 30px; width: 60px; height: 60px; z-index: 9999; pointer-events: none; }
+  /* CHAT DOCK (Hidden by default on tools, shown on home) */
+  .assistant-wrap { position: fixed; left: 30px; bottom: 30px; width: 60px; height: 60px; z-index: 9999; pointer-events: none; transition: opacity 0.3s ease; }
   .assistant-wrap::before { content: ""; position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at center, rgba(34, 197, 94, 0.8) 0%, rgba(21, 128, 61, 0.4) 40%, transparent 100%); box-shadow: 0 0 20px rgba(34, 197, 94, 0.6); animation: pulseGlow 4s ease-in-out infinite; z-index: -1; pointer-events: none; }
   @keyframes pulseGlow { 0%,100%{opacity:0.8; transform:scale(1);} 50%{opacity:1; transform:scale(1.1);} }
 
-  /* OVERLAY STYLES */
   .overlay { position: fixed; inset: 0; display: none; place-items: center; z-index: 500; background: radial-gradient(ellipse at center, rgba(15, 23, 42, 0.95) 0%, rgba(2, 6, 23, 0.98) 80%); animation: fadeIn 300ms ease-out; }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   .panel { width: min(1200px, 92vw); height: min(78vh, 820px); border: 1px solid rgba(255,255,255,0.1); background: linear-gradient(180deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98)); border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.8); backdrop-filter: blur(15px); position: relative; overflow: hidden; }
@@ -104,9 +98,7 @@
   .btn { cursor: pointer; font-weight: bold; text-transform: uppercase; } .btn:hover { background: rgba(255,255,255,0.1); }
   #sphereWrap { position: absolute; inset: 8px; border-radius: 12px; overflow: hidden; z-index: 0; pointer-events: none; }
   canvas#sphere { width: 100%; height: 100%; display: block; filter: drop-shadow(0 0 10px var(--neon-white)); opacity: 0.6; }
-  .insights { position: absolute; left: 16px; right: 16px; bottom: 16px; z-index: 2; background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 10px; color: var(--neon-white); font-size: 0.85rem; }
   
-  /* Rolling Globe CSS */
   .rolling-globe-container { display:flex; justify-content:center; align-items:center; height:120px; border:1px dashed #334155; border-radius:16px; background:rgba(0,0,0,0.2); flex-direction: column; gap: 10px; }
   .rolling-globe { font-size: 40px; animation: roll 10s infinite linear; text-shadow: 0 0 20px #3b82f6; }
   @keyframes roll { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -143,7 +135,7 @@
   </div>
 </div>
 
-<div class="portfolio-orbit sun-surface" onclick="window.open('https://github.com/2619506/khwajai/tree/main/portfolio/index.html', '_blank')">Portfolio</div>
+<div class="portfolio-orbit sun-surface" onclick="window.open('portfolio/index.html', '_blank')">Portfolio</div>
 <div class="assistant-wrap"><div class="assistant-hole"></div></div>
 
 <div id="analyzerOverlay" class="overlay" aria-hidden="true">
@@ -169,48 +161,52 @@
       <div class="chart-wrap">
         <div id="sphereWrap"><canvas id="sphere"></canvas></div>
         <div id="chart"></div>
-        <div id="insights" class="insights" style="display:none;"></div>
       </div>
     </div>
   </div>
 </div>
 
 <div id="appContainer" style="display:none; position:fixed; inset:0; z-index:2000; background:#0f172a;">
-  <button onclick="closeEmbeddedApp()" style="position:absolute; top:10px; right:10px; z-index:2001; background:rgba(0,0,0,0.5); color:rgba(255,255,255,0.7); border:1px solid rgba(255,255,255,0.2); padding:5px 10px; border-radius:4px; cursor:pointer; font-size:12px;">✕</button>
   <iframe src="https://khwajai-spreadsheet.hf.space/?embed=true" style="width:100%; height:100vh; border:none; overflow:hidden;" allow="clipboard-read; clipboard-write; fullscreen;"></iframe>
 </div>
 
 <script>
-// FIX: URL Routing & Chat Hiding
-function updateRoute(path) {
-    history.pushState({}, "", path);
+// Logic to hide chat when not on home
+function hideChat() {
+    const chat = document.querySelector('.assistant-wrap');
+    if(chat) chat.style.display = 'none';
+}
+function showChat() {
+    const chat = document.querySelector('.assistant-wrap');
+    if(chat) chat.style.display = 'block';
 }
 
 function openEmbeddedApp() {
     document.getElementById('analyzerOverlay').style.display = 'none';
     document.getElementById('appContainer').style.display = 'block';
-    document.querySelector('.assistant-wrap').style.display = 'none'; // Hide Chatbase on Tool
-    updateRoute('/tools/spreadsheet');
+    hideChat();
+    history.pushState({}, "", "/tools/spreadsheet");
 }
 function closeEmbeddedApp() {
-    document.getElementById('appContainer').style.display = 'none';
-    document.querySelector('.assistant-wrap').style.display = 'block'; // Show Chatbase
-    updateRoute('/');
+    // Note: Since button is removed, this function is only callable via console or back button logic if added later.
+    // Ideally user uses browser back button.
 }
 function openOverlay(){ 
     document.getElementById('analyzerOverlay').style.display = 'grid'; 
     startSphere(); onResizeSphere(); 
-    updateRoute('/tools');
+    hideChat();
+    history.pushState({}, "", "/tools");
 }
 function closeOverlay(){ 
     document.getElementById('analyzerOverlay').style.display = 'none'; 
     stopSphere(); 
-    updateRoute('/');
+    showChat();
+    history.pushState({}, "", "/");
 }
 
-// Global UI functions
 function showProjects(){
-  updateRoute('/projects');
+  hideChat();
+  history.pushState({}, "", "/projects");
   document.getElementById('centerContent').innerHTML = `
     <h1 id="ccTitle" style="font-size:2.5rem">KEY PROJECTS</h1>
     <div id="ccText" style="text-align:left; font-size:0.9rem;">
@@ -224,7 +220,8 @@ function showProjects(){
 }
 
 function showAIML(){
-  updateRoute('/ai-ml');
+  hideChat();
+  history.pushState({}, "", "/ai-ml");
   document.getElementById('centerContent').innerHTML = `
     <h1 id="ccTitle" style="font-size:2.5rem">AI & MACHINE LEARNING</h1>
     <div id="ccText">
@@ -243,7 +240,8 @@ function showAIML(){
 }
 
 function showHome(){
-  updateRoute('/');
+  showChat();
+  history.pushState({}, "", "/");
   document.getElementById('centerContent').innerHTML = `<h1 id="ccTitle">KHWAJA AI</h1><p id="ccText"><b>Financial AI & Business Analytics Strategist</b>Merging an MSc in Business Analytics & Finance with over 5 years of operational expertise. From streamlining diplomatic workflows to driving data-led strategies in retail, I bridge the gap between technical insights and executive decision-making. I specialize in optimizing processes, financial modeling, and delivering actionable intelligence using Python, SQL, and Power BI.</p>`;
 }
 </script>
@@ -356,4 +354,3 @@ window.addEventListener('resize', window.onResizeSphere);
 
 </body>
 </html>
-
