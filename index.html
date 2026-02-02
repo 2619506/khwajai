@@ -22,7 +22,7 @@
 
   canvas#stars { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
 
-  /* Planet & UI Styles (Kept Exactly as before) */
+  /* UI STYLES */
   .earth-surface { border-radius: 50%; background: radial-gradient(circle at 35% 35%, #4ade80 0%, #059669 25%, #0369a1 50%, #0f172a 85%, #020617 100%); box-shadow: inset 10px 10px 60px rgba(255,255,255,0.15), inset -20px -20px 80px rgba(0,0,0,0.95), 0 0 40px rgba(14, 165, 233, 0.15); border: none; position: relative; cursor: pointer; }
   .moon-surface { border-radius: 50%; background: radial-gradient(circle at 30% 30%, #e2e8f0 0%, #94a3b8 30%, #64748b 60%, #1e293b 90%, #020617 100%); box-shadow: inset 2px 2px 10px rgba(255,255,255,0.3), 0 0 15px rgba(255, 255, 255, 0.1); border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: transform 0.3s; color: #0f172a !important; text-shadow: 0 1px 1px rgba(255,255,255,0.5); }
   .moon-surface:hover { transform: scale(1.15); box-shadow: 0 0 25px rgba(255, 255, 255, 0.3); z-index: 50; }
@@ -44,10 +44,11 @@
   #ccText ul { text-align: left; padding-left: 15px; margin-top: 5px; font-size: 0.9em; }
   #ccText li { margin-bottom: 4px; }
 
-  /* CHAT DOCK */
-  .assistant-wrap { position: fixed; left: 30px; bottom: 30px; width: 60px; height: 60px; z-index: 9999; pointer-events: none; transition: opacity 0.3s ease; }
-  .assistant-wrap.hidden { display: none !important; opacity: 0; pointer-events: none; } /* FORCE HIDE CLASS */
+  /* CHAT DOCK (Visibility Toggle) */
+  .assistant-wrap { position: fixed; left: 30px; bottom: 30px; width: 60px; height: 60px; z-index: 9999; transition: opacity 0.3s ease; }
+  .chat-hidden { display: none !important; opacity: 0; pointer-events: none; }
 
+  /* OVERLAYS */
   .overlay { position: fixed; inset: 0; display: none; place-items: center; z-index: 500; background: radial-gradient(ellipse at center, rgba(15, 23, 42, 0.95) 0%, rgba(2, 6, 23, 0.98) 80%); animation: fadeIn 300ms ease-out; }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   .panel { width: min(1200px, 92vw); height: min(78vh, 820px); border: 1px solid rgba(255,255,255,0.1); background: linear-gradient(180deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98)); border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.8); backdrop-filter: blur(15px); position: relative; overflow: hidden; }
@@ -131,71 +132,89 @@
 </div>
 
 <script>
-// FIX: Force Chat Hide on App Load
-function hideChat() {
+// Toggle Chat Visibility
+function toggleChat(show) {
     const chat = document.querySelector('.assistant-wrap');
-    if(chat) chat.classList.add('hidden'); // Use class based toggle
-}
-function showChat() {
-    const chat = document.querySelector('.assistant-wrap');
-    if(chat) chat.classList.remove('hidden');
+    if(chat) {
+        if(show) chat.classList.remove('chat-hidden');
+        else chat.classList.add('chat-hidden');
+    }
 }
 
 function openEmbeddedApp() {
     document.getElementById('analyzerOverlay').style.display = 'none';
     document.getElementById('appContainer').style.display = 'block';
-    hideChat(); // HIDES THE GREEN BUBBLE
+    toggleChat(false); // HIDE CHAT
     history.pushState({}, "", "/tools/spreadsheet");
 }
 
 function openOverlay(){ 
     document.getElementById('analyzerOverlay').style.display = 'grid'; 
     startSphere(); onResizeSphere(); 
-    hideChat();
+    toggleChat(false); // HIDE CHAT
     history.pushState({}, "", "/tools");
 }
+
 function closeOverlay(){ 
     document.getElementById('analyzerOverlay').style.display = 'none'; 
     stopSphere(); 
-    showChat();
+    toggleChat(true); // SHOW CHAT
     history.pushState({}, "", "/");
 }
 
-// ... Rest of your UI functions (showProjects, showAIML, etc.) ...
 function showProjects(){
-  hideChat();
+  toggleChat(false);
   history.pushState({}, "", "/projects");
   document.getElementById('centerContent').innerHTML = `<h1 id="ccTitle" style="font-size:2.5rem">KEY PROJECTS</h1><div id="ccText" style="text-align:left; font-size:0.9rem;"><ul style="list-style-type:none; padding:0;"><li style="margin-bottom:10px;"><b>🛍️ iOutlet Revenue Analysis</b> Analyzed 32,000+ sales transactions (£8.9M) to identify seasonal trends and built Python dashboards for reporting.</li><li style="margin-bottom:10px;"><b>🍄 Sustainable Production (AREA)</b> Managed an £80k donor-funded project, coordinating field teams and streamlining reporting workflows by 50%.</li><li><b>📈 Financial Forecasting (Uni. Dundee)</b> Developed equity price forecasting models using MATLAB & R, improving predictive accuracy through back-testing.</li></ul><div style="text-align:center; margin-top:10px; font-size:0.8rem; color:#f8fafc;">(Click Earth to return)</div></div>`;
 }
 
 function showAIML(){
-  hideChat();
+  toggleChat(false);
   history.pushState({}, "", "/ai-ml");
   document.getElementById('centerContent').innerHTML = `<h1 id="ccTitle" style="font-size:2.5rem">AI & MACHINE LEARNING</h1><div id="ccText"><b>Technical Arsenal</b><p>Proficient in deploying <b>Python</b> (Pandas, Scikit-Learn) and <b>R</b> for predictive modeling.</p><br><b>Core Competencies</b><ul style="display:inline-block; text-align:left;"><li>• Financial Forecasting (ARIMA/Time-Series)</li><li>• Purchasing Behavior Modeling</li><li>• Regression Analysis & KPI Design</li><li>• Automated Streamlit Dashboards</li></ul><div style="text-align:center; margin-top:10px; font-size:0.8rem; color:#f8fafc;">(Click Earth to return)</div></div>`;
 }
 
 function showHome(){
-  showChat();
+  toggleChat(true);
   history.pushState({}, "", "/");
   document.getElementById('centerContent').innerHTML = `<h1 id="ccTitle">KHWAJA AI</h1><p id="ccText"><b>Financial AI & Business Analytics Strategist</b>Merging an MSc in Business Analytics & Finance with over 5 years of operational expertise. From streamlining diplomatic workflows to driving data-led strategies in retail, I bridge the gap between technical insights and executive decision-making. I specialize in optimizing processes, financial modeling, and delivering actionable intelligence using Python, SQL, and Power BI.</p>`;
 }
 </script>
 
 <script>
-// Chatbase & Effects Scripts (Keep as is)
-(function(){if(!window.chatbase || window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}})();
-const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="85-fKKKuG65obFx8ejTz3";script.domain="www.chatbase.co";document.body.appendChild(script);};
-if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)};
-window.addEventListener("load", function(){setTimeout(()=>{const bubble = document.querySelector("#chatbase-bubble, iframe[src*='chatbase']");if(bubble){bubble.style.position = "absolute"; bubble.style.bottom = "50%"; bubble.style.left = "50%"; bubble.style.transform = "translate(-50%, 50%) scale(0.9)"; bubble.style.zIndex = "12"; document.querySelector(".assistant-wrap").appendChild(bubble);}}, 2500);});
+(function(){
+  if(!window.chatbase || window.chatbase("getState")!=="initialized"){
+    window.chatbase=(...arguments)=>{ if(!window.chatbase.q){window.chatbase.q=[]} window.chatbase.q.push(arguments) };
+    window.chatbase=new Proxy(window.chatbase,{ get(target,prop){ if(prop==="q"){return target.q} return(...args)=>target(prop,...args) } });
+  }
+  const onLoad=function(){
+    const script=document.createElement("script");
+    script.src="https://www.chatbase.co/embed.min.js";
+    script.id="85-fKKKuG65obFx8ejTz3";
+    script.domain="www.chatbase.co";
+    document.body.appendChild(script);
+  };
+  if(document.readyState==="complete"){onLoad()} else { window.addEventListener("load", onLoad) }
+})();
+window.addEventListener("load", function(){
+  setTimeout(()=>{
+    const bubble = document.querySelector("#chatbase-bubble, iframe[src*='chatbase']");
+    if(bubble){
+      bubble.style.position = "absolute"; bubble.style.bottom = "50%"; bubble.style.left = "50%";
+      bubble.style.transform = "translate(-50%, 50%) scale(0.9)"; bubble.style.zIndex = "12";
+      document.querySelector(".assistant-wrap").appendChild(bubble);
+    }
+  }, 2500);
+});
+</script>
 
-// Stars Background
+<script>
 const canvas = document.getElementById('stars'); const ctx = canvas.getContext('2d'); let stars = [], meteors = [];
 function resizeCanvas(){ canvas.width = innerWidth; canvas.height = innerHeight; } resizeCanvas(); addEventListener('resize', resizeCanvas);
 function createStars(count){ stars=[]; for(let i=0;i<count;i++){ stars.push({ x:Math.random()*canvas.width, y:Math.random()*canvas.height, speed:Math.random()*0.2+0.05, size:Math.random()*1.5 }); } }
 function createMeteors(count){ meteors=[]; for(let i=0;i<count;i++){ meteors.push({ x:Math.random()*canvas.width, y:Math.random()*canvas.height, speedX:-(Math.random()*4+2), speedY:Math.random()*2+1, length:Math.random()*50+30 }); } }
 function drawStars(){ ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = '#ffffff'; for(const s of stars){ ctx.beginPath(); ctx.arc(s.x,s.y,s.size,0,Math.PI*2); ctx.fill(); s.y+=s.speed; if(s.y>canvas.height){s.y=0;s.x=Math.random()*canvas.width;} } ctx.strokeStyle = '#ffffff'; ctx.lineWidth=0.8; for(const m of meteors){ ctx.beginPath(); ctx.moveTo(m.x,m.y); ctx.lineTo(m.x+m.length*m.speedX/10, m.y+m.length*m.speedY/10); ctx.stroke(); m.x+=m.speedX; m.y+=m.speedY; if(m.x<-100||m.y>canvas.height+100){m.x=canvas.width+Math.random()*200;m.y=Math.random()*canvas.height/2;} } }
 createStars(300); createMeteors(3); (function animate(){ drawStars(); requestAnimationFrame(animate); })();
-
 const wheel = document.getElementById('wheel'); document.addEventListener('mousemove', e=>{ const centerX = innerWidth/2; const offsetX = e.clientX - centerX; const rotation = offsetX/40; wheel.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`; });
 </script>
 
