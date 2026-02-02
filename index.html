@@ -34,8 +34,6 @@
     letter-spacing: 0.5px;
   }
 
-  /* FIX: STAR BACKGROUND VISIBILITY */
-  /* Changed z-index from -3 to 0 so it sits on top of the body background but behind the Earth */
   canvas#stars { 
     position: fixed; 
     inset: 0; 
@@ -43,18 +41,15 @@
     pointer-events: none; 
   }
 
-  /* --- PLANET TEXTURES --- */
-  
-  /* 1. EARTH (Main) */
   .earth-surface {
     border-radius: 50%;
     background: radial-gradient(
       circle at 35% 35%, 
-      #4ade80 0%,      /* Highlight */
-      #059669 25%,     /* Land */
-      #0369a1 50%,     /* Ocean */
-      #0f172a 85%,     /* Deep Ocean */
-      #020617 100%     /* Shadow */
+      #4ade80 0%,      
+      #059669 25%,     
+      #0369a1 50%,     
+      #0f172a 85%,     
+      #020617 100%     
     );
     box-shadow: 
       inset 10px 10px 60px rgba(255,255,255,0.15), 
@@ -65,7 +60,6 @@
     cursor: pointer;
   }
 
-  /* 2. MOON (Satellites) */
   .moon-surface {
     border-radius: 50%;
     background: radial-gradient(
@@ -92,7 +86,6 @@
     z-index: 50;
   }
 
-  /* 3. SUN (Portfolio) */
   .sun-surface {
     border-radius: 50%;
     background: radial-gradient(
@@ -117,15 +110,12 @@
   .sun-surface:hover { transform: scale(1.15); box-shadow: 0 0 80px rgba(251, 191, 36, 0.9); }
   @keyframes pulseSun { 0%,100%{ box-shadow: 0 0 60px rgba(251, 191, 36, 0.6); } 50%{ box-shadow: 0 0 90px rgba(251, 191, 36, 0.8); } }
 
-
-  /* --- MAIN LAYOUT --- */
   .wheel {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
     width: min(60vw, 500px); height: min(60vw, 500px);
     z-index: 10;
   }
 
-  /* SATELLITE MOON POSITIONING */
   .satellite {
     position: absolute;
     width: 90px; height: 90px;
@@ -139,7 +129,6 @@
   .pos-ai { top: 50%; right: -110px; transform: translateY(-50%); }
   .pos-projects { bottom: -110px; left: 50%; transform: translateX(-50%); }
 
-  /* PORTFOLIO (Top Right) */
   .portfolio-orbit {
     position: fixed; top: 8%; right: 8%;
     width: 120px; height: 120px;
@@ -147,13 +136,12 @@
     display: flex; justify-content: center; align-items: center;
   }
 
-  /* --- CENTER TEXT --- */
   .center-content {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
     width: 80%; 
     height: 80%;
     display: flex; flex-direction: column; justify-content: center; align-items: center;
-    pointer-events: none; /* Allows click-through to parent (.wheel) */
+    pointer-events: none; 
     text-align: center; z-index: 30;
   }
 
@@ -188,7 +176,6 @@
   #ccText ul { text-align: left; padding-left: 15px; margin-top: 5px; font-size: 0.9em; }
   #ccText li { margin-bottom: 4px; }
 
-  /* --- CHATBOT DOCK --- */
   .assistant-wrap {
     position: fixed; left: 30px; bottom: 30px; width: 60px; height: 60px;
     z-index: 9999; pointer-events: none;
@@ -202,7 +189,6 @@
   }
   @keyframes pulseGlow { 0%,100%{opacity:0.8; transform:scale(1);} 50%{opacity:1; transform:scale(1.1);} }
 
-  /* OVERLAY STYLES */
   .overlay { position: fixed; inset: 0; display: none; place-items: center; z-index: 500; background: radial-gradient(ellipse at center, rgba(15, 23, 42, 0.95) 0%, rgba(2, 6, 23, 0.98) 80%); animation: fadeIn 300ms ease-out; }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   .panel { width: min(1200px, 92vw); height: min(78vh, 820px); border: 1px solid rgba(255,255,255,0.1); background: linear-gradient(180deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98)); border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.8); backdrop-filter: blur(15px); position: relative; overflow: hidden; }
@@ -217,7 +203,6 @@
   canvas#sphere { width: 100%; height: 100%; display: block; filter: drop-shadow(0 0 10px var(--neon-white)); opacity: 0.6; }
   .insights { position: absolute; left: 16px; right: 16px; bottom: 16px; z-index: 2; background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 10px; color: var(--neon-white); font-size: 0.85rem; }
   
-  /* RESPONSIVE */
   @media (max-width: 980px){ 
     .panel-body { grid-template-columns: 1fr; height: auto; } 
     .chart-wrap { height: 50vh; } 
@@ -265,9 +250,7 @@
         <div class="card" style="border-color: #4ade80; background: rgba(74, 222, 128, 0.05);">
           <h3 style="color:#4ade80">🚀 NEW: AI+ Spreadsheet</h3>
           <p style="font-size:0.8rem; color:#cbd5e1; margin-bottom:10px;">Next-gen data tool. Upload CSVs or use OCR to convert images to data tables instantly.</p>
-          
           <button class="btn" style="background:#059669; border:none;" onclick="openEmbeddedApp()">Launch Tool <i class="fas fa-external-link-alt"></i></button>
-        
         </div>
         <div class="card">
           <h3>Legacy Analyzer</h3>
@@ -287,13 +270,7 @@
 </div>
 
 <div id="appContainer" style="display:none; position:fixed; inset:0; z-index:2000; background:#0f172a;">
-  <button onclick="closeEmbeddedApp()" style="position:absolute; top:10px; right:10px; z-index:2001; background:rgba(239,68,68,0.8); color:white; border:none; padding:8px 12px; border-radius:4px; cursor:pointer; font-weight:bold;">✕ Close Tool</button>
-  
-  <iframe 
-    src="https://khwajai-spreadsheet.hf.space/?embed=true"
-    style="width:100%; height:100vh; border:none; overflow:hidden;"
-    allow="clipboard-read; clipboard-write; fullscreen;">
-  </iframe>
+  <iframe src="https://khwajai-spreadsheet.hf.space/?embed=true" style="width:100%; height:100vh; border:none; overflow:hidden;" allow="clipboard-read; clipboard-write; fullscreen;"></iframe>
 </div>
 
 <script>
@@ -429,7 +406,6 @@ import * as THREE from 'three';
 
 let sphereScene, sphereCamera, sphereRenderer, sphereMesh, sphereReq;
 
-// Expose start/stop to global window so the UI buttons work
 window.startSphere = function(){
   const wrap = document.getElementById('sphereWrap');
   const canvas = document.getElementById('sphere');
@@ -479,4 +455,3 @@ window.addEventListener('resize', window.onResizeSphere);
 
 </body>
 </html>
-
