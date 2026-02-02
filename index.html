@@ -287,9 +287,13 @@
 </div>
 
 <div id="appContainer" style="display:none; position:fixed; inset:0; z-index:2000; background:#0f172a;">
-  <button onclick="closeEmbeddedApp()" style="position:absolute; top:10px; right:10px; z-index:2001; background:rgba(0,0,0,0.5); color:rgba(255,255,255,0.7); border:1px solid rgba(255,255,255,0.2); padding:5px 10px; border-radius:4px; cursor:pointer; font-size:12px;">✕</button>
+  <button onclick="closeEmbeddedApp()" style="position:absolute; top:10px; right:10px; z-index:2001; background:rgba(239,68,68,0.8); color:white; border:none; padding:8px 12px; border-radius:4px; cursor:pointer; font-weight:bold;">✕ Close Tool</button>
   
-  <iframe src="https://khwajai-spreadsheet.hf.space/?embed=true" style="width:100%; height:100vh; border:none; overflow:hidden;" allow="clipboard-read; clipboard-write; fullscreen;"></iframe>
+  <iframe 
+    src="https://khwajai-spreadsheet.hf.space/?embed=true"
+    style="width:100%; height:100vh; border:none; overflow:hidden;"
+    allow="clipboard-read; clipboard-write; fullscreen;">
+  </iframe>
 </div>
 
 <script>
@@ -475,3 +479,4 @@ window.addEventListener('resize', window.onResizeSphere);
 
 </body>
 </html>
+
