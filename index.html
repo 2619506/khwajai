@@ -5,13 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Khwaja AI | Intelligent Analytics</title>
 
-<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
+<script src="[https://cdn.plot.ly/plotly-2.35.2.min.js](https://cdn.plot.ly/plotly-2.35.2.min.js)"></script>
+<script src="[https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js](https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js)"></script>
+<script src="[https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js](https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js)"></script>
+
+<script type="importmap">
+  {
+    "imports": {
+      "three": "[https://unpkg.com/three@0.158.0/build/three.module.js](https://unpkg.com/three@0.158.0/build/three.module.js)"
+    }
+  }
+</script>
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;600&display=swap');
+  @import url('[https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;600&display=swap](https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;600&display=swap)');
 
   :root{
     --neon-white: #f8fafc;
@@ -49,7 +56,7 @@
       0 0 40px rgba(14, 165, 233, 0.15);
     border: none;
     position: relative;
-    cursor: pointer; /* Indicates clickable to return home */
+    cursor: pointer;
   }
 
   /* 2. MOON (Satellites) */
@@ -134,7 +141,7 @@
     display: flex; justify-content: center; align-items: center;
   }
 
-  /* --- CENTER TEXT (Fixed for Mobile) --- */
+  /* --- CENTER TEXT --- */
   .center-content {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
     width: 80%; 
@@ -147,7 +154,7 @@
   #ccTitle {
     margin: 0 0 10px 0;
     font-family: 'Orbitron', sans-serif;
-    font-size: clamp(1.8rem, 4vw, 3.2rem); /* Slightly smaller base for mobile */
+    font-size: clamp(1.8rem, 4vw, 3.2rem); 
     font-weight: 900; letter-spacing: 2px;
     color: #ffffff;
     text-shadow: 0 4px 15px rgba(0,0,0,0.6);
@@ -155,14 +162,12 @@
 
   #ccText {
     color: #f1f5f9; 
-    font-size: clamp(0.7rem, 1.2vh, 1.0rem); /* Dynamic resizing */
+    font-size: clamp(0.7rem, 1.2vh, 1.0rem); 
     line-height: 1.5; 
     font-weight: 400;
     text-wrap: balance; 
     width: 100%; max-width: 420px; 
     text-shadow: 0 2px 5px rgba(0,0,0,0.9);
-    
-    /* Mobile Constraints */
     overflow: hidden;
     padding: 0 10px;
   }
@@ -211,27 +216,14 @@
     .panel-body { grid-template-columns: 1fr; height: auto; } 
     .chart-wrap { height: 50vh; } 
     #sphereWrap { display: none; }
-    
-    /* Make Earth smaller on mobile to keep text inside */
-    .wheel { width: 85vw; height: 85vw; } /* Slightly bigger for touch targets */
-    
-    /* Shrink the moon satellites */
+    .wheel { width: 85vw; height: 85vw; } 
     .satellite { width: 65px; height: 65px; font-size: 0.5rem; }
-    
-    /* Pull moons closer to prevent overflow */
     .pos-tools { left: -35px; }
     .pos-ai { right: -35px; }
     .pos-projects { bottom: -35px; }
-    
     .portfolio-orbit { top: 20px; right: 20px; width: 80px; height: 80px; font-size: 0.6rem; }
-    
-    /* Text Auto-Resize for Mobile */
     #ccTitle { font-size: 1.5rem; margin-bottom: 5px; }
-    #ccText { 
-        font-size: 0.7rem; 
-        line-height: 1.2; 
-        padding: 0 15px; /* Extra padding inside globe */
-    }
+    #ccText { font-size: 0.7rem; line-height: 1.2; padding: 0 15px; }
     #ccText b { font-size: 0.9rem; margin-bottom: 4px; }
   }
 </style>
@@ -241,19 +233,9 @@
 <canvas id="stars"></canvas>
 
 <div class="wheel earth-surface" id="wheel" onclick="showHome()">
-  
-  <div class="satellite moon-surface pos-tools" onclick="event.stopPropagation(); openOverlay()">
-    Tools
-  </div>
-
-  <div class="satellite moon-surface pos-ai" onclick="event.stopPropagation(); showAIML()">
-    AI & ML
-  </div>
-
-  <div class="satellite moon-surface pos-projects" onclick="event.stopPropagation(); showProjects()">
-    Projects
-  </div>
-
+  <div class="satellite moon-surface pos-tools" onclick="event.stopPropagation(); openOverlay()">Tools</div>
+  <div class="satellite moon-surface pos-ai" onclick="event.stopPropagation(); showAIML()">AI & ML</div>
+  <div class="satellite moon-surface pos-projects" onclick="event.stopPropagation(); showProjects()">Projects</div>
   <div class="center-content" id="centerContent">
     <h1 id="ccTitle">KHWAJA AI</h1>
     <p id="ccText">
@@ -263,13 +245,8 @@
   </div>
 </div>
 
-<div class="portfolio-orbit sun-surface" onclick="window.open('/portfolio/', '_blank')">
-  Portfolio
-</div>
-
-<div class="assistant-wrap">
-  <div class="assistant-hole"></div>
-</div>
+<div class="portfolio-orbit sun-surface" onclick="window.open('/portfolio/', '_blank')">Portfolio</div>
+<div class="assistant-wrap"><div class="assistant-hole"></div></div>
 
 <div id="analyzerOverlay" class="overlay" aria-hidden="true">
   <div class="panel" role="dialog">
@@ -278,30 +255,20 @@
       <button class="close-btn" onclick="closeOverlay()">✕</button>
     </div>
     <div class="panel-body">
-      
       <div class="controls">
-        
         <div class="card" style="border-color: #4ade80; background: rgba(74, 222, 128, 0.05);">
           <h3 style="color:#4ade80">🚀 NEW: AI+ Spreadsheet</h3>
-          <p style="font-size:0.8rem; color:#cbd5e1; margin-bottom:10px;">
-            Next-gen data tool. Upload CSVs or use OCR to convert images to data tables instantly.
-          </p>
-          <button class="btn" style="background:#059669; border:none;" onclick="openEmbeddedApp()">
-            Launch Tool <i class="fas fa-external-link-alt"></i>
-          </button>
+          <p style="font-size:0.8rem; color:#cbd5e1; margin-bottom:10px;">Next-gen data tool. Upload CSVs or use OCR to convert images to data tables instantly.</p>
+          <button class="btn" style="background:#059669; border:none;" onclick="openEmbeddedApp()">Launch Tool <i class="fas fa-external-link-alt"></i></button>
         </div>
-
         <div class="card">
           <h3>Legacy Analyzer</h3>
-          <p style="font-size:0.8rem; color:#94a3b8; margin-bottom:10px;">
-            Basic plotting and dataset comparison tool.
-          </p>
-          <label>Dataset 1</label><input id="file1" type="file" accept=".csv,.xlsx,.xls" />
-          <label>Dataset 2</label><input id="file2" type="file" accept=".csv,.xlsx,.xls" />
+          <p style="font-size:0.8rem; color:#94a3b8; margin-bottom:10px;">Basic plotting and dataset comparison tool.</p>
+          <label>Dataset 1</label><input id="file1" type="file" accept=".csv,.xlsx,.xls,.png,.jpg" />
+          <label>Dataset 2</label><input id="file2" type="file" accept=".csv,.xlsx,.xls,.png,.jpg" />
           <button id="vizBtn" class="btn" style="margin-top:10px;" onclick="plotData()" disabled>Visualize Data</button>
         </div>
       </div>
-
       <div class="chart-wrap">
         <div id="sphereWrap"><canvas id="sphere"></canvas></div>
         <div id="chart"></div>
@@ -313,26 +280,20 @@
 
 <div id="appContainer" style="display:none; position:fixed; inset:0; z-index:2000; background:#0f172a;">
   <button onclick="closeEmbeddedApp()" style="position:absolute; top:10px; right:10px; z-index:2001; background:rgba(239,68,68,0.8); color:white; border:none; padding:8px 12px; border-radius:4px; cursor:pointer; font-weight:bold;">✕ Close Tool</button>
-  
-  <iframe 
-    src="https://khwajai-spreadsheet.hf.space/?embed=true"
-    style="width:100%; height:100vh; border:none; overflow:hidden;"
-    allow="clipboard-read; clipboard-write; fullscreen;">
-  </iframe>
+  <iframe src="[https://khwajai-spreadsheet.hf.space/?embed=true](https://khwajai-spreadsheet.hf.space/?embed=true)" style="width:100%; height:100vh; border:none; overflow:hidden;" allow="clipboard-read; clipboard-write; fullscreen;"></iframe>
 </div>
 
 <script>
-/* FIX: Functions to handle the embedded app overlay */
 function openEmbeddedApp() {
-  document.getElementById('analyzerOverlay').style.display = 'none'; // Hide tools menu
-  document.getElementById('appContainer').style.display = 'block'; // Show app
+  document.getElementById('analyzerOverlay').style.display = 'none';
+  document.getElementById('appContainer').style.display = 'block';
 }
 function closeEmbeddedApp() {
-  document.getElementById('appContainer').style.display = 'none'; // Hide app
-  // Optional: Re-open the tools menu or just return to home
-  // document.getElementById('analyzerOverlay').style.display = 'grid'; 
+  document.getElementById('appContainer').style.display = 'none';
 }
+</script>
 
+<script>
 (function(){
   if(!window.chatbase || window.chatbase("getState")!=="initialized"){
     window.chatbase=(...arguments)=>{ if(!window.chatbase.q){window.chatbase.q=[]} window.chatbase.q.push(arguments) };
@@ -340,14 +301,13 @@ function closeEmbeddedApp() {
   }
   const onLoad=function(){
     const script=document.createElement("script");
-    script.src="https://www.chatbase.co/embed.min.js";
+    script.src="[https://www.chatbase.co/embed.min.js](https://www.chatbase.co/embed.min.js)";
     script.id="85-fKKKuG65obFx8ejTz3";
     script.domain="www.chatbase.co";
     document.body.appendChild(script);
   };
   if(document.readyState==="complete"){onLoad()} else { window.addEventListener("load", onLoad) }
 })();
-/* Move Chatbase to Dock */
 window.addEventListener("load", function(){
   setTimeout(()=>{
     const bubble = document.querySelector("#chatbase-bubble, iframe[src*='chatbase']");
@@ -376,8 +336,9 @@ function drawStars(){
 }
 createStars(300); createMeteors(3);
 (function animate(){ drawStars(); requestAnimationFrame(animate); })();
+</script>
 
-/* Wheel Rotation */
+<script>
 const wheel = document.getElementById('wheel');
 document.addEventListener('mousemove', e=>{ 
   const centerX = innerWidth/2; const offsetX = e.clientX - centerX; 
@@ -385,10 +346,8 @@ document.addEventListener('mousemove', e=>{
   wheel.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`; 
 });
 
-/* Home & UI Logic */
 function showProjects(){
-  const cc = document.getElementById('centerContent');
-  cc.innerHTML = `
+  document.getElementById('centerContent').innerHTML = `
     <h1 id="ccTitle" style="font-size:2.5rem">KEY PROJECTS</h1>
     <div id="ccText" style="text-align:left; font-size:0.9rem;">
       <ul style="list-style-type:none; padding:0;">
@@ -397,13 +356,11 @@ function showProjects(){
         <li><b>📈 Financial Forecasting (Uni. Dundee)</b> Developed equity price forecasting models using MATLAB & R, improving predictive accuracy through back-testing.</li>
       </ul>
       <div style="text-align:center; margin-top:10px; font-size:0.8rem; color:#f8fafc;">(Click Earth to return)</div>
-    </div>
-  `;
+    </div>`;
 }
 
 function showAIML(){
-  const cc = document.getElementById('centerContent');
-  cc.innerHTML = `
+  document.getElementById('centerContent').innerHTML = `
     <h1 id="ccTitle" style="font-size:2.5rem">AI & MACHINE LEARNING</h1>
     <div id="ccText">
       <b>Technical Arsenal</b>
@@ -417,35 +374,30 @@ function showAIML(){
         <li>• Automated Streamlit Dashboards</li>
       </ul>
       <div style="text-align:center; margin-top:10px; font-size:0.8rem; color:#f8fafc;">(Click Earth to return)</div>
-    </div>
-  `;
+    </div>`;
 }
 
 function showHome(){
-  const cc = document.getElementById('centerContent');
-  cc.innerHTML = `<h1 id="ccTitle">KHWAJA AI</h1><p id="ccText"><b>Financial AI & Business Analytics Strategist</b>Merging an MSc in Business Analytics & Finance with over 5 years of operational expertise. From streamlining diplomatic workflows to driving data-led strategies in retail, I bridge the gap between technical insights and executive decision-making. I specialize in optimizing processes, financial modeling, and delivering actionable intelligence using Python, SQL, and Power BI.</p>`;
+  document.getElementById('centerContent').innerHTML = `<h1 id="ccTitle">KHWAJA AI</h1><p id="ccText"><b>Financial AI & Business Analytics Strategist</b>Merging an MSc in Business Analytics & Finance with over 5 years of operational expertise. From streamlining diplomatic workflows to driving data-led strategies in retail, I bridge the gap between technical insights and executive decision-making. I specialize in optimizing processes, financial modeling, and delivering actionable intelligence using Python, SQL, and Power BI.</p>`;
 }
 
 function openOverlay(){ document.getElementById('analyzerOverlay').style.display = 'grid'; startSphere(); onResizeSphere(); }
 function closeOverlay(){ document.getElementById('analyzerOverlay').style.display = 'none'; stopSphere(); }
 
-/* Chart/File Logic */
 let dataset1 = [], dataset2 = [];
 const el = id => document.getElementById(id);
-const setStatus = msg => el('status').textContent = msg;
+const setStatus = msg => {}; 
 function setControlsEnabled(enabled){ ['x1','y1','chartType','vizBtn'].forEach(id=>{ if(el(id)) el(id).disabled=!enabled; }); }
 el('file1').addEventListener('change', e=> loadFile(e.target.files[0], 1));
 el('file2').addEventListener('change', e=> loadFile(e.target.files[0], 2));
 function loadFile(file, idx){ 
   if(!file) return; 
-  setStatus(`Loading ${file.name}...`);
   if(file.name.endsWith('.csv')){ Papa.parse(file, {header:true, dynamicTyping:true, complete: res => assignData(res.data, idx)}); }
-  else { setStatus("Excel parsing requires server or fuller library setup."); } 
+  else { console.log("Excel/Image parsing requires server."); } 
 }
 function assignData(data, idx){ 
   const clean = data.filter(r => Object.values(r).some(v=>v!==null));
   if(idx===1) dataset1=clean; else dataset2=clean;
-  setStatus(`Loaded dataset ${idx} (${clean.length} rows)`);
   if(dataset1.length || dataset2.length) { populateDropdowns(); setControlsEnabled(true); }
 }
 function populateDropdowns(){
@@ -457,27 +409,59 @@ function plotData(){
   const trace1 = { x: dataset1.map(r=>r[xKey]), y: dataset1.map(r=>r[yKey]), type: type==='scatter'?'scatter':type, mode:'markers' };
   Plotly.newPlot('chart', [trace1], { paper_bgcolor:'rgba(0,0,0,0)', plot_bgcolor:'rgba(0,0,0,0)', font:{color:'#fff'} });
 }
+</script>
 
-/* 3D Sphere Logic */
+<script type="module">
+import * as THREE from 'three';
+
 let sphereScene, sphereCamera, sphereRenderer, sphereMesh, sphereReq;
-function startSphere(){
+
+// Expose start/stop to global window so the UI buttons work
+window.startSphere = function(){
   const wrap = document.getElementById('sphereWrap');
   const canvas = document.getElementById('sphere');
+  if(!wrap || !canvas) return;
+
   sphereScene = new THREE.Scene();
   const w = wrap.clientWidth, h = wrap.clientHeight;
-  sphereCamera = new THREE.PerspectiveCamera(35, w/h, 0.1, 1000); sphereCamera.position.z = 6;
+  sphereCamera = new THREE.PerspectiveCamera(35, w/h, 0.1, 1000); 
+  sphereCamera.position.z = 6;
+
   sphereRenderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
   sphereRenderer.setSize(w,h,false);
+
   const geo = new THREE.SphereGeometry(2.2, 48, 48);
   const mat = new THREE.MeshPhongMaterial({ color: 0x94a3b8, emissive: 0x0f172a, shininess: 30, transparent:true, opacity:0.6, wireframe:true });
-  sphereMesh = new THREE.Mesh(geo, mat); sphereScene.add(sphereMesh);
-  const glow = new THREE.PointLight(0xffffff, 1, 50); glow.position.set(4,4,6); sphereScene.add(glow);
-  const animate = ()=>{ sphereMesh.rotation.y += 0.0025; sphereRenderer.render(sphereScene, sphereCamera); sphereReq = requestAnimationFrame(animate); };
+  sphereMesh = new THREE.Mesh(geo, mat); 
+  sphereScene.add(sphereMesh);
+
+  const glow = new THREE.PointLight(0xffffff, 1, 50); 
+  glow.position.set(4,4,6); 
+  sphereScene.add(glow);
+
+  const animate = ()=>{ 
+    if(sphereMesh) sphereMesh.rotation.y += 0.0025; 
+    sphereRenderer.render(sphereScene, sphereCamera); 
+    sphereReq = requestAnimationFrame(animate); 
+  };
   animate();
 }
-function stopSphere(){ if(sphereReq) cancelAnimationFrame(sphereReq); }
-function onResizeSphere(){ if(sphereRenderer) { const w = el('sphereWrap').clientWidth, h = el('sphereWrap').clientHeight; sphereRenderer.setSize(w,h,false); sphereCamera.aspect=w/h; sphereCamera.updateProjectionMatrix(); } }
-addEventListener('resize', onResizeSphere);
+
+window.stopSphere = function(){ 
+  if(sphereReq) cancelAnimationFrame(sphereReq); 
+}
+
+window.onResizeSphere = function(){ 
+  if(sphereRenderer) { 
+    const wrap = document.getElementById('sphereWrap');
+    if(!wrap) return;
+    const w = wrap.clientWidth, h = wrap.clientHeight; 
+    sphereRenderer.setSize(w,h,false); 
+    sphereCamera.aspect=w/h; 
+    sphereCamera.updateProjectionMatrix(); 
+  } 
+}
+window.addEventListener('resize', window.onResizeSphere);
 </script>
 
 </body>
