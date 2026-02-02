@@ -281,22 +281,15 @@
       
       <div class="controls">
         
-       <div class="card" style="border-color: #4ade80; background: rgba(74, 222, 128, 0.05);">
-  <h3 style="color:#4ade80">🚀 NEW: AI+ Spreadsheet</h3>
-  <p style="font-size:0.8rem; color:#cbd5e1; margin-bottom:10px;">
-    Next-gen data tool. Upload CSVs or use OCR to convert images to data tables instantly.
-  </p>
-  
-  <button class="btn" style="background:#059669; border:none;" 
-     onclick="window.open('https://huggingface.co/spaces/Khwajai/spreadsheet', '_blank')">
-    Launch Tool <i class="fas fa-external-link-alt"></i>
-  </button>
-
-  <button class="btn" style="background:transparent; border:1px solid #4ade80; color:#4ade80; margin-top:5px;" 
-     onclick="window.open('https://github.com/2619506/BusnX-App', '_blank')">
-    View Code <i class="fab fa-github"></i>
-  </button>
-</div>
+        <div class="card" style="border-color: #4ade80; background: rgba(74, 222, 128, 0.05);">
+          <h3 style="color:#4ade80">🚀 NEW: AI+ Spreadsheet</h3>
+          <p style="font-size:0.8rem; color:#cbd5e1; margin-bottom:10px;">
+            Next-gen data tool. Upload CSVs or use OCR to convert images to data tables instantly.
+          </p>
+          <button class="btn" style="background:#059669; border:none;" onclick="openEmbeddedApp()">
+            Launch Tool <i class="fas fa-external-link-alt"></i>
+          </button>
+        </div>
 
         <div class="card">
           <h3>Legacy Analyzer</h3>
@@ -318,7 +311,28 @@
   </div>
 </div>
 
+<div id="appContainer" style="display:none; position:fixed; inset:0; z-index:2000; background:#0f172a;">
+  <button onclick="closeEmbeddedApp()" style="position:absolute; top:10px; right:10px; z-index:2001; background:rgba(239,68,68,0.8); color:white; border:none; padding:8px 12px; border-radius:4px; cursor:pointer; font-weight:bold;">✕ Close Tool</button>
+  
+  <iframe 
+    src="https://khwajai-spreadsheet.hf.space/?embed=true"
+    style="width:100%; height:100vh; border:none; overflow:hidden;"
+    allow="clipboard-read; clipboard-write; fullscreen;">
+  </iframe>
+</div>
+
 <script>
+/* FIX: Functions to handle the embedded app overlay */
+function openEmbeddedApp() {
+  document.getElementById('analyzerOverlay').style.display = 'none'; // Hide tools menu
+  document.getElementById('appContainer').style.display = 'block'; // Show app
+}
+function closeEmbeddedApp() {
+  document.getElementById('appContainer').style.display = 'none'; // Hide app
+  // Optional: Re-open the tools menu or just return to home
+  // document.getElementById('analyzerOverlay').style.display = 'grid'; 
+}
+
 (function(){
   if(!window.chatbase || window.chatbase("getState")!=="initialized"){
     window.chatbase=(...arguments)=>{ if(!window.chatbase.q){window.chatbase.q=[]} window.chatbase.q.push(arguments) };
@@ -468,6 +482,3 @@ addEventListener('resize', onResizeSphere);
 
 </body>
 </html>
-
-
-
