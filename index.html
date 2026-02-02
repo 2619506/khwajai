@@ -28,23 +28,52 @@
   * { box-sizing:border-box; }
   html, body { height:100%; margin: 0; overflow: hidden; background: #020617; color: var(--neon-white); font-family: 'Outfit', sans-serif; letter-spacing: 0.5px; }
 
-  canvas#stars { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+  /* FIX: STAR BACKGROUND VISIBILITY */
+  canvas#stars { 
+    position: fixed; 
+    inset: 0; 
+    z-index: 0; /* Behind everything */
+    pointer-events: none; 
+  }
 
-  /* Planet & UI Styles */
-  .earth-surface { border-radius: 50%; background: radial-gradient(circle at 35% 35%, #4ade80 0%, #059669 25%, #0369a1 50%, #0f172a 85%, #020617 100%); box-shadow: inset 10px 10px 60px rgba(255,255,255,0.15), inset -20px -20px 80px rgba(0,0,0,0.95), 0 0 40px rgba(14, 165, 233, 0.15); border: none; position: relative; cursor: pointer; }
-  .moon-surface { border-radius: 50%; background: radial-gradient(circle at 30% 30%, #e2e8f0 0%, #94a3b8 30%, #64748b 60%, #1e293b 90%, #020617 100%); box-shadow: inset 2px 2px 10px rgba(255,255,255,0.3), 0 0 15px rgba(255, 255, 255, 0.1); border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease; color: #0f172a !important; text-shadow: 0 1px 1px rgba(255,255,255,0.5); }
+  /* --- PLANET TEXTURES --- */
+  .earth-surface {
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #4ade80 0%, #059669 25%, #0369a1 50%, #0f172a 85%, #020617 100%);
+    box-shadow: inset 10px 10px 60px rgba(255,255,255,0.15), inset -20px -20px 80px rgba(0,0,0,0.95), 0 0 40px rgba(14, 165, 233, 0.15);
+    border: none; position: relative; cursor: pointer;
+  }
+
+  .moon-surface {
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #e2e8f0 0%, #94a3b8 30%, #64748b 60%, #1e293b 90%, #020617 100%);
+    box-shadow: inset 2px 2px 10px rgba(255,255,255,0.3), 0 0 15px rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease;
+    color: #0f172a !important; text-shadow: 0 1px 1px rgba(255,255,255,0.5);
+  }
   .moon-surface:hover { transform: scale(1.15); box-shadow: 0 0 25px rgba(255, 255, 255, 0.3); z-index: 50; }
-  .sun-surface { border-radius: 50%; background: radial-gradient(circle at 30% 30%, #fff7ed 0%, #fcd34d 20%, #f59e0b 50%, #ea580c 85%, #7c2d12 100%); box-shadow: inset 0 0 20px rgba(255,255,255,0.8), 0 0 60px rgba(251, 191, 36, 0.6), 0 0 100px rgba(245, 158, 11, 0.3); cursor: pointer; transition: transform 0.3s; animation: pulseSun 4s ease-in-out infinite; color: #451a03; font-family: 'Orbitron', sans-serif; font-size: 0.85rem; font-weight: 900; text-shadow: 0 1px 2px rgba(255,255,255,0.5); }
+
+  .sun-surface {
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #fff7ed 0%, #fcd34d 20%, #f59e0b 50%, #ea580c 85%, #7c2d12 100%);
+    box-shadow: inset 0 0 20px rgba(255,255,255,0.8), 0 0 60px rgba(251, 191, 36, 0.6), 0 0 100px rgba(245, 158, 11, 0.3);
+    cursor: pointer; transition: transform 0.3s; animation: pulseSun 4s ease-in-out infinite;
+    color: #451a03; font-family: 'Orbitron', sans-serif; font-size: 0.85rem; font-weight: 900; text-shadow: 0 1px 2px rgba(255,255,255,0.5);
+  }
   .sun-surface:hover { transform: scale(1.15); box-shadow: 0 0 80px rgba(251, 191, 36, 0.9); }
   @keyframes pulseSun { 0%,100%{ box-shadow: 0 0 60px rgba(251, 191, 36, 0.6); } 50%{ box-shadow: 0 0 90px rgba(251, 191, 36, 0.8); } }
 
+  /* --- MAIN LAYOUT --- */
   .wheel { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: min(60vw, 500px); height: min(60vw, 500px); z-index: 10; }
   .satellite { position: absolute; width: 90px; height: 90px; z-index: 20; display: flex; justify-content: center; align-items: center; text-align: center; font-family: 'Orbitron', sans-serif; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; }
+  
   .pos-tools { top: 50%; left: -110px; transform: translateY(-50%); }
   .pos-ai { top: 50%; right: -110px; transform: translateY(-50%); }
   .pos-projects { bottom: -110px; left: 50%; transform: translateX(-50%); }
+  
   .portfolio-orbit { position: fixed; top: 8%; right: 8%; width: 120px; height: 120px; z-index: 100; display: flex; justify-content: center; align-items: center; }
 
+  /* --- CENTER TEXT --- */
   .center-content { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 80%; height: 80%; display: flex; flex-direction: column; justify-content: center; align-items: center; pointer-events: none; text-align: center; z-index: 30; }
   #ccTitle { margin: 0 0 10px 0; font-family: 'Orbitron', sans-serif; font-size: clamp(1.8rem, 4vw, 3.2rem); font-weight: 900; letter-spacing: 2px; color: #ffffff; text-shadow: 0 4px 15px rgba(0,0,0,0.6); }
   #ccText { color: #f1f5f9; font-size: clamp(0.7rem, 1.2vh, 1.0rem); line-height: 1.5; font-weight: 400; text-wrap: balance; width: 100%; max-width: 420px; text-shadow: 0 2px 5px rgba(0,0,0,0.9); overflow: hidden; padding: 0 10px; }
@@ -52,24 +81,32 @@
   #ccText ul { text-align: left; padding-left: 15px; margin-top: 5px; font-size: 0.9em; }
   #ccText li { margin-bottom: 4px; }
 
-  /* CHAT DOCK */
-  .assistant-wrap { position: fixed; left: 30px; bottom: 30px; width: 60px; height: 60px; z-index: 9999; pointer-events: none; transition: opacity 0.3s ease; }
+  /* --- CHAT DOCK (Visibility Toggle) --- */
+  .assistant-wrap { 
+    position: fixed; left: 30px; bottom: 30px; width: 60px; height: 60px; 
+    z-index: 9999; pointer-events: none; 
+    transition: opacity 0.3s ease, visibility 0.3s; 
+  }
   .assistant-wrap::before { content: ""; position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at center, rgba(34, 197, 94, 0.8) 0%, rgba(21, 128, 61, 0.4) 40%, transparent 100%); box-shadow: 0 0 20px rgba(34, 197, 94, 0.6); animation: pulseGlow 4s ease-in-out infinite; z-index: -1; pointer-events: none; }
   @keyframes pulseGlow { 0%,100%{opacity:0.8; transform:scale(1);} 50%{opacity:1; transform:scale(1.1);} }
 
+  /* OVERLAY STYLES */
   .overlay { position: fixed; inset: 0; display: none; place-items: center; z-index: 500; background: radial-gradient(ellipse at center, rgba(15, 23, 42, 0.95) 0%, rgba(2, 6, 23, 0.98) 80%); animation: fadeIn 300ms ease-out; }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   .panel { width: min(1200px, 92vw); height: min(78vh, 820px); border: 1px solid rgba(255,255,255,0.1); background: linear-gradient(180deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98)); border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.8); backdrop-filter: blur(15px); position: relative; overflow: hidden; }
   .panel-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); }
   .close-btn { width: 36px; height: 36px; border-radius: 50%; border: 1px solid #fff; background: transparent; color: #fff; cursor: pointer; display: grid; place-items: center; }
   .panel-body { display: grid; grid-template-columns: 320px 1fr; gap: 16px; height: calc(100% - 62px); padding: 16px; }
-  .controls { overflow-y: auto; } .chart-wrap { position: relative; height: 100%; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 8px; background: rgba(0,0,0,0.3); }
+  .controls { overflow-y: auto; } 
+  .chart-wrap { position: relative; height: 100%; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 8px; background: rgba(0,0,0,0.3); }
   .card { border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 12px; margin-bottom: 12px; background: rgba(255,255,255,0.03); }
   input, select, button { width: 100%; padding: 10px; margin-top: 5px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.5); color: #fff; }
   .btn { cursor: pointer; font-weight: bold; text-transform: uppercase; } .btn:hover { background: rgba(255,255,255,0.1); }
+  
   #sphereWrap { position: absolute; inset: 8px; border-radius: 12px; overflow: hidden; z-index: 0; pointer-events: none; }
   canvas#sphere { width: 100%; height: 100%; display: block; filter: drop-shadow(0 0 10px var(--neon-white)); opacity: 0.6; }
   
+  /* Rolling Globe CSS */
   .rolling-globe-container { display:flex; justify-content:center; align-items:center; height:120px; border:1px dashed #334155; border-radius:16px; background:rgba(0,0,0,0.2); flex-direction: column; gap: 10px; }
   .rolling-globe { font-size: 40px; animation: roll 10s infinite linear; text-shadow: 0 0 20px #3b82f6; }
   @keyframes roll { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -107,6 +144,7 @@
 </div>
 
 <div class="portfolio-orbit sun-surface" onclick="window.open('/portfolio/', '_blank')">Portfolio</div>
+
 <div class="assistant-wrap"><div class="assistant-hole"></div></div>
 
 <div id="analyzerOverlay" class="overlay" aria-hidden="true">
@@ -122,6 +160,7 @@
           <p style="font-size:0.8rem; color:#cbd5e1; margin-bottom:10px;">Next-gen data tool. Upload CSVs or use OCR to convert images to data tables instantly.</p>
           <button class="btn" style="background:#059669; border:none;" onclick="openEmbeddedApp()">Launch Tool <i class="fas fa-external-link-alt"></i></button>
         </div>
+        
         <div class="rolling-globe-container">
             <div class="rolling-globe">🌍</div>
             <div class="shelf-text">-- LAB SHELF --</div>
@@ -140,39 +179,52 @@
 </div>
 
 <script>
+// Toggle Chat Visibility (Show on Home, Hide in Tool)
 function toggleChat(show) {
     const chat = document.querySelector('.assistant-wrap');
     if(chat) {
-        chat.style.display = show ? 'block' : 'none';
+        if(show) {
+            chat.style.display = 'block';
+            chat.style.visibility = 'visible';
+            chat.style.opacity = '1';
+        } else {
+            chat.style.display = 'none';
+            chat.style.visibility = 'hidden';
+            chat.style.opacity = '0';
+        }
     }
 }
 
+// Open Spreadsheet Tool
 function openEmbeddedApp() {
     document.getElementById('analyzerOverlay').style.display = 'none';
     document.getElementById('appContainer').style.display = 'block';
-    toggleChat(false); // Hide Chat
+    toggleChat(false); // HIDE GREEN CHAT CIRCLE
     history.pushState({view: 'app'}, "", "/tools/spreadsheet");
 }
 
+// Open Main Tools Menu
 function openOverlay(){ 
     document.getElementById('analyzerOverlay').style.display = 'grid'; 
     startSphere(); onResizeSphere(); 
-    toggleChat(false); // Hide Chat
+    toggleChat(false); // HIDE CHAT
     history.pushState({view: 'tools'}, "", "/tools");
 }
 
+// Close Tools Menu -> Return Home
 function closeOverlay(){ 
     document.getElementById('analyzerOverlay').style.display = 'none'; 
     stopSphere(); 
-    toggleChat(true); // Show Chat
+    toggleChat(true); // SHOW CHAT
     history.pushState({view: 'home'}, "", "/");
 }
 
-// Restore state on Back Button
+// Handle Browser Back Button
 window.onpopstate = function(event) {
+    // Hide tool and overlay, restore home
     document.getElementById('appContainer').style.display = 'none';
     document.getElementById('analyzerOverlay').style.display = 'none';
-    toggleChat(true); // Always restore chat on back
+    toggleChat(true); 
     showHome(); 
 };
 
@@ -196,7 +248,6 @@ function showHome(){
 </script>
 
 <script>
-// Chatbase Script
 (function(){
   if(!window.chatbase || window.chatbase("getState")!=="initialized"){
     window.chatbase=(...arguments)=>{ if(!window.chatbase.q){window.chatbase.q=[]} window.chatbase.q.push(arguments) };
@@ -228,7 +279,12 @@ const canvas = document.getElementById('stars'); const ctx = canvas.getContext('
 function resizeCanvas(){ canvas.width = innerWidth; canvas.height = innerHeight; } resizeCanvas(); addEventListener('resize', resizeCanvas);
 function createStars(count){ stars=[]; for(let i=0;i<count;i++){ stars.push({ x:Math.random()*canvas.width, y:Math.random()*canvas.height, speed:Math.random()*0.2+0.05, size:Math.random()*1.5 }); } }
 function createMeteors(count){ meteors=[]; for(let i=0;i<count;i++){ meteors.push({ x:Math.random()*canvas.width, y:Math.random()*canvas.height, speedX:-(Math.random()*4+2), speedY:Math.random()*2+1, length:Math.random()*50+30 }); } }
-function drawStars(){ ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = '#ffffff'; for(const s of stars){ ctx.beginPath(); ctx.arc(s.x,s.y,s.size,0,Math.PI*2); ctx.fill(); s.y+=s.speed; if(s.y>canvas.height){s.y=0;s.x=Math.random()*canvas.width;} } ctx.strokeStyle = '#ffffff'; ctx.lineWidth=0.8; for(const m of meteors){ ctx.beginPath(); ctx.moveTo(m.x,m.y); ctx.lineTo(m.x+m.length*m.speedX/10, m.y+m.length*m.speedY/10); ctx.stroke(); m.x+=m.speedX; m.y+=m.speedY; if(m.x<-100||m.y>canvas.height+100){m.x=canvas.width+Math.random()*200;m.y=Math.random()*canvas.height/2;} } }
+function drawStars(){ 
+  ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = '#ffffff'; 
+  for(const s of stars){ ctx.beginPath(); ctx.arc(s.x,s.y,s.size,0,Math.PI*2); ctx.fill(); s.y+=s.speed; if(s.y>canvas.height){s.y=0;s.x=Math.random()*canvas.width;} } 
+  ctx.strokeStyle = '#ffffff'; ctx.lineWidth=0.8;
+  for(const m of meteors){ ctx.beginPath(); ctx.moveTo(m.x,m.y); ctx.lineTo(m.x+m.length*m.speedX/10, m.y+m.length*m.speedY/10); ctx.stroke(); m.x+=m.speedX; m.y+=m.speedY; if(m.x<-100||m.y>canvas.height+100){m.x=canvas.width+Math.random()*200;m.y=Math.random()*canvas.height/2;} } 
+}
 createStars(300); createMeteors(3); (function animate(){ drawStars(); requestAnimationFrame(animate); })();
 const wheel = document.getElementById('wheel'); document.addEventListener('mousemove', e=>{ const centerX = innerWidth/2; const offsetX = e.clientX - centerX; const rotation = offsetX/40; wheel.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`; });
 </script>
@@ -241,5 +297,6 @@ window.stopSphere = function(){ if(sphereReq) cancelAnimationFrame(sphereReq); }
 window.onResizeSphere = function(){ if(sphereRenderer) { const wrap = document.getElementById('sphereWrap'); if(!wrap) return; const w = wrap.clientWidth, h = wrap.clientHeight; sphereRenderer.setSize(w,h,false); sphereCamera.aspect=w/h; sphereCamera.updateProjectionMatrix(); } }
 window.addEventListener('resize', window.onResizeSphere);
 </script>
+
 </body>
 </html>
