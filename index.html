@@ -81,10 +81,10 @@
   #ccText ul { text-align: left; padding-left: 15px; margin-top: 5px; font-size: 0.9em; }
   #ccText li { margin-bottom: 4px; }
 
-  /* --- CHAT DOCK (Visibility Toggle) --- */
+  /* --- CHAT DOCK (Decoration Only) --- */
   .assistant-wrap { 
     position: fixed; left: 30px; bottom: 30px; width: 60px; height: 60px; 
-    z-index: 9999; pointer-events: none; 
+    z-index: 50; pointer-events: none; 
     transition: opacity 0.3s ease, visibility 0.3s; 
   }
   .assistant-wrap::before { content: ""; position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at center, rgba(34, 197, 94, 0.8) 0%, rgba(21, 128, 61, 0.4) 40%, transparent 100%); box-shadow: 0 0 20px rgba(34, 197, 94, 0.6); animation: pulseGlow 4s ease-in-out infinite; z-index: -1; pointer-events: none; }
@@ -147,6 +147,8 @@
 
 <div class="assistant-wrap"><div class="assistant-hole"></div></div>
 
+<div id="chatbaseContainer" style="display:block; position:fixed; bottom:30px; left:30px; z-index:9999;"></div>
+
 <div id="analyzerOverlay" class="overlay" aria-hidden="true">
   <div class="panel" role="dialog">
     <div class="panel-header">
@@ -179,27 +181,29 @@
 </div>
 
 <script>
-// Toggle Chat Visibility (Show on Home, Hide in Tool)
+// --- CHAT VISIBILITY LOGIC ---
 function toggleChat(show) {
-    const chat = document.querySelector('.assistant-wrap');
-    if(chat) {
-        if(show) {
-            chat.style.display = 'block';
-            chat.style.visibility = 'visible';
-            chat.style.opacity = '1';
-        } else {
-            chat.style.display = 'none';
-            chat.style.visibility = 'hidden';
-            chat.style.opacity = '0';
-        }
+    const chatGlow = document.querySelector('.assistant-wrap');
+    const chatContainer = document.getElementById('chatbaseContainer');
+
+    if (chatGlow) {
+        chatGlow.style.display = show ? 'block' : 'none';
+        chatGlow.style.visibility = show ? 'visible' : 'hidden';
+        chatGlow.style.opacity = show ? '1' : '0';
+    }
+
+    if (chatContainer) {
+        chatContainer.style.display = show ? 'block' : 'none';
     }
 }
+
+// --- NAVIGATION & VIEWS ---
 
 // Open Spreadsheet Tool
 function openEmbeddedApp() {
     document.getElementById('analyzerOverlay').style.display = 'none';
     document.getElementById('appContainer').style.display = 'block';
-    toggleChat(false); // HIDE GREEN CHAT CIRCLE
+    toggleChat(false); // HIDE CHAT
     history.pushState({view: 'app'}, "", "/tools/spreadsheet");
 }
 
@@ -221,27 +225,29 @@ function closeOverlay(){
 
 // Handle Browser Back Button
 window.onpopstate = function(event) {
-    // Hide tool and overlay, restore home
     document.getElementById('appContainer').style.display = 'none';
     document.getElementById('analyzerOverlay').style.display = 'none';
     toggleChat(true); 
     showHome(); 
 };
 
+// Projects Page
 function showProjects(){
-  toggleChat(false);
+  toggleChat(false); // HIDE CHAT
   history.pushState({view: 'projects'}, "", "/projects");
   document.getElementById('centerContent').innerHTML = `<h1 id="ccTitle" style="font-size:2.5rem">KEY PROJECTS</h1><div id="ccText" style="text-align:left; font-size:0.9rem;"><ul style="list-style-type:none; padding:0;"><li style="margin-bottom:10px;"><b>🛍️ iOutlet Revenue Analysis</b> Analyzed 32,000+ sales transactions (£8.9M) to identify seasonal trends and built Python dashboards for reporting.</li><li style="margin-bottom:10px;"><b>🍄 Sustainable Production (AREA)</b> Managed an £80k donor-funded project, coordinating field teams and streamlining reporting workflows by 50%.</li><li><b>📈 Financial Forecasting (Uni. Dundee)</b> Developed equity price forecasting models using MATLAB & R, improving predictive accuracy through back-testing.</li></ul><div style="text-align:center; margin-top:10px; font-size:0.8rem; color:#f8fafc;">(Click Earth to return)</div></div>`;
 }
 
+// AI & ML Page
 function showAIML(){
-  toggleChat(false);
+  toggleChat(false); // HIDE CHAT
   history.pushState({view: 'ai'}, "", "/ai-ml");
   document.getElementById('centerContent').innerHTML = `<h1 id="ccTitle" style="font-size:2.5rem">AI & MACHINE LEARNING</h1><div id="ccText"><b>Technical Arsenal</b><p>Proficient in deploying <b>Python</b> (Pandas, Scikit-Learn) and <b>R</b> for predictive modeling.</p><br><b>Core Competencies</b><ul style="display:inline-block; text-align:left;"><li>• Financial Forecasting (ARIMA/Time-Series)</li><li>• Purchasing Behavior Modeling</li><li>• Regression Analysis & KPI Design</li><li>• Automated Streamlit Dashboards</li></ul><div style="text-align:center; margin-top:10px; font-size:0.8rem; color:#f8fafc;">(Click Earth to return)</div></div>`;
 }
 
+// Home Page
 function showHome(){
-  toggleChat(true);
+  toggleChat(true); // SHOW CHAT
   history.pushState({view: 'home'}, "", "/");
   document.getElementById('centerContent').innerHTML = `<h1 id="ccTitle">KHWAJA AI</h1><p id="ccText"><b>Financial AI & Business Analytics Strategist</b>Merging an MSc in Business Analytics & Finance with over 5 years of operational expertise. From streamlining diplomatic workflows to driving data-led strategies in retail, I bridge the gap between technical insights and executive decision-making. I specialize in optimizing processes, financial modeling, and delivering actionable intelligence using Python, SQL, and Power BI.</p>`;
 }
@@ -262,13 +268,21 @@ function showHome(){
   };
   if(document.readyState==="complete"){onLoad()} else { window.addEventListener("load", onLoad) }
 })();
+
+// Move Chatbase bubble into our controlled container once loaded
 window.addEventListener("load", function(){
   setTimeout(()=>{
     const bubble = document.querySelector("#chatbase-bubble, iframe[src*='chatbase']");
     if(bubble){
-      bubble.style.position = "absolute"; bubble.style.bottom = "50%"; bubble.style.left = "50%";
-      bubble.style.transform = "translate(-50%, 50%) scale(0.9)"; bubble.style.zIndex = "12";
-      document.querySelector(".assistant-wrap").appendChild(bubble);
+      // Reset Chatbase default positioning so it follows our container
+      bubble.style.position = "absolute"; 
+      bubble.style.bottom = "50%"; 
+      bubble.style.left = "50%";
+      bubble.style.transform = "translate(-50%, 50%) scale(0.9)"; 
+      bubble.style.zIndex = "12";
+
+      const container = document.getElementById("chatbaseContainer");
+      if(container) container.appendChild(bubble);
     }
   }, 2500);
 });
