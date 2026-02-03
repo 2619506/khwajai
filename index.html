@@ -25,14 +25,14 @@
     --deep-space: #000000;
   }
 
-  * { box-sizing:border-box; }
+  * { box-sizing:border-box; margin: 0; padding: 0; }
   html, body { height:100%; margin: 0; overflow: hidden; background: #020617; color: var(--neon-white); font-family: 'Outfit', sans-serif; letter-spacing: 0.5px; }
 
-  /* FIX: STAR BACKGROUND VISIBILITY */
+  /* BACKGROUND */
   canvas#stars { 
     position: fixed; 
     inset: 0; 
-    z-index: 0; /* Behind everything */
+    z-index: 0; 
     pointer-events: none; 
   }
 
@@ -67,9 +67,9 @@
   .wheel { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: min(60vw, 500px); height: min(60vw, 500px); z-index: 10; }
   .satellite { position: absolute; width: 90px; height: 90px; z-index: 20; display: flex; justify-content: center; align-items: center; text-align: center; font-family: 'Orbitron', sans-serif; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; }
   
-  .pos-tools { top: 50%; left: -110px; transform: translateY(-50%); }
-  .pos-ai { top: 50%; right: -110px; transform: translateY(-50%); }
-  .pos-projects { bottom: -110px; left: 50%; transform: translateX(-50%); }
+  /* POSITIONING (Modified: Only Left and Right) */
+  .pos-left { top: 50%; left: -110px; transform: translateY(-50%); }
+  .pos-right { top: 50%; right: -110px; transform: translateY(-50%); }
   
   .portfolio-orbit { position: fixed; top: 8%; right: 8%; width: 120px; height: 120px; z-index: 100; display: flex; justify-content: center; align-items: center; }
 
@@ -118,7 +118,7 @@
     #sphereWrap { display: none; }
     .wheel { width: 85vw; height: 85vw; } 
     .satellite { width: 65px; height: 65px; font-size: 0.5rem; }
-    .pos-tools { left: -35px; } .pos-ai { right: -35px; } .pos-projects { bottom: -35px; }
+    .pos-left { left: -35px; } .pos-right { right: -35px; }
     .portfolio-orbit { top: 20px; right: 20px; width: 80px; height: 80px; font-size: 0.6rem; }
     #ccTitle { font-size: 1.5rem; margin-bottom: 5px; }
     #ccText { font-size: 0.7rem; line-height: 1.2; padding: 0 15px; }
@@ -131,9 +131,10 @@
 <canvas id="stars"></canvas>
 
 <div class="wheel earth-surface" id="wheel" onclick="showHome()">
-  <div class="satellite moon-surface pos-tools" onclick="event.stopPropagation(); openOverlay()">Tools</div>
-  <div class="satellite moon-surface pos-ai" onclick="event.stopPropagation(); showAIML()">AI & ML</div>
-  <div class="satellite moon-surface pos-projects" onclick="event.stopPropagation(); showProjects()">Projects</div>
+  <div class="satellite moon-surface pos-left" onclick="event.stopPropagation(); openOverlay()">Tools</div>
+  
+  <div class="satellite moon-surface pos-right" onclick="event.stopPropagation(); showProjects()">Projects</div>
+  
   <div class="center-content" id="centerContent">
     <h1 id="ccTitle">KHWAJA AI</h1>
     <p id="ccText">
@@ -231,16 +232,16 @@ window.onpopstate = function(event) {
     showHome(); 
 };
 
-// Projects Page
+// Projects Page (Now on the Right)
 function showProjects(){
   toggleChat(false); // HIDE CHAT
   history.pushState({view: 'projects'}, "", "/projects");
   document.getElementById('centerContent').innerHTML = `<h1 id="ccTitle" style="font-size:2.5rem">KEY PROJECTS</h1><div id="ccText" style="text-align:left; font-size:0.9rem;"><ul style="list-style-type:none; padding:0;"><li style="margin-bottom:10px;"><b>🛍️ iOutlet Revenue Analysis</b> Analyzed 32,000+ sales transactions (£8.9M) to identify seasonal trends and built Python dashboards for reporting.</li><li style="margin-bottom:10px;"><b>🍄 Sustainable Production (AREA)</b> Managed an £80k donor-funded project, coordinating field teams and streamlining reporting workflows by 50%.</li><li><b>📈 Financial Forecasting (Uni. Dundee)</b> Developed equity price forecasting models using MATLAB & R, improving predictive accuracy through back-testing.</li></ul><div style="text-align:center; margin-top:10px; font-size:0.8rem; color:#f8fafc;">(Click Earth to return)</div></div>`;
 }
 
-// AI & ML Page
+// AI & ML Page (Kept in script logic but removed from main wheel UI)
 function showAIML(){
-  toggleChat(false); // HIDE CHAT
+  toggleChat(false); 
   history.pushState({view: 'ai'}, "", "/ai-ml");
   document.getElementById('centerContent').innerHTML = `<h1 id="ccTitle" style="font-size:2.5rem">AI & MACHINE LEARNING</h1><div id="ccText"><b>Technical Arsenal</b><p>Proficient in deploying <b>Python</b> (Pandas, Scikit-Learn) and <b>R</b> for predictive modeling.</p><br><b>Core Competencies</b><ul style="display:inline-block; text-align:left;"><li>• Financial Forecasting (ARIMA/Time-Series)</li><li>• Purchasing Behavior Modeling</li><li>• Regression Analysis & KPI Design</li><li>• Automated Streamlit Dashboards</li></ul><div style="text-align:center; margin-top:10px; font-size:0.8rem; color:#f8fafc;">(Click Earth to return)</div></div>`;
 }
