@@ -67,7 +67,7 @@
   .wheel { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: min(60vw, 500px); height: min(60vw, 500px); z-index: 10; }
   .satellite { position: absolute; width: 90px; height: 90px; z-index: 20; display: flex; justify-content: center; align-items: center; text-align: center; font-family: 'Orbitron', sans-serif; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; }
   
-  /* POSITIONING (Modified: Only Left and Right) */
+  /* POSITIONING (Left and Right only) */
   .pos-left { top: 50%; left: -110px; transform: translateY(-50%); }
   .pos-right { top: 50%; right: -110px; transform: translateY(-50%); }
   
@@ -80,15 +80,6 @@
   #ccText b { color: #86efac; font-weight: 700; display: block; margin-bottom: 6px; font-size: 1.1em; letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 6px; display: inline-block; }
   #ccText ul { text-align: left; padding-left: 15px; margin-top: 5px; font-size: 0.9em; }
   #ccText li { margin-bottom: 4px; }
-
-  /* --- CHAT DOCK (Decoration Only) --- */
-  .assistant-wrap { 
-    position: fixed; left: 30px; bottom: 30px; width: 60px; height: 60px; 
-    z-index: 50; pointer-events: none; 
-    transition: opacity 0.3s ease, visibility 0.3s; 
-  }
-  .assistant-wrap::before { content: ""; position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at center, rgba(34, 197, 94, 0.8) 0%, rgba(21, 128, 61, 0.4) 40%, transparent 100%); box-shadow: 0 0 20px rgba(34, 197, 94, 0.6); animation: pulseGlow 4s ease-in-out infinite; z-index: -1; pointer-events: none; }
-  @keyframes pulseGlow { 0%,100%{opacity:0.8; transform:scale(1);} 50%{opacity:1; transform:scale(1.1);} }
 
   /* OVERLAY STYLES */
   .overlay { position: fixed; inset: 0; display: none; place-items: center; z-index: 500; background: radial-gradient(ellipse at center, rgba(15, 23, 42, 0.95) 0%, rgba(2, 6, 23, 0.98) 80%); animation: fadeIn 300ms ease-out; }
@@ -146,10 +137,6 @@
 
 <div class="portfolio-orbit sun-surface" onclick="window.open('/portfolio/', '_blank')">Portfolio</div>
 
-<div class="assistant-wrap"><div class="assistant-hole"></div></div>
-
-<div id="chatbaseContainer" style="display:block; position:fixed; bottom:30px; left:30px; z-index:9999;"></div>
-
 <div id="analyzerOverlay" class="overlay" aria-hidden="true">
   <div class="panel" role="dialog">
     <div class="panel-header">
@@ -182,29 +169,12 @@
 </div>
 
 <script>
-// --- CHAT VISIBILITY LOGIC ---
-function toggleChat(show) {
-    const chatGlow = document.querySelector('.assistant-wrap');
-    const chatContainer = document.getElementById('chatbaseContainer');
-
-    if (chatGlow) {
-        chatGlow.style.display = show ? 'block' : 'none';
-        chatGlow.style.visibility = show ? 'visible' : 'hidden';
-        chatGlow.style.opacity = show ? '1' : '0';
-    }
-
-    if (chatContainer) {
-        chatContainer.style.display = show ? 'block' : 'none';
-    }
-}
-
 // --- NAVIGATION & VIEWS ---
 
 // Open Spreadsheet Tool
 function openEmbeddedApp() {
     document.getElementById('analyzerOverlay').style.display = 'none';
     document.getElementById('appContainer').style.display = 'block';
-    toggleChat(false); // HIDE CHAT
     history.pushState({view: 'app'}, "", "/tools/spreadsheet");
 }
 
@@ -212,7 +182,6 @@ function openEmbeddedApp() {
 function openOverlay(){ 
     document.getElementById('analyzerOverlay').style.display = 'grid'; 
     startSphere(); onResizeSphere(); 
-    toggleChat(false); // HIDE CHAT
     history.pushState({view: 'tools'}, "", "/tools");
 }
 
@@ -220,7 +189,6 @@ function openOverlay(){
 function closeOverlay(){ 
     document.getElementById('analyzerOverlay').style.display = 'none'; 
     stopSphere(); 
-    toggleChat(true); // SHOW CHAT
     history.pushState({view: 'home'}, "", "/");
 }
 
@@ -228,65 +196,26 @@ function closeOverlay(){
 window.onpopstate = function(event) {
     document.getElementById('appContainer').style.display = 'none';
     document.getElementById('analyzerOverlay').style.display = 'none';
-    toggleChat(true); 
     showHome(); 
 };
 
-// Projects Page (Now on the Right)
+// Projects Page (Right Side)
 function showProjects(){
-  toggleChat(false); // HIDE CHAT
   history.pushState({view: 'projects'}, "", "/projects");
   document.getElementById('centerContent').innerHTML = `<h1 id="ccTitle" style="font-size:2.5rem">KEY PROJECTS</h1><div id="ccText" style="text-align:left; font-size:0.9rem;"><ul style="list-style-type:none; padding:0;"><li style="margin-bottom:10px;"><b>🛍️ iOutlet Revenue Analysis</b> Analyzed 32,000+ sales transactions (£8.9M) to identify seasonal trends and built Python dashboards for reporting.</li><li style="margin-bottom:10px;"><b>🍄 Sustainable Production (AREA)</b> Managed an £80k donor-funded project, coordinating field teams and streamlining reporting workflows by 50%.</li><li><b>📈 Financial Forecasting (Uni. Dundee)</b> Developed equity price forecasting models using MATLAB & R, improving predictive accuracy through back-testing.</li></ul><div style="text-align:center; margin-top:10px; font-size:0.8rem; color:#f8fafc;">(Click Earth to return)</div></div>`;
 }
 
-// AI & ML Page (Kept in script logic but removed from main wheel UI)
+// AI & ML Page (Kept hidden logic for URL handling if needed, but removed from visual UI)
 function showAIML(){
-  toggleChat(false); 
   history.pushState({view: 'ai'}, "", "/ai-ml");
   document.getElementById('centerContent').innerHTML = `<h1 id="ccTitle" style="font-size:2.5rem">AI & MACHINE LEARNING</h1><div id="ccText"><b>Technical Arsenal</b><p>Proficient in deploying <b>Python</b> (Pandas, Scikit-Learn) and <b>R</b> for predictive modeling.</p><br><b>Core Competencies</b><ul style="display:inline-block; text-align:left;"><li>• Financial Forecasting (ARIMA/Time-Series)</li><li>• Purchasing Behavior Modeling</li><li>• Regression Analysis & KPI Design</li><li>• Automated Streamlit Dashboards</li></ul><div style="text-align:center; margin-top:10px; font-size:0.8rem; color:#f8fafc;">(Click Earth to return)</div></div>`;
 }
 
 // Home Page
 function showHome(){
-  toggleChat(true); // SHOW CHAT
   history.pushState({view: 'home'}, "", "/");
   document.getElementById('centerContent').innerHTML = `<h1 id="ccTitle">KHWAJA AI</h1><p id="ccText"><b>Financial AI & Business Analytics Strategist</b>Merging an MSc in Business Analytics & Finance with over 5 years of operational expertise. From streamlining diplomatic workflows to driving data-led strategies in retail, I bridge the gap between technical insights and executive decision-making. I specialize in optimizing processes, financial modeling, and delivering actionable intelligence using Python, SQL, and Power BI.</p>`;
 }
-</script>
-
-<script>
-(function(){
-  if(!window.chatbase || window.chatbase("getState")!=="initialized"){
-    window.chatbase=(...arguments)=>{ if(!window.chatbase.q){window.chatbase.q=[]} window.chatbase.q.push(arguments) };
-    window.chatbase=new Proxy(window.chatbase,{ get(target,prop){ if(prop==="q"){return target.q} return(...args)=>target(prop,...args) } });
-  }
-  const onLoad=function(){
-    const script=document.createElement("script");
-    script.src="https://www.chatbase.co/embed.min.js";
-    script.id="85-fKKKuG65obFx8ejTz3";
-    script.domain="www.chatbase.co";
-    document.body.appendChild(script);
-  };
-  if(document.readyState==="complete"){onLoad()} else { window.addEventListener("load", onLoad) }
-})();
-
-// Move Chatbase bubble into our controlled container once loaded
-window.addEventListener("load", function(){
-  setTimeout(()=>{
-    const bubble = document.querySelector("#chatbase-bubble, iframe[src*='chatbase']");
-    if(bubble){
-      // Reset Chatbase default positioning so it follows our container
-      bubble.style.position = "absolute"; 
-      bubble.style.bottom = "50%"; 
-      bubble.style.left = "50%";
-      bubble.style.transform = "translate(-50%, 50%) scale(0.9)"; 
-      bubble.style.zIndex = "12";
-
-      const container = document.getElementById("chatbaseContainer");
-      if(container) container.appendChild(bubble);
-    }
-  }, 2500);
-});
 </script>
 
 <script>
