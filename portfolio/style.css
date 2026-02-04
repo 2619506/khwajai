@@ -31,7 +31,6 @@ body {
 .glass-nav {
     display: flex; 
     align-items: center;
-    /* No justify-content: space-between needed with this new flex approach */
     padding: 1.2rem 5%;
     background: rgba(5, 5, 5, 0.15);
     backdrop-filter: blur(20px);
@@ -40,16 +39,16 @@ body {
     position: sticky; top: 0; z-index: 1000;
 }
 
-/* 1. Left Section (Logo) - Takes 1 part space */
+/* 1. Logo Section */
 .logo-container { flex: 1; }
 .logo { font-weight: 700; font-size: 1.5rem; color: white; letter-spacing: -0.5px; }
 .dot-neon { color: var(--neon-teal); text-shadow: 0 0 10px var(--neon-teal); }
 
-/* 2. Center Section (Links) - Takes 2 parts space to center itself */
+/* 2. Center Links */
 .nav-links { 
     flex: 2; 
     display: flex; 
-    justify-content: center; /* PERFECTLY CENTERED */
+    justify-content: center; 
     list-style: none; 
     gap: 2rem; 
     align-items: center; 
@@ -60,10 +59,7 @@ body {
 }
 .nav-links a.nav-item:hover { color: white; text-shadow: 0 0 8px rgba(255,255,255,0.5); }
 
-/* Hide Mobile Button on Desktop */
-.mobile-btn-item { display: none; }
-
-/* 3. Right Section (Button) - Takes 1 part space */
+/* 3. Right Button */
 .cta-container { flex: 1; display: flex; justify-content: flex-end; }
 
 /* --- BUTTONS --- */
@@ -293,7 +289,8 @@ footer { text-align: center; padding: 3rem; border-top: 1px solid var(--glass-bo
     .nav-links.active { display: flex; }
     
     /* Show Mobile Button */
-    .mobile-btn-item { display: block; width: 100%; text-align: center; margin-top: 1rem; }
+    /* Add this rule to show the button in the list only on mobile */
+    .nav-links .btn-neon { display: block; width: 100%; text-align: center; margin-top: 1rem; }
     
     /* Timeline Mobile Reset */
     .timeline::after { left: 31px; }
