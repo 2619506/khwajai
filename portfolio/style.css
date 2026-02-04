@@ -180,7 +180,7 @@ body {
 .stat-card { padding: 1.5rem; text-align: center; }
 .stat-card h2 { font-size: 2.2rem; color: var(--neon-blue); text-shadow: 0 0 10px var(--glow-blue); }
 
-/* --- MIRROR TIMELINE (Updated) --- */
+/* --- MIRROR TIMELINE (Fully Aligned) --- */
 .section-pad { padding: 6rem 10%; }
 .section-heading { font-size: 3rem; text-align: center; }
 .section-sub { text-align: center; color: var(--text-muted); margin-bottom: 1rem; }
@@ -200,22 +200,35 @@ body {
 
 .timeline-item { padding: 10px 40px; position: relative; width: 50%; }
 
-/* LEFT Side Item */
+/* --- LEFT ITEM (Aligns content to the Right) --- */
 .left { left: 0; }
-.left .timeline-card { text-align: right; } /* Align content to right (towards line) */
-.left .card-footer { justify-content: flex-end; } /* Button on right */
+.left .timeline-card { 
+    text-align: right; 
+    display: flex; flex-direction: column; align-items: flex-end; 
+}
+.left .card-footer { justify-content: flex-end; } 
+/* Force elements to right */
+.left .date-badge, .left .timeline-role { 
+    margin-left: auto; margin-right: 0;
+}
 
-/* RIGHT Side Item */
+/* --- RIGHT ITEM (Aligns content to the Left) --- */
 .right { left: 50%; }
-.right .timeline-card { text-align: left; } /* Align content to left (towards line) */
-.right .card-footer { justify-content: flex-start; } /* Button on left */
+.right .timeline-card { 
+    text-align: left; 
+    display: flex; flex-direction: column; align-items: flex-start;
+}
+.right .card-footer { justify-content: flex-start; } 
+/* Force elements to left */
+.right .date-badge, .right .timeline-role { 
+    margin-right: auto; margin-left: 0;
+}
 
 .timeline-dot {
     position: absolute; width: 16px; height: 16px; right: -8px; 
     border-radius: 50%; z-index: 10;
     background: var(--bg-dark); border: 2px solid white;
 }
-/* Flip dot for right side */
 .right .timeline-dot { left: -8px; right: auto; }
 
 /* Dot Colors */
@@ -223,30 +236,32 @@ body {
 .dot-purple { border-color: var(--neon-purple); box-shadow: 0 0 10px var(--neon-purple); }
 .dot-teal { border-color: var(--neon-teal); box-shadow: 0 0 10px var(--neon-teal); }
 
-.timeline-card { padding: 2rem; }
+.timeline-card { padding: 2rem; width: 100%; }
 
 .job-details { 
-    list-style: none; /* No bullets */
-    margin-top: 15px; 
-    color: #d4d4d8; 
-    font-size: 1rem; 
-    line-height: 1.7; 
+    list-style: none; margin-top: 15px; 
+    color: #d4d4d8; font-size: 1rem; line-height: 1.7; 
 }
 .job-details li { margin-bottom: 12px; }
 
-/* Badges */
+/* DATES & ROLES */
 .date-badge {
-    display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; margin-bottom: 10px;
+    padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; margin-bottom: 8px;
     background: rgba(255,255,255,0.05); border: 1px solid transparent;
 }
-.badge-blue { color: var(--neon-blue); border-color: var(--neon-blue); }
-.badge-purple { color: var(--neon-purple); border-color: var(--neon-purple); }
-.badge-teal { color: var(--neon-teal); border-color: var(--neon-teal); }
+.timeline-role {
+    display: block; font-size: 1.1rem; font-weight: 600; color: white;
+    margin-bottom: 5px;
+}
+
+/* Unique Colors */
+.left .timeline-card .date-badge.badge-blue { color: var(--neon-blue); border-color: var(--neon-blue); }
+.right .timeline-card .date-badge.badge-purple { color: var(--neon-purple); border-color: var(--neon-purple); }
+.left .timeline-card .date-badge.badge-teal { color: var(--neon-teal); border-color: var(--neon-teal); }
 
 /* Footer & Buttons */
 .card-footer {
-    margin-top: 1.5rem; display: flex; 
-    /* removed global justify-content, handled by .left/.right above */
+    margin-top: 1.5rem; display: flex; width: 100%;
     border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px;
 }
 
@@ -257,10 +272,13 @@ body {
 }
 .btn-glow-blue { color: var(--neon-blue); border-color: var(--neon-blue); }
 .btn-glow-blue:hover { background: var(--neon-blue); color: white; box-shadow: 0 0 15px var(--glow-blue); }
+
 .btn-glow-purple { color: var(--neon-purple); border-color: var(--neon-purple); }
 .btn-glow-purple:hover { background: var(--neon-purple); color: white; box-shadow: 0 0 15px var(--glow-purple); }
+
 .btn-glow-teal { color: var(--neon-teal); border-color: var(--neon-teal); }
 .btn-glow-teal:hover { background: var(--neon-teal); color: white; box-shadow: 0 0 15px rgba(0,204,150,0.5); }
+
 
 /* --- GRIDS & CARDS --- */
 .projects-grid, .certs-grid, .skills-container, .contact-container {
@@ -335,8 +353,19 @@ footer { text-align: center; padding: 3rem; border-top: 1px solid var(--glass-bo
     
     /* Reset Alignment for Mobile */
     .left, .right { left: 0; }
-    .left .timeline-card, .right .timeline-card { text-align: left; }
+    
+    /* Reset Card Flex to Normal Column */
+    .left .timeline-card, .right .timeline-card { 
+        text-align: left; 
+        align-items: flex-start;
+    }
+    
     .left .card-footer, .right .card-footer { justify-content: flex-start; }
+    
+    .left .date-badge, .right .date-badge,
+    .left .timeline-role, .right .timeline-role {
+        margin-left: 0; margin-right: auto;
+    }
     
     .left .timeline-dot, .right .timeline-dot { left: 23px; right: auto; }
 }
