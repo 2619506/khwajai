@@ -10,55 +10,60 @@
 </head>
 <body>
 
+    <canvas id="particle-canvas"></canvas>
+
     <nav class="glass-nav">
-        <div class="logo">Portfolio.</div>
+        <div class="logo">Portfolio<span class="dot-neon">.</span></div>
+        <div class="menu-toggle" id="mobile-menu"><i class="fas fa-bars"></i></div>
         <ul class="nav-links">
-            <li><a href="#about">About</a></li>
-            <li><a href="#experience">Experience</a></li>
-            <li><a href="#projects">Projects</a></li>
-            <li><a href="#skills">Skills</a></li>
-            <li><a href="#education">Education</a></li>
-            <li><a href="#contact">Contact</a></li>
+            <li><a href="#about" class="nav-item">About</a></li>
+            <li><a href="#experience" class="nav-item">Experience</a></li>
+            <li><a href="#projects" class="nav-item">Projects</a></li>
+            <li><a href="#skills" class="nav-item">Skills</a></li>
+            <li><a href="#education" class="nav-item">Education</a></li>
+            <li><a href="#contact" class="nav-item">Contact</a></li>
+            <li><a href="#contact" class="btn-neon">Hire Me</a></li>
         </ul>
-        <a href="#contact" class="btn-primary">Hire Me</a>
     </nav>
 
     <section id="about" class="hero-section">
         <div class="hero-content fade-in">
-            <h1 class="name-title">Khwaja Abdul Ghani<br> <span class="highlight">"Ghafoori"</span></h1>
+            <h1 class="name-title">Khwaja Abdul Ghani<br> <span class="highlight-text">"Ghafoori"</span></h1>
             <p class="tagline">
-                Business & Financial Analyst | Administrative Professional | Turning Data Into Smarter Strategies
+                Business & Financial Analyst | Administrative Professional
             </p>
-            <p class="summary" id="typewriter-text"></p>
+            <p class="summary"><span id="typewriter-text"></span></p>
+            
             <div class="hero-buttons">
-                <a href="#contact" class="btn-white"><i class="far fa-envelope"></i> Contact Me</a>
-                <a href="Khwaja_CV.pdf" target="_blank" class="btn-outline"><i class="fas fa-download"></i> Download CV</a>
+                <a href="#contact" class="btn-neon-white"><i class="far fa-envelope"></i> Contact Me</a>
+                <a href="Khwaja_CV.pdf" target="_blank" class="btn-glass"><i class="fas fa-download"></i> Download CV</a>
             </div>
         </div>
+        
         <div class="hero-image fade-in delay-1">
             <div class="image-wrapper">
-                <img src="images/profile.jpg" alt="Khwaja Ghafoori" onerror="this.src='https://via.placeholder.com/500x600?text=Upload+Profile.jpg'">
+                <img src="images/profile.jpg" alt="Khwaja Ghafoori" onerror="this.src='https://via.placeholder.com/300x400?text=Profile+Pic'">
             </div>
         </div>
     </section>
 
     <section class="stats-section">
-        <div class="stat-card fade-in">
+        <div class="stat-card silver-glass fade-in">
             <h2>5+</h2>
             <h3>Years</h3>
             <p>Experience</p>
         </div>
-        <div class="stat-card fade-in delay-1">
+        <div class="stat-card silver-glass fade-in delay-1">
             <h2>£8.9M</h2>
             <h3>Revenue</h3>
             <p>Analyzed</p>
         </div>
-        <div class="stat-card fade-in delay-2">
+        <div class="stat-card silver-glass fade-in delay-2">
             <h2>40%</h2>
             <h3>Efficiency</h3>
             <p>Improvement</p>
         </div>
-        <div class="stat-card fade-in delay-3">
+        <div class="stat-card silver-glass fade-in delay-3">
             <h2>200+</h2>
             <h3>Stakeholders</h3>
             <p>Trained</p>
@@ -66,61 +71,58 @@
     </section>
 
     <section id="experience" class="section-pad">
-        <h2 class="section-heading">Experience<span class="dot">.</span></h2>
+        <h2 class="section-heading">Experience<span class="dot-neon">.</span></h2>
         <p class="section-sub">My professional journey</p>
-        <div class="divider"></div>
+        <div class="divider-gradient"></div>
 
         <div class="timeline">
             <div class="timeline-item left fade-up">
-                <div class="timeline-dot"></div>
-                <div class="timeline-card">
-                    <span class="date-badge">May 2025 – Jul 2025</span>
+                <div class="timeline-dot dot-blue"></div>
+                <div class="timeline-card silver-glass">
+                    <span class="date-badge badge-blue">May 2025 – Jul 2025</span>
                     <span class="timeline-role">Data Analytics Intern</span>
                     <h3 class="company">The iOutlet</h3>
                     <p class="location"><i class="fas fa-map-marker-alt"></i> Dundee, UK</p>
                     <ul class="job-details">
                         <li>Analysed 32,000+ sales transactions (£8.9M revenue) to isolate seasonality trends.</li>
                         <li>Built automated Python/Streamlit dashboards, reducing manual reporting time by 40%.</li>
-                        <li>Identified margin-improvement opportunities, revealing potential 15% cost reductions.</li>
                     </ul>
                     <div class="card-footer">
-                        <a href="documents/ioutlet_proof.pdf" target="_blank" class="proof-badge" title="View Certificate/Letter"><i class="fas fa-file-alt"></i> View Proof</a>
+                        <a href="documents/ioutlet_proof.pdf" target="_blank" class="proof-btn btn-glow-blue"><i class="fas fa-file-alt"></i> View Proof</a>
                     </div>
                 </div>
             </div>
 
             <div class="timeline-item right fade-up delay-1">
-                <div class="timeline-dot"></div>
-                <div class="timeline-card">
-                    <span class="date-badge">Dec 2019 – Nov 2024</span>
+                <div class="timeline-dot dot-purple"></div>
+                <div class="timeline-card silver-glass">
+                    <span class="date-badge badge-purple">Dec 2019 – Nov 2024</span>
                     <span class="timeline-role">Administrative & Systems Officer</span>
                     <h3 class="company">Embassy of Afghanistan</h3>
                     <p class="location"><i class="fas fa-map-marker-alt"></i> New Delhi, India</p>
                     <ul class="job-details">
                         <li>Led business process optimization for 4 departments, reducing processing time by ~40%.</li>
-                        <li>Managed complex logistics and scheduling for 5 senior leaders and high-level officials.</li>
-                        <li>Maintained audit-ready records with 100% accuracy and strict confidentiality.</li>
+                        <li>Managed complex logistics and scheduling for 5 senior leaders.</li>
                     </ul>
                     <div class="card-footer">
-                        <a href="documents/embassy_proof.pdf" target="_blank" class="proof-badge"><i class="fas fa-file-alt"></i> View Proof</a>
+                        <a href="documents/embassy_proof.pdf" target="_blank" class="proof-btn btn-glow-purple"><i class="fas fa-file-alt"></i> View Proof</a>
                     </div>
                 </div>
             </div>
 
             <div class="timeline-item left fade-up delay-2">
-                <div class="timeline-dot"></div>
-                <div class="timeline-card">
-                    <span class="date-badge">Sep 2014 – Oct 2016</span>
+                <div class="timeline-dot dot-teal"></div>
+                <div class="timeline-card silver-glass">
+                    <span class="date-badge badge-teal">Sep 2014 – Oct 2016</span>
                     <span class="timeline-role">Project Coordinator</span>
                     <h3 class="company">AREA (NGO)</h3>
                     <p class="location"><i class="fas fa-map-marker-alt"></i> Afghanistan</p>
                     <ul class="job-details">
                         <li>Coordinated an £80k donor-funded project, ensuring governance compliance.</li>
                         <li>Analyzed project expenditure data, reducing operational delays by 20%.</li>
-                        <li>Acted as liaison between field teams, management, and external partners.</li>
                     </ul>
                     <div class="card-footer">
-                        <a href="documents/area_proof.pdf" target="_blank" class="proof-badge"><i class="fas fa-file-alt"></i> View Proof</a>
+                        <a href="documents/area_proof.pdf" target="_blank" class="proof-btn btn-glow-teal"><i class="fas fa-file-alt"></i> View Proof</a>
                     </div>
                 </div>
             </div>
@@ -128,103 +130,105 @@
     </section>
 
     <section id="projects" class="section-pad">
-        <h2 class="section-heading">Academic Projects<span class="dot">.</span></h2>
-        <p class="section-sub">Research, Analysis & Findings</p>
-        <div class="divider"></div>
+        <h2 class="section-heading">Academic Projects<span class="dot-neon">.</span></h2>
+        <div class="divider-gradient"></div>
 
         <div class="projects-grid">
-            <div class="project-card fade-up">
+            <div class="project-card silver-glass fade-up">
                 <div class="project-header">
-                    <h3>Financial Forecasting Models</h3>
+                    <h3>Financial Forecasting</h3>
                     <span class="tech-tag">MATLAB & R</span>
                 </div>
                 <p class="project-institution">University of Dundee (2025)</p>
                 <div class="project-body">
-                    <p><strong>The Work:</strong> Developed advanced forecasting models for equity prices and inflation trends using ARIMA and Time-Series analysis.</p>
-                    <p><strong>The Findings:</strong> Successfully improved predictive accuracy through rigorous back-testing, providing a reliable framework for trend analysis.</p>
+                    <p>Developed advanced forecasting models for equity prices using ARIMA and Time-Series analysis.</p>
                 </div>
                 <div class="card-footer">
-                    <a href="documents/forecasting_project.pdf" target="_blank" class="proof-badge"><i class="fas fa-external-link-alt"></i> View Report</a>
+                    <a href="documents/forecasting_project.pdf" target="_blank" class="proof-btn btn-glow-blue"><i class="fas fa-external-link-alt"></i> Report</a>
                 </div>
             </div>
 
-            <div class="project-card fade-up delay-1">
+            <div class="project-card silver-glass fade-up delay-1">
                 <div class="project-header">
                     <h3>Database Optimization</h3>
                     <span class="tech-tag">SQL & MongoDB</span>
                 </div>
                 <p class="project-institution">University of Dundee (2025)</p>
                 <div class="project-body">
-                    <p><strong>The Work:</strong> Designed and optimised SQL and NoSQL (MongoDB) databases, implementing indexing strategies.</p>
-                    <p><strong>The Findings:</strong> Achieved a <strong>~30% improvement in query speed</strong>, enabling significantly faster access to financial data.</p>
+                    <p>Designed and optimised SQL databases, achieving a <strong>30% improvement</strong> in query speed.</p>
                 </div>
                 <div class="card-footer">
-                    <a href="documents/database_project.pdf" target="_blank" class="proof-badge"><i class="fas fa-external-link-alt"></i> View Report</a>
+                    <a href="documents/database_project.pdf" target="_blank" class="proof-btn btn-glow-purple"><i class="fas fa-external-link-alt"></i> Report</a>
                 </div>
             </div>
 
-            <div class="project-card fade-up delay-2">
+            <div class="project-card silver-glass fade-up delay-2">
                 <div class="project-header">
-                    <h3>Sustainable Production Initiative</h3>
+                    <h3>Sustainable Production</h3>
                     <span class="tech-tag">Project Management</span>
                 </div>
                 <p class="project-institution">AREA (2014-2016)</p>
                 <div class="project-body">
-                    <p><strong>The Work:</strong> Led the planning and monitoring of a sustainable Oyster Mushroom production project.</p>
-                    <p><strong>The Findings:</strong> Established partnerships with local authorities and ensured sustainable market access.</p>
+                    <p>Led the planning and monitoring of a sustainable production project with local authorities.</p>
                 </div>
                 <div class="card-footer">
-                    <a href="documents/mushroom_project.pdf" target="_blank" class="proof-badge"><i class="fas fa-external-link-alt"></i> View Report</a>
+                    <a href="documents/mushroom_project.pdf" target="_blank" class="proof-btn btn-glow-teal"><i class="fas fa-external-link-alt"></i> Report</a>
                 </div>
             </div>
         </div>
     </section>
 
     <section class="section-pad">
-        <h2 class="section-heading">Certifications<span class="dot">.</span></h2>
-        <div class="divider"></div>
+        <h2 class="section-heading">Certifications<span class="dot-neon">.</span></h2>
+        <div class="divider-gradient"></div>
         <div class="certs-grid">
-            <div class="cert-item">
+            <div class="cert-item silver-glass">
                 <i class="fas fa-certificate cert-icon"></i>
-                <div>
+                <div class="cert-content">
                     <h4>IBM Data Analyst</h4>
                     <p>2023</p>
-                    <a href="documents/ibm_cert.pdf" target="_blank">View Certificate</a>
+                    <a href="documents/ibm_cert.pdf" target="_blank" class="cert-link">View Certificate</a>
                 </div>
             </div>
-            <div class="cert-item">
+            <div class="cert-item silver-glass">
                 <i class="fas fa-tasks cert-icon"></i>
-                <div>
-                    <h4>Google Project Management</h4>
+                <div class="cert-content">
+                    <h4>Google PM</h4>
                     <p>2023</p>
-                    <a href="documents/google_pm_cert.pdf" target="_blank">View Certificate</a>
+                    <a href="documents/google_pm_cert.pdf" target="_blank" class="cert-link">View Certificate</a>
                 </div>
             </div>
-            <div class="cert-item">
+            <div class="cert-item silver-glass">
                 <i class="fas fa-bullhorn cert-icon"></i>
-                <div>
-                    <h4>Google Digital Marketing</h4>
+                <div class="cert-content">
+                    <h4>Google Marketing</h4>
                     <p>2022</p>
-                    <a href="documents/google_dm_cert.pdf" target="_blank">View Certificate</a>
+                    <a href="documents/google_dm_cert.pdf" target="_blank" class="cert-link">View Certificate</a>
                 </div>
             </div>
         </div>
     </section>
 
     <section id="skills" class="section-pad">
-        <h2 class="section-heading">Expertise<span class="dot">.</span></h2>
-        <div class="divider"></div>
+        <h2 class="section-heading">Expertise<span class="dot-neon">.</span></h2>
+        <div class="divider-gradient"></div>
+        
         <div class="skills-container">
-            <div class="skill-category fade-up">
-                <h3><i class="fas fa-chart-line"></i> Data & Analytics</h3>
+            <div class="skill-category silver-glass fade-up">
+                <div class="category-header header-blue">
+                    <i class="fas fa-chart-line"></i> Data & Analytics
+                </div>
                 <div class="skill-tags">
                     <span>Python (Pandas)</span><span>SQL</span><span>Power BI</span>
                     <span>Tableau</span><span>Advanced Excel</span><span>R Studio</span>
                     <span>MATLAB</span><span>Financial Modelling</span>
                 </div>
             </div>
-            <div class="skill-category fade-up delay-1">
-                <h3><i class="fas fa-tools"></i> Tools & Systems</h3>
+            
+            <div class="skill-category silver-glass fade-up delay-1">
+                <div class="category-header header-purple">
+                    <i class="fas fa-tools"></i> Tools & Systems
+                </div>
                 <div class="skill-tags">
                     <span>Salesforce</span><span>NetSuite</span><span>Jira</span>
                     <span>Confluence</span><span>MS Project</span><span>Asana</span>
@@ -234,50 +238,41 @@
     </section>
 
     <section id="education" class="section-pad">
-        <h2 class="section-heading">Education<span class="dot">.</span></h2>
-        <div class="divider"></div>
+        <h2 class="section-heading">Education<span class="dot-neon">.</span></h2>
+        <div class="divider-gradient"></div>
         <div class="skills-container">
-             <div class="skill-category fade-up">
+             <div class="skill-category silver-glass fade-up">
                 <h3>MSc Business Analytics & Finance</h3>
                 <p style="color:var(--text-muted)">University of Dundee, UK (2025-2026)</p>
-                <p style="font-size: 0.9rem; margin-top:10px;">Focus: Data-driven strategic decision making & Financial Modelling.</p>
                 <div class="card-footer">
-                    <a href="documents/msc_degree.pdf" target="_blank" class="proof-badge"><i class="fas fa-file-alt"></i> View Proof</a>
+                    <a href="documents/msc_degree.pdf" target="_blank" class="proof-btn btn-glow-blue"><i class="fas fa-file-alt"></i> View</a>
                 </div>
             </div>
-            <div class="skill-category fade-up delay-1">
+            <div class="skill-category silver-glass fade-up delay-1">
                 <h3>MBA & BBS (Marketing & Ops)</h3>
                 <p style="color:var(--text-muted)">Jamia Millia Islamia, India (2008-2014)</p>
-                <p style="font-size: 0.9rem; margin-top:10px;">Focus: Operational efficiency, market research, and management.</p>
                 <div class="card-footer">
-                    <a href="documents/mba_degree.pdf" target="_blank" class="proof-badge"><i class="fas fa-file-alt"></i> View Proof</a>
+                    <a href="documents/mba_degree.pdf" target="_blank" class="proof-btn btn-glow-purple"><i class="fas fa-file-alt"></i> View</a>
                 </div>
             </div>
         </div>
     </section>
 
     <section id="contact" class="section-pad">
-        <h2 class="section-heading">Get In Touch<span class="dot">.</span></h2>
-        <p class="section-sub">Open for opportunities in Data Analytics & Finance</p>
-        <div class="divider"></div>
+        <h2 class="section-heading">Get In Touch<span class="dot-neon">.</span></h2>
+        <div class="divider-gradient"></div>
         <div class="contact-container fade-up">
-            <div class="contact-box">
+            <div class="contact-box silver-glass">
                 <div class="icon-circle"><i class="fas fa-envelope"></i></div>
                 <h3>Email</h3>
                 <p>khwaja.abdulghani@gmail.com</p>
-                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=khwaja.abdulghani@gmail.com" target="_blank" class="btn-text">Send Message <i class="fas fa-arrow-right"></i></a>
+                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=khwaja.abdulghani@gmail.com" target="_blank" class="btn-text">Message <i class="fas fa-arrow-right"></i></a>
             </div>
-            <div class="contact-box">
-                <div class="icon-circle"><i class="fas fa-phone-alt"></i></div>
-                <h3>Phone</h3>
-                <p>+44 7823 909596</p>
-                <a href="tel:+447823909596" class="btn-text">Call Now <i class="fas fa-arrow-right"></i></a>
-            </div>
-            <div class="contact-box">
+            <div class="contact-box silver-glass">
                 <div class="icon-circle"><i class="fab fa-linkedin-in"></i></div>
                 <h3>LinkedIn</h3>
                 <p>Connect Professionally</p>
-                <a href="https://www.linkedin.com/in/khwaja786/" target="_blank" class="btn-text">View Profile <i class="fas fa-arrow-right"></i></a>
+                <a href="https://www.linkedin.com/in/khwaja786/" target="_blank" class="btn-text">Profile <i class="fas fa-arrow-right"></i></a>
             </div>
         </div>
     </section>
@@ -288,17 +283,23 @@
 
     <script src="script.js"></script>
     <script>
-        const textToType = "A rigorous Business Analyst & Administrative Professional with over 5 years of experience. I bridge the gap between complex data insights and strategic operational decisions using Python, SQL, and effective management.";
+        /* REFINED TYPEWRITER SCRIPT */
+        const textToType = "A rigorous Business Analyst & Administrative Professional. I bridge the gap between complex data insights and strategic operational decisions.";
         const typeWriterElement = document.getElementById('typewriter-text');
         let i = 0;
+
         function typeWriter() {
             if (i < textToType.length) {
                 typeWriterElement.innerHTML += textToType.charAt(i);
                 i++;
-                setTimeout(typeWriter, 25);
+                setTimeout(typeWriter, 40); // Slightly slower for better effect
             }
         }
-        window.onload = function() { typeWriter(); };
+        
+        // Ensure it starts after page load
+        window.addEventListener('load', () => {
+            setTimeout(typeWriter, 1000); // 1 second delay to let fade-in happen
+        });
     </script>
 </body>
 </html>
