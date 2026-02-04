@@ -13,8 +13,14 @@
     <canvas id="particle-canvas"></canvas>
 
     <nav class="glass-nav">
-        <div class="logo">Portfolio<span class="dot-neon">.</span></div>
-        <div class="menu-toggle" id="mobile-menu"><i class="fas fa-bars"></i></div>
+        <div class="logo-container">
+            <div class="logo">Portfolio<span class="dot-neon">.</span></div>
+        </div>
+        
+        <div class="menu-toggle" id="mobile-menu">
+            <i class="fas fa-bars"></i>
+        </div>
+
         <ul class="nav-links">
             <li><a href="#about" class="nav-item">About</a></li>
             <li><a href="#experience" class="nav-item">Experience</a></li>
@@ -22,8 +28,13 @@
             <li><a href="#skills" class="nav-item">Skills</a></li>
             <li><a href="#education" class="nav-item">Education</a></li>
             <li><a href="#contact" class="nav-item">Contact</a></li>
-            <li><a href="#contact" class="btn-neon">Hire Me</a></li>
+            
+            <li class="mobile-btn-item"><a href="#contact" class="btn-neon">Contact Me</a></li>
         </ul>
+
+        <div class="cta-container">
+            <a href="#contact" class="btn-neon desktop-btn">Contact Me</a>
+        </div>
     </nav>
 
     <section id="about" class="hero-section">
@@ -283,22 +294,18 @@
 
     <script src="script.js"></script>
     <script>
-        /* REFINED TYPEWRITER SCRIPT */
         const textToType = "A rigorous Business Analyst & Administrative Professional. I bridge the gap between complex data insights and strategic operational decisions.";
         const typeWriterElement = document.getElementById('typewriter-text');
         let i = 0;
-
         function typeWriter() {
             if (i < textToType.length) {
                 typeWriterElement.innerHTML += textToType.charAt(i);
                 i++;
-                setTimeout(typeWriter, 40); // Slightly slower for better effect
+                setTimeout(typeWriter, 40);
             }
         }
-        
-        // Ensure it starts after page load
         window.addEventListener('load', () => {
-            setTimeout(typeWriter, 1000); // 1 second delay to let fade-in happen
+            setTimeout(typeWriter, 1000);
         });
     </script>
 </body>
