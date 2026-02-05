@@ -10,129 +10,102 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;600&display=swap');
 
-  /* --- THEME: STARLIGHT & ROCK --- */
-  :root {
-    --neon: #e2e8f0;                 /* Starlight White/Silver */
-    --neon-soft: rgba(226, 232, 240, 0.5); /* Soft White Glow */
-    --rock-dark: #1e293b;            /* Dark Slate (Asteroid Shadow) */
-    --rock-light: #475569;           /* Lighter Slate (Asteroid Highlight) */
-    --glass: rgba(15, 23, 42, 0.6);  /* Dark Blue-Grey Glass */
-    --glass-strong: rgba(15, 23, 42, 0.85);
-    --ink: #cbd5e1;                  /* Soft Grey Text */
+  :root{
+    --neon-blue: #00f3ff;
+    --neon-purple: #bc13fe;
+    --neon-green: #0aff68;
     --deep-space: #020617;
+    --glass: rgba(255, 255, 255, 0.05);
   }
 
   * { box-sizing:border-box; margin: 0; padding: 0; }
-  html, body { height:100%; }
-  body {
-    margin: 0; overflow: hidden; background: var(--deep-space);
-    color: var(--neon);
-    font-family: 'Share Tech Mono', monospace; letter-spacing: 0.6px;
-  }
+  html, body { height:100%; margin: 0; overflow: hidden; background: var(--deep-space); color: #fff; font-family: 'Outfit', sans-serif; }
 
-  /* Starfield canvas */
-  canvas#stars { position:fixed; inset:0; z-index:-3; }
+  /* --- BACKGROUND & STARS --- */
+  canvas#stars { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
 
-  /* Global glow */
-  h1,h2,h3,p,a,label,button,select,input, i { 
-    text-shadow: 0 0 5px var(--neon-soft); 
-  }
-
-  /* --- SPACESHIP WHEEL / ASTEROID (RESTORED) --- */
-  .wheel {
-    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-    width: min(70vw, 550px); height: min(70vw, 550px); border-radius: 50%;
-    
-    /* ROCKY PLANET GRADIENT */
-    background: radial-gradient(circle at 35% 35%, var(--rock-light) 0%, var(--rock-dark) 50%, #000000 100%);
-    
-    /* Subtle silver rim */
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    
-    /* Atmosphere glow */
-    box-shadow: inset 0 0 80px rgba(0,0,0,0.8), 0 0 40px rgba(226, 232, 240, 0.15);
-    z-index: 10;
-    transition: opacity 0.5s ease, transform 0.5s ease;
-  }
-
-  /* Orbiting Alien Tabs (The Moons) */
-  .tab {
-    position: absolute; width: 100px; height: 60px;
-    background: rgba(30, 41, 59, 0.6); /* Dark Slate Glass */
-    border: 1px solid var(--neon-soft);
-    border-radius: 12px;
-    color: var(--neon);
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.85rem; letter-spacing: 2px;
-    display: flex; justify-content: center; align-items: center; gap: 8px;
-    text-transform: uppercase; font-weight: bold;
-    cursor: pointer;
-    backdrop-filter: blur(4px);
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-    transition: all 0.3s ease;
-    z-index: 20;
-  }
-  .tab:hover { 
-    background: rgba(255, 255, 255, 0.15); 
-    box-shadow: 0 0 25px var(--neon-soft);
-    transform: scale(1.1); 
-    color: #fff;
-  }
-
-  /* Specific Tab Positions */
-  .pos-left   { top: 50%; left: -60px; transform: translateY(-50%); }
-  .pos-right  { top: 50%; right: -60px; transform: translateY(-50%); }
-  .pos-bottom { bottom: -30px; left: 50%; transform: translateX(-50%); }
-
-  /* Central Text */
-  .center-content {
-    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-    width: 70%; text-align: center; pointer-events: none;
-  }
-  .center-content h1 { margin: 6px 0 8px; font-family: 'Orbitron', sans-serif; font-size: clamp(1.8rem, 4vw, 3rem); color: #fff; letter-spacing: 4px; }
-  .center-content p { margin: 0; color: var(--ink); font-size: clamp(0.75rem, 1.5vh, 1rem); line-height: 1.5; }
-  .center-content b { color: var(--neon); display: block; margin-bottom: 8px; border-bottom: 1px solid var(--neon-soft); display: inline-block; padding-bottom: 4px; }
-
-  /* Portfolio Sun (Top Right) */
-  .portfolio-orbit {
-    position: fixed; top: 8%; right: 8%; width: 80px; height: 80px;
+  /* --- MAIN NAVIGATION WHEEL (YOUR ORIGINAL DESIGN) --- */
+  .wheel { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: min(60vw, 500px); height: min(60vw, 500px); z-index: 10; transition: opacity 0.5s ease; }
+  
+  /* Planet Styles */
+  .earth-surface {
     border-radius: 50%;
-    background: radial-gradient(circle at 30% 30%, #f1f5f9 0%, #64748b 100%);
-    border: 2px solid var(--neon);
-    box-shadow: 0 0 30px var(--neon-soft);
-    display: grid; place-items: center;
-    font-family: 'Orbitron', sans-serif; font-size: 0.65rem; color: var(--deep-space); font-weight: 900;
-    cursor: pointer; z-index: 100; transition: 0.3s;
-    animation: float 6s ease-in-out infinite;
+    background: radial-gradient(circle at 35% 35%, #4ade80 0%, #059669 25%, #0369a1 50%, #0f172a 85%, #020617 100%);
+    box-shadow: inset 10px 10px 60px rgba(255,255,255,0.15), inset -20px -20px 80px rgba(0,0,0,0.95), 0 0 40px rgba(14, 165, 233, 0.15);
+    cursor: pointer; position: relative;
   }
-  .portfolio-orbit:hover { transform: scale(1.1); box-shadow: 0 0 50px white; }
-  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
 
-  /* ============================================ */
-  /* SATELLITE HANGAR (The Overlay)        */
-  /* ============================================ */
-  .overlay {
-    position: fixed; inset: 0; display: none; place-items: center; z-index: 500;
-    background: radial-gradient(ellipse at center, rgba(2, 6, 23, 0.95) 0%, #000 90%);
-    animation: fadeIn 0.4s ease-out;
+  .moon-surface {
+    position: absolute; width: 90px; height: 90px; border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #e2e8f0 0%, #94a3b8 30%, #64748b 60%, #1e293b 90%, #020617 100%);
+    box-shadow: inset 2px 2px 10px rgba(255,255,255,0.3), 0 0 15px rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: all 0.3s ease;
+    display: flex; justify-content: center; align-items: center; text-align: center;
+    font-family: 'Orbitron', sans-serif; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; color: #0f172a; z-index: 20;
   }
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .moon-surface:hover { transform: scale(1.15); box-shadow: 0 0 25px var(--neon-blue); color: var(--neon-blue); text-shadow: 0 0 5px #000; border-color: var(--neon-blue); }
 
-  .hangar-container {
-    width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    position: relative;
+  /* Positions */
+  .pos-left { top: 50%; left: -110px; transform: translateY(-50%); }
+  .pos-right { top: 50%; right: -110px; transform: translateY(-50%); }
+  .pos-bottom { bottom: -110px; left: 50%; transform: translateX(-50%); }
+
+  .portfolio-orbit { 
+    position: fixed; top: 8%; right: 8%; width: 100px; height: 100px; z-index: 100; 
+    border-radius: 50%; background: radial-gradient(circle at 30% 30%, #fff7ed 0%, #fcd34d 20%, #f59e0b 50%, #ea580c 85%, #7c2d12 100%);
+    box-shadow: 0 0 40px rgba(245, 158, 11, 0.4); display: grid; place-items: center;
+    font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 0.7rem; color: #451a03; cursor: pointer;
+    animation: pulseSun 4s infinite; transition: transform 0.3s;
+  }
+  .portfolio-orbit:hover { transform: scale(1.1); box-shadow: 0 0 60px rgba(245, 158, 11, 0.8); }
+  @keyframes pulseSun { 0%,100%{ box-shadow: 0 0 40px rgba(245, 158, 11, 0.4); } 50%{ box-shadow: 0 0 70px rgba(245, 158, 11, 0.6); } }
+
+  /* --- CENTER TEXT --- */
+  .center-content { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 80%; text-align: center; pointer-events: none; z-index: 30; }
+  #ccTitle { font-family: 'Orbitron', sans-serif; font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900; letter-spacing: 4px; text-shadow: 0 0 20px rgba(0,0,0,0.8); margin-bottom: 10px;}
+  #ccText { font-size: clamp(0.8rem, 1.5vh, 1rem); line-height: 1.6; max-width: 500px; margin: 0 auto; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+  #ccText b { color: var(--neon-green); display: block; margin-bottom: 5px; font-family: 'Share Tech Mono', monospace; letter-spacing: 1px; }
+
+  /* --- THE HANGAR (Overlay for Tools) --- */
+  .hangar-overlay {
+    position: fixed; inset: 0; z-index: 500; background: rgba(2, 6, 23, 0.95);
+    backdrop-filter: blur(10px); display: none; opacity: 0; transition: opacity 0.5s ease;
+    flex-direction: column; justify-content: center; align-items: center;
+  }
+  
+  .hangar-grid {
+    position: absolute; inset: 0; 
+    background-image: 
+      linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
+    background-size: 60px 60px;
+    perspective: 1000px; transform: scale(1.2); opacity: 0.3; pointer-events: none;
+  }
+
+  /* GLASS BACK BUTTON */
+  .glass-back-btn {
+    position: absolute; top: 30px; left: 30px;
+    width: 50px; height: 50px; border-radius: 50%;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff; display: grid; place-items: center; font-size: 1.2rem;
+    cursor: pointer; transition: all 0.3s ease; z-index: 100;
+  }
+  .glass-back-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 20px var(--neon-blue);
+    border-color: var(--neon-blue); color: var(--neon-blue);
+    transform: scale(1.1);
   }
 
   .hangar-title {
-    font-family: 'Orbitron', sans-serif; font-size: 2rem; color: var(--neon);
-    text-shadow: 0 0 20px var(--neon-soft); margin-bottom: 60px; letter-spacing: 4px;
-    border-bottom: 2px solid var(--neon-soft); padding-bottom: 10px;
+    font-family: 'Orbitron', sans-serif; font-size: 1.8rem; color: var(--neon-blue);
+    text-shadow: 0 0 15px var(--neon-blue); margin-bottom: 60px; z-index: 10; letter-spacing: 3px;
   }
 
-  /* --- SATELLITE OBJECTS (Inside the Moon Menu) --- */
-  .satellite-belt {
-    display: flex; gap: 60px; perspective: 1000px; flex-wrap: wrap; justify-content: center; z-index: 10;
-  }
+  /* --- SATELLITE OBJECT DESIGN (Only Inside Hangar) --- */
+  .satellite-belt { display: flex; gap: 60px; z-index: 10; flex-wrap: wrap; justify-content: center; }
 
   .satellite-unit {
     position: relative; width: 140px; height: 140px; cursor: pointer;
@@ -140,72 +113,49 @@
     transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
   .satellite-unit:hover { transform: translateY(-15px) scale(1.1); }
-  
-  /* Core Body (Rock Style) */
+  .satellite-unit:hover .sat-body { box-shadow: 0 0 30px var(--glow-color); border-color: #fff; }
+  .satellite-unit:hover .sat-wing { background: rgba(255,255,255,0.9); box-shadow: 0 0 20px var(--glow-color); }
+  .satellite-unit:hover .sat-label { color: #fff; opacity: 1; transform: translateY(5px); }
+
+  /* Core Body */
   .sat-body {
-    width: 60px; height: 60px; 
-    background: var(--rock-dark); 
-    border: 2px solid var(--neon);
+    width: 60px; height: 60px; background: #0f172a; border: 2px solid var(--neon-color);
     border-radius: 12px; display: grid; place-items: center; z-index: 2;
-    box-shadow: 0 0 20px rgba(255,255,255,0.1), inset 0 0 10px rgba(0,0,0,0.5);
-    transition: all 0.3s ease;
+    box-shadow: 0 0 15px var(--glow-color), inset 0 0 10px var(--glow-color);
+    transition: all 0.3s ease; position: relative;
   }
   .sat-body i { font-size: 1.5rem; color: #fff; }
 
-  /* Solar Wings (Glass Style) */
+  /* Solar Wings */
   .sat-wing {
     position: absolute; top: 50%; transform: translateY(-50%);
-    width: 40px; height: 50px; 
-    background: var(--glass);
-    border: 1px solid var(--neon-soft); 
-    z-index: 1; transition: all 0.3s ease;
+    width: 35px; height: 50px; background: rgba(255,255,255,0.1);
+    border: 1px solid var(--neon-color); z-index: 1; transition: all 0.3s ease;
   }
-  .sat-wing.left { left: -25px; border-radius: 6px 0 0 6px; border-right: none; }
-  .sat-wing.right { right: -25px; border-radius: 0 6px 6px 0; border-left: none; }
-  
-  /* Grid lines on wings */
+  .sat-wing.left { left: -20px; border-radius: 4px 0 0 4px; border-right: none; }
+  .sat-wing.right { right: -20px; border-radius: 0 4px 4px 0; border-left: none; }
   .sat-wing::after {
     content:''; position: absolute; inset: 0;
-    background: linear-gradient(rgba(226, 232, 240, 0.1) 1px, transparent 1px);
-    background-size: 100% 20%;
+    background: linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);
+    background-size: 100% 25%;
   }
-
-  /* Hover Effects */
-  .satellite-unit:hover .sat-body { box-shadow: 0 0 30px var(--neon-soft); border-color: #fff; background: var(--rock-light); }
-  .satellite-unit:hover .sat-wing { background: rgba(226, 232, 240, 0.15); box-shadow: 0 0 15px var(--neon-soft); }
-  .satellite-unit:hover .sat-label { opacity: 1; transform: translateY(10px); color: #fff; }
 
   .sat-label {
     margin-top: 25px; font-family: 'Share Tech Mono', monospace; font-size: 0.9rem;
-    color: var(--ink); letter-spacing: 1px; opacity: 0.7; transition: all 0.3s ease; text-align: center;
+    color: var(--neon-color); letter-spacing: 1px; opacity: 0.7;
+    transition: all 0.3s ease; text-align: center;
   }
 
-  /* Close Button */
-  .close-hangar {
-    position: absolute; top: 30px; right: 30px; 
-    background: transparent; border: 1px solid var(--neon); color: var(--neon);
-    padding: 10px 24px; font-family: 'Orbitron', sans-serif; cursor: pointer;
-    text-transform: uppercase; font-size: 0.8rem; letter-spacing: 2px;
-    border-radius: 30px; transition: 0.3s;
-  }
-  .close-hangar:hover { background: var(--neon-soft); box-shadow: 0 0 20px var(--neon-soft); }
+  /* --- APP FRAMES --- */
+  .app-frame { display: none; position: fixed; inset: 0; z-index: 2000; background: #000; animation: zoomIn 0.5s ease-out; }
+  @keyframes zoomIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-  /* App Frames */
-  .app-frame {
-    display: none; position: fixed; inset: 0; z-index: 2000; background: #000;
-  }
-  .close-app-btn {
-    position: absolute; top: 20px; right: 20px; z-index: 2010;
-    background: #0f172a; border: 1px solid var(--neon); color: var(--neon);
-    padding: 8px 16px; cursor: pointer; font-family: 'Share Tech Mono', monospace;
-  }
-
-  /* Responsive */
+  /* --- RESPONSIVE --- */
   @media (max-width: 980px){ 
     .wheel { width: 85vw; height: 85vw; } 
     .pos-left { left: -40px; } .pos-right { right: -40px; } .pos-bottom { bottom: -40px; }
     .satellite-belt { gap: 40px; }
-    .center-content h1 { font-size: 2rem; }
+    #ccTitle { font-size: 2rem; }
   }
 </style>
 </head>
@@ -213,132 +163,137 @@
 
 <canvas id="stars"></canvas>
 
-<div class="wheel" id="wheel" onclick="showHome()">
+<div class="wheel earth-surface" id="wheel" onclick="showHome()">
   
-  <div class="tab pos-left" onclick="event.stopPropagation(); openHangar()">
-    <i class="fas fa-rocket"></i> Tools
+  <div class="moon-surface pos-left" onclick="event.stopPropagation(); openHangar()">
+    <div><i class="fas fa-rocket" style="display:block; font-size:1.2rem; margin-bottom:4px;"></i>Tools</div>
   </div>
   
-  <div class="tab pos-right" onclick="event.stopPropagation(); showProjects()">
-    <i class="fas fa-folder-open"></i> Work
+  <div class="moon-surface pos-right" onclick="event.stopPropagation(); showProjects()">
+    <div><i class="fas fa-folder-open" style="display:block; font-size:1.2rem; margin-bottom:4px;"></i>Work</div>
   </div>
   
-  <div class="tab pos-bottom" onclick="event.stopPropagation(); window.open('https://github.com/khwaja-gh', '_blank')">
-    <i class="fab fa-github"></i> Code
+  <div class="moon-surface pos-bottom" onclick="event.stopPropagation(); window.open('https://github.com/khwaja-gh', '_blank')">
+    <div><i class="fab fa-github" style="display:block; font-size:1.2rem; margin-bottom:4px;"></i>Code</div>
   </div>
   
   <div class="center-content" id="centerContent">
     <h1 id="ccTitle">KHWAJA AI</h1>
     <div id="ccText">
       <b>Intelligent Analytics System</b>
-      <p>Merging financial modeling with advanced AI. Click the tabs to access the satellite array and mission logs.</p>
+      <p>Merging financial modeling with advanced AI. Click the satellites to explore tools, projects, and codebase.</p>
     </div>
   </div>
 </div>
 
 <div class="portfolio-orbit" onclick="window.open('/portfolio/', '_blank')">PORTFOLIO</div>
 
-<div id="hangarOverlay" class="overlay">
-  <div class="hangar-container">
-    <button class="close-hangar" onclick="closeHangar()"> <i class="fas fa-arrow-left"></i> Return to Base</button>
+<div id="hangarOverlay" class="hangar-overlay">
+  <div class="hangar-grid"></div>
+  
+  <button class="glass-back-btn" onclick="closeHangar()" title="Return to Orbit">
+    <i class="fas fa-chevron-left"></i>
+  </button>
+  
+  <h2 class="hangar-title">TOOL MODULES</h2>
+  
+  <div class="satellite-belt">
     
-    <h2 class="hangar-title">SATELLITE ARRAY</h2>
-    
-    <div class="satellite-belt">
-      
-      <div class="satellite-unit" onclick="openApp('spreadsheet')">
-        <div class="sat-wing left"></div>
-        <div class="sat-body"><i class="fas fa-table"></i></div>
-        <div class="sat-wing right"></div>
-        <div class="sat-label">AI SPREADSHEET</div>
-      </div>
-
-      <div class="satellite-unit" onclick="openApp('nutrition')">
-        <div class="sat-wing left"></div>
-        <div class="sat-body"><i class="fas fa-carrot"></i></div>
-        <div class="sat-wing right"></div>
-        <div class="sat-label">NUTRITION AI</div>
-      </div>
-
-      <div class="satellite-unit" style="opacity: 0.5; pointer-events:none;">
-        <div class="sat-wing left"></div>
-        <div class="sat-body"><i class="fas fa-lock"></i></div>
-        <div class="sat-wing right"></div>
-        <div class="sat-label">OFFLINE</div>
-      </div>
-
+    <div class="satellite-unit" style="--neon-color: #0aff68; --glow-color: rgba(10, 255, 104, 0.4);" onclick="openApp('spreadsheet')">
+      <div class="sat-wing left"></div>
+      <div class="sat-body"><i class="fas fa-table"></i></div>
+      <div class="sat-wing right"></div>
+      <div class="sat-label">AI SPREADSHEET</div>
     </div>
+
+    <div class="satellite-unit" style="--neon-color: #bc13fe; --glow-color: rgba(188, 19, 254, 0.4);" onclick="openApp('nutrition')">
+      <div class="sat-wing left"></div>
+      <div class="sat-body"><i class="fas fa-carrot"></i></div>
+      <div class="sat-wing right"></div>
+      <div class="sat-label">NUTRITION AI</div>
+    </div>
+
+    <div class="satellite-unit" style="--neon-color: #00f3ff; --glow-color: rgba(0, 243, 255, 0.4); opacity: 0.5; pointer-events:none;">
+      <div class="sat-wing left"></div>
+      <div class="sat-body"><i class="fas fa-lock"></i></div>
+      <div class="sat-wing right"></div>
+      <div class="sat-label">LOCKED</div>
+    </div>
+
   </div>
 </div>
 
 <div id="appContainer_spreadsheet" class="app-frame">
-  <button class="close-app-btn" onclick="closeApp('spreadsheet')">✕ CLOSE CONNECTION</button>
+  <button class="glass-back-btn" onclick="closeApp('spreadsheet')" style="z-index:3000;">
+    <i class="fas fa-times"></i>
+  </button>
   <iframe src="https://khwajai-spreadsheet.hf.space/?embed=true" style="width:100%; height:100%; border:none;"></iframe>
 </div>
 
 <div id="appContainer_nutrition" class="app-frame">
-  <button class="close-app-btn" onclick="closeApp('nutrition')">✕ CLOSE CONNECTION</button>
+  <button class="glass-back-btn" onclick="closeApp('nutrition')" style="z-index:3000;">
+    <i class="fas fa-times"></i>
+  </button>
   <iframe src="https://khwajai-nutrition-planner.hf.space" style="width:100%; height:100%; border:none;"></iframe>
 </div>
 
 <script>
-/* --- LOGIC --- */
-
+/* --- HANGAR LOGIC --- */
 function openHangar() {
   const hangar = document.getElementById('hangarOverlay');
-  hangar.style.display = 'grid'; // Grid places items center
+  hangar.style.display = 'flex';
+  setTimeout(() => { hangar.style.opacity = '1'; }, 10);
   
-  // Fade out main wheel
-  const wheel = document.getElementById('wheel');
-  wheel.style.opacity = '0';
-  wheel.style.transform = 'translate(-50%, -50%) scale(0.8)';
-  wheel.style.pointerEvents = 'none';
+  // Hide the main wheel
+  document.getElementById('wheel').style.opacity = '0';
+  document.getElementById('wheel').style.pointerEvents = 'none';
 }
 
 function closeHangar() {
   const hangar = document.getElementById('hangarOverlay');
-  hangar.style.display = 'none';
+  hangar.style.opacity = '0';
+  setTimeout(() => { hangar.style.display = 'none'; }, 500);
   
-  // Restore main wheel
-  const wheel = document.getElementById('wheel');
-  wheel.style.opacity = '1';
-  wheel.style.transform = 'translate(-50%, -50%) scale(1)';
-  wheel.style.pointerEvents = 'all';
+  // Show wheel again
+  document.getElementById('wheel').style.opacity = '1';
+  document.getElementById('wheel').style.pointerEvents = 'all';
 }
 
 function openApp(appName) {
-  document.getElementById('hangarOverlay').style.display = 'none';
+  document.getElementById('hangarOverlay').style.opacity = '0';
+  setTimeout(() => { document.getElementById('hangarOverlay').style.display = 'none'; }, 500);
   document.getElementById(`appContainer_${appName}`).style.display = 'block';
 }
 
 function closeApp(appName) {
   document.getElementById(`appContainer_${appName}`).style.display = 'none';
-  openHangar(); // Return to satellite view
+  openHangar(); // Return to Hangar
 }
 
+/* --- TEXT UPDATES --- */
 function showProjects(){
   document.getElementById('ccTitle').innerHTML = "MISSION LOG";
   document.getElementById('ccText').innerHTML = `
     <ul style="text-align:left; list-style:none; padding:0; font-size:0.9rem;">
-      <li style="margin-bottom:12px; border-left:2px solid var(--neon); padding-left:10px;">
-        <b style="color:#fff">iOutlet Revenue</b>
+      <li style="margin-bottom:12px; border-left:2px solid var(--neon-green); padding-left:10px;">
+        <b style="color:var(--neon-green)">iOutlet Revenue</b>
         Analyzed £8.9M in transactions to optimize seasonal stock.
       </li>
-      <li style="margin-bottom:12px; border-left:2px solid var(--rock-light); padding-left:10px;">
-        <b style="color:#fff">Financial Forecasting</b>
+      <li style="margin-bottom:12px; border-left:2px solid var(--neon-blue); padding-left:10px;">
+        <b style="color:var(--neon-blue)">Financial Forecasting</b>
         MATLAB/R models for equity trend prediction.
       </li>
     </ul>
-    <div style="margin-top:10px; font-size:0.7rem; color:var(--ink);">// CLICK ASTEROID TO RESET</div>
+    <div style="margin-top:10px; font-size:0.7rem; color:#64748b;">// CLICK EARTH TO RESET</div>
   `;
 }
 
 function showHome(){
   document.getElementById('ccTitle').innerHTML = "KHWAJA AI";
-  document.getElementById('ccText').innerHTML = `<b>Intelligent Analytics System</b><p>Merging financial modeling with advanced AI. Click the tabs to access the satellite array and mission logs.</p>`;
+  document.getElementById('ccText').innerHTML = `<b>Intelligent Analytics System</b><p>Merging financial modeling with advanced AI. Click the satellites to explore tools, projects, and codebase.</p>`;
 }
 
-/* --- STARS --- */
+/* --- STARFIELD ANIMATION --- */
 const canvas = document.getElementById('stars'); const ctx = canvas.getContext('2d'); 
 let stars = [];
 function resizeCanvas(){ canvas.width = innerWidth; canvas.height = innerHeight; } 
@@ -346,27 +301,37 @@ resizeCanvas(); window.addEventListener('resize', resizeCanvas);
 
 function initStars() {
   stars = [];
-  for(let i=0; i<300; i++) {
-    stars.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, size: Math.random()*1.2, speed: Math.random()*0.15 });
+  for(let i=0; i<400; i++) {
+    stars.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      size: Math.random() * 1.5,
+      speed: Math.random() * 0.2
+    });
   }
 }
+
 function animateStars() {
-  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = "#020617";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = "#fff";
+  
   stars.forEach(s => {
     ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); ctx.fill();
-    s.y -= s.speed; if(s.y < 0) s.y = canvas.height;
+    s.y -= s.speed; 
+    if(s.y < 0) s.y = canvas.height;
   });
   requestAnimationFrame(animateStars);
 }
 initStars(); animateStars();
 
-/* --- PARALLAX --- */
+/* --- PARALLAX EFFECT --- */
 document.addEventListener('mousemove', (e) => {
-  const x = (e.clientX / window.innerWidth - 0.5) * 15;
-  const y = (e.clientY / window.innerHeight - 0.5) * 15;
+  const x = (e.clientX / window.innerWidth - 0.5) * 20;
+  const y = (e.clientY / window.innerHeight - 0.5) * 20;
   document.getElementById('wheel').style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
 });
+
 </script>
 </body>
 </html>
