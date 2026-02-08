@@ -149,13 +149,14 @@ canvas#stars { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
 }
 @keyframes zoomIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-/* --- RE-DESIGNED BUTTON: TOP RIGHT FIXED --- */
+/* --- BUTTON: TOP CENTER POSITIONED --- */
 .close-hangar {
   position: absolute;
-  top: 20px; 
-  right: 30px; /* MOVED TO RIGHT to avoid overlapping center titles */
-  left: auto;
-  transform: none; 
+  top: 15px; 
+  left: 50%;  /* Center Horizontal */
+  transform: translateX(-50%); /* Center Alignment */
+  right: auto;
+  
   background: rgba(15, 23, 42, 0.4); 
   border: 1px solid var(--glass-border);
   color: var(--brand-blue);
