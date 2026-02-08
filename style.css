@@ -149,15 +149,17 @@ canvas#stars { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
 }
 @keyframes zoomIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-/* --- RE-DESIGNED RETURN BUTTON (TRANSPARENT & SMALL) --- */
+/* --- RE-DESIGNED RETURN BUTTON (CENTERED PILL) --- */
 .close-hangar {
   position: absolute;
-  top: 15px; right: auto; left: 15px; /* Top Left positioning */
-  background: rgba(15, 23, 42, 0.4); /* Very transparent */
+  top: 15px; 
+  left: 50%; /* Center horizontally */
+  transform: translateX(-50%); /* Perfect centering alignment */
+  background: rgba(15, 23, 42, 0.4); 
   border: 1px solid var(--glass-border);
   color: var(--brand-blue);
   padding: 8px 16px;
-  border-radius: 30px; /* Small pill shape */
+  border-radius: 30px; 
   font-family: 'Orbitron', sans-serif;
   font-size: 0.7rem;
   letter-spacing: 1px;
