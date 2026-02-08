@@ -36,7 +36,7 @@
 
 <div id="hangarOverlay" class="hangar-overlay">
   <div class="hangar-grid"></div>
-  <button class="close-hangar" onclick="closeHangar()" style="top: 30px; left: auto; right: 30px;"> 
+  <button class="close-hangar" onclick="closeHangar()" style="top: 30px; left: auto; right: 30px; transform: none;"> 
     <i class="fas fa-times"></i> Close Hangar
   </button>
   
@@ -70,7 +70,7 @@
 
 <div id="appContainer_spreadsheet" class="app-frame">
   <button class="close-hangar" onclick="closeApp('spreadsheet')">
-    <i class="fas fa-chevron-center"></i> Orbit
+    <i class="fas fa-chevron-left"></i> Orbit
   </button>
   
   <div class="iframe-wrapper">
@@ -86,7 +86,7 @@
 
 <div id="appContainer_nutrition" class="app-frame">
   <button class="close-hangar" onclick="closeApp('nutrition')">
-    <i class="fas fa-chevron-center"></i> Orbit
+    <i class="fas fa-chevron-left"></i> Orbit
   </button>
   
   <div class="iframe-wrapper">
@@ -176,4 +176,3 @@ const wheel = document.getElementById('wheel'); document.addEventListener('mouse
 
 </body>
 </html>
-
