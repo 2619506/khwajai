@@ -21,7 +21,7 @@
   
   <div class="satellite moon-surface pos-right" onclick="event.stopPropagation(); showProjects()">Projects</div>
   
-  <div class="satellite moon-surface pos-bottom" onclick="event.stopPropagation(); window.open('https://github.com/khwaja-gh', '_blank')">Other<br>Projects</div>
+  <div class="satellite moon-surface pos-bottom" onclick="event.stopPropagation(); window.open('https://khwajai-nutrition-planner.hf.space', '_blank')">Nutrition<br>AI</div>
   
   <div class="center-content" id="centerContent">
     <h1 id="ccTitle">KHWAJA AI</h1>
@@ -52,11 +52,11 @@
       <div class="sat-label">AI SPREADSHEET</div>
     </div>
 
-    <div class="satellite-unit" style="--neon-color: #bc13fe; --glow-color: rgba(188, 19, 254, 0.4);" onclick="openApp('nutrition')">
+    <div class="satellite-unit" style="--neon-color: #bc13fe; --glow-color: rgba(188, 19, 254, 0.4);" onclick="openApp('anomaly')">
       <div class="sat-wing left"></div>
-      <div class="sat-body"><i class="fas fa-carrot"></i></div>
+      <div class="sat-body"><i class="fas fa-chart-line"></i></div>
       <div class="sat-wing right"></div>
-      <div class="sat-label">NUTRITION AI</div>
+      <div class="sat-label">PREDICTIVE AI</div>
     </div>
 
     <div class="satellite-unit" style="--neon-color: #00f3ff; --glow-color: rgba(0, 243, 255, 0.4); opacity: 0.5; pointer-events:none;">
@@ -85,16 +85,16 @@
   </div>
 </div>
 
-<div id="appContainer_nutrition" class="app-frame">
-  <button class="close-hangar" onclick="closeApp('nutrition')">
+<div id="appContainer_anomaly" class="app-frame">
+  <button class="close-hangar" onclick="closeApp('anomaly')">
     <i class="fas fa-chevron-left"></i> Orbit
   </button>
   
   <div class="iframe-wrapper">
     <div class="iframe-loader"></div>
-    <div class="loading-text">Syncing Neural Data...</div>
+    <div class="loading-text">Initializing AI Model...</div>
     
-    <iframe src="https://khwajai-nutrition-planner.hf.space" 
+    <iframe src="https://YOUR-NEW-HUGGINGFACE-LINK.hf.space" 
             style="width:100%; height:100%; border:none; position:relative; z-index:20;" 
             allow="clipboard-read; clipboard-write; fullscreen;"
             onload="this.previousElementSibling.style.display='none'; this.previousElementSibling.previousElementSibling.style.display='none';"></iframe>
@@ -144,7 +144,7 @@ function closeApp(appName) {
 // Handle Back Button
 window.onpopstate = function(event) {
     document.getElementById('appContainer_spreadsheet').style.display = 'none';
-    document.getElementById('appContainer_nutrition').style.display = 'none';
+    document.getElementById('appContainer_anomaly').style.display = 'none'; // Updated to anomaly
     closeHangar(); 
 };
 
