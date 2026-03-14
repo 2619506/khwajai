@@ -17,17 +17,17 @@
 
 <div class="wheel earth-surface" id="wheel" onclick="showHome()">
   
-  <div class="satellite moon-surface pos-left" onclick="event.stopPropagation(); openHangar()">Tools</div>
+  <div class="satellite moon-surface pos-left" onclick="event.stopPropagation(); openHangar()">AI & ML<br>Projects</div>
   
-  <div class="satellite moon-surface pos-right" onclick="event.stopPropagation(); showProjects()">Projects</div>
+  <div class="satellite moon-surface pos-right" onclick="event.stopPropagation(); showProjects()">Academic<br>Projects</div>
   
   <div class="satellite moon-surface pos-bottom" onclick="event.stopPropagation(); openOtherProjects()">Other<br>Projects</div>
   
   <div class="center-content" id="centerContent">
     <h1 id="ccTitle">KHWAJA AI</h1>
     <p id="ccText">
-      <b>Financial AI & Business Analytics Strategist</b>
-      Merging an MSc in Business Analytics & Finance with over 5 years of operational expertise. From streamlining diplomatic workflows to driving data-led strategies in retail, I bridge the gap between technical insights and executive decision-making. I specialize in optimizing processes, financial modeling, and delivering actionable intelligence using Python, SQL, and Power BI.
+      <b>Data Scientist & AI Developer</b><br>
+      Blending an MSc in Business Analytics & Finance with practical Python development and operational leadership. I transition complex theoretical models into functional, end-to-end applications. From designing real-time anomaly detection systems to automating reporting workflows, I specialize in translating data into resilient, actionable strategies. My core technical stack includes Python, Scikit-Learn, TensorFlow, SQL, and React integration.
     </p>
   </div>
 </div>
@@ -227,13 +227,13 @@ window.onpopstate = function(event) {
 // Projects Page Logic
 function showProjects(){
   history.pushState({view: 'projects'}, "", "/projects");
-  document.getElementById('centerContent').innerHTML = `<h1 id="ccTitle" style="font-size:2.5rem">KEY PROJECTS</h1><div id="ccText" style="text-align:left; font-size:0.9rem;"><ul style="list-style-type:none; padding:0;"><li style="margin-bottom:10px;"><b>🛍️ iOutlet Revenue Analysis</b> Analyzed 32,000+ sales transactions (£8.9M) to identify seasonal trends and built Python dashboards for reporting.</li><li style="margin-bottom:10px;"><b>🍄 Sustainable Production (AREA)</b> Managed an £80k donor-funded project, coordinating field teams and streamlining reporting workflows by 50%.</li><li><b>📈 Financial Forecasting (Uni. Dundee)</b> Developed equity price forecasting models using MATLAB & R, improving predictive accuracy through back-testing.</li></ul><div style="text-align:center; margin-top:10px; font-size:0.8rem; color:#f8fafc;">(Click Earth to return)</div></div>`;
+  document.getElementById('centerContent').innerHTML = `<h1 id="ccTitle" style="font-size:2.5rem">ACADEMIC PROJECTS</h1><div id="ccText" style="text-align:left; font-size:0.9rem;"><ul style="list-style-type:none; padding:0;"><li style="margin-bottom:10px;"><b>📈 Tech Sector Volatility Prediction</b> Comparative study of Machine Learning models (Random Forest vs. Linear Regression) using MATLAB for stock price forecasting.</li><li style="margin-bottom:10px;"><b>💳 Fraud Detection Optimization</b> Implemented hybrid anomaly detection architectures using Python to identify outliers in high-volume, imbalanced datasets.</li><li><b>🛍️ iOutlet Revenue Analysis</b> Analyzed 32,000+ sales transactions to identify margin-improvement strategies using Python data visualizations.</li></ul><div style="text-align:center; margin-top:10px; font-size:0.8rem; color:#f8fafc;">(Click Earth to return)</div></div>`;
 }
 
 // Home Page Logic
 function showHome(){
   history.pushState({view: 'home'}, "", "/");
-  document.getElementById('centerContent').innerHTML = `<h1 id="ccTitle">KHWAJA AI</h1><p id="ccText"><b>Financial AI & Business Analytics Strategist</b>Merging an MSc in Business Analytics & Finance with over 5 years of operational expertise. From streamlining diplomatic workflows to driving data-led strategies in retail, I bridge the gap between technical insights and executive decision-making. I specialize in optimizing processes, financial modeling, and delivering actionable intelligence using Python, SQL, and Power BI.</p>`;
+  document.getElementById('centerContent').innerHTML = `<h1 id="ccTitle">KHWAJA AI</h1><p id="ccText"><b>Data Scientist & AI Developer</b><br>Blending an MSc in Business Analytics & Finance with practical Python development and operational leadership. I transition complex theoretical models into functional, end-to-end applications. From designing real-time anomaly detection systems to automating reporting workflows, I specialize in translating data into resilient, actionable strategies. My core technical stack includes Python, Scikit-Learn, TensorFlow, SQL, and React integration.</p>`;
 }
 
 // --- STARFIELD ---
