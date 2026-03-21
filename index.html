@@ -6,14 +6,82 @@
 <title>Khwaja AI | Intelligent Analytics</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
 <link rel="stylesheet" href="style.css">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;600&display=swap');
+
+  /* Bionic Mouse Specific Styles */
+  #virtual-cursor {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      background-color: #00ffcc;
+      border-radius: 50%;
+      pointer-events: none; /* Let clicks pass straight through it to the buttons below */
+      transform: translate(-50%, -50%);
+      z-index: 99999;
+      box-shadow: 0 0 15px #00ffcc;
+      transition: transform 0.1s, background-color 0.1s;
+      display: none; /* Hidden by default */
+  }
+
+  .video-container {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      width: 240px;
+      border: 2px solid #ff007f;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 15px rgba(255, 0, 127, 0.4);
+      z-index: 50;
+  }
+  
+  .input_video {
+      width: 100%;
+      display: block;
+      transform: scaleX(-1); /* Mirror the video */
+  }
+
+  .bionic-test-area {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: white;
+      z-index: 20;
+  }
+
+  #test-target {
+      padding: 20px 40px;
+      font-size: 20px;
+      background-color: #3b3b58;
+      color: white;
+      border: 2px solid #ff007f;
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: 'Orbitron', sans-serif;
+      margin-top: 20px;
+      transition: all 0.3s;
+  }
+
+  #test-target.simulated-active {
+      background-color: #ff007f !important;
+      color: white !important;
+      box-shadow: 0 0 20px #ff007f;
+      transform: scale(0.95);
+  }
 </style>
 </head>
 <body>
 
 <canvas id="stars"></canvas>
+
+<div id="virtual-cursor"></div>
 
 <div class="wheel earth-surface" id="wheel" onclick="showHome()">
   
@@ -59,11 +127,11 @@
       <div class="sat-label">PREDICTIVE AI</div>
     </div>
 
-    <div class="satellite-unit" style="--neon-color: #00f3ff; --glow-color: rgba(0, 243, 255, 0.4); opacity: 0.5; pointer-events:none;">
+    <div class="satellite-unit" style="--neon-color: #ff007f; --glow-color: rgba(255, 0, 127, 0.4);" onclick="openApp('bionicmouse')">
       <div class="sat-wing left"></div>
-      <div class="sat-body"><i class="fas fa-lock"></i></div>
+      <div class="sat-body"><i class="fas fa-hand-pointer"></i></div>
       <div class="sat-wing right"></div>
-      <div class="sat-label">LOCKED</div>
+      <div class="sat-label">BIONIC MOUSE</div>
     </div>
 
   </div>
@@ -101,7 +169,6 @@
   <button class="close-hangar" onclick="closeApp('spreadsheet')">
     <i class="fas fa-chevron-left"></i> Orbit
   </button>
-  
   <div class="iframe-wrapper">
     <div class="iframe-loader"></div>
     <div class="loading-text">Establishing Link...</div>
@@ -116,7 +183,6 @@
   <button class="close-hangar" onclick="closeApp('anomaly')">
     <i class="fas fa-chevron-left"></i> Orbit
   </button>
-  
   <div class="iframe-wrapper">
     <div class="iframe-loader"></div>
     <div class="loading-text">Initializing AI Model...</div>
@@ -131,7 +197,6 @@
   <button class="close-hangar" onclick="closeApp('nutrition')">
     <i class="fas fa-chevron-left"></i> Orbit
   </button>
-  
   <div class="iframe-wrapper">
     <div class="iframe-loader"></div>
     <div class="loading-text">Syncing Neural Data...</div>
@@ -142,12 +207,32 @@
   </div>
 </div>
 
+<div id="appContainer_bionicmouse" class="app-frame" style="background-color: #1e1e2f;">
+  <button class="close-hangar" onclick="closeApp('bionicmouse')" style="z-index: 100;">
+    <i class="fas fa-chevron-left"></i> Orbit
+  </button>
+  
+  <div class="bionic-test-area">
+      <h2 style="font-family: 'Orbitron', sans-serif; font-size: 2.5rem; color: #ff007f; text-shadow: 0 0 10px rgba(255,0,127,0.5);">ASSISTIVE BIONIC MOUSE</h2>
+      <p style="font-family: 'Outfit', sans-serif; font-size: 1.2rem; margin-bottom: 30px;">
+          Allow camera access.<br>
+          <b>Point Index Finger</b> to move the cursor.<br>
+          <b>Poke Forward</b> to click (Air Touch).
+      </p>
+      
+      <button id="test-target" onclick="bionicTargetClicked()">Poke the Air Here!</button>
+  </div>
+
+  <div class="video-container">
+      <video class="input_video" autoplay playsinline></video>
+  </div>
+</div>
+
 <script>
 // --- NAVIGATION LOGIC ---
 
-let activeHangar = 'hangarOverlay'; // Tracks which hangar is currently open
+let activeHangar = 'hangarOverlay'; 
 
-// Tools Hangar
 function openHangar() {
     activeHangar = 'hangarOverlay';
     const hangar = document.getElementById('hangarOverlay');
@@ -171,7 +256,6 @@ function closeHangar() {
     history.pushState({view: 'home'}, "", "/");
 }
 
-// Other Projects Hangar
 function openOtherProjects() {
     activeHangar = 'otherProjectsHangar';
     const hangar = document.getElementById('otherProjectsHangar');
@@ -197,17 +281,28 @@ function closeOtherProjects() {
 
 // App Logic
 function openApp(appName) {
-    // Hide whichever hangar is active
     document.getElementById(activeHangar).style.opacity = '0';
     setTimeout(() => { document.getElementById(activeHangar).style.display = 'none'; }, 500);
     
     document.getElementById(`appContainer_${appName}`).style.display = 'block';
+
+    // Start the Bionic Mouse camera only if that app is opened
+    if(appName === 'bionicmouse') {
+        initBionicMouse();
+    }
+
     history.pushState({view: appName}, "", `/${activeHangar === 'hangarOverlay' ? 'tools' : 'projects'}/${appName}`);
 }
 
 function closeApp(appName) {
     document.getElementById(`appContainer_${appName}`).style.display = 'none';
-    // Return to the hangar the app was launched from
+    
+    // Shut down the camera immediately to save battery/privacy
+    if(appName === 'bionicmouse' && bionicCamera) {
+        bionicCamera.stop();
+        document.getElementById('virtual-cursor').style.display = 'none';
+    }
+
     if (activeHangar === 'hangarOverlay') {
         openHangar();
     } else {
@@ -220,17 +315,131 @@ window.onpopstate = function(event) {
     document.getElementById('appContainer_spreadsheet').style.display = 'none';
     document.getElementById('appContainer_anomaly').style.display = 'none'; 
     document.getElementById('appContainer_nutrition').style.display = 'none'; 
+    
+    document.getElementById('appContainer_bionicmouse').style.display = 'none';
+    if(bionicCamera) bionicCamera.stop();
+    document.getElementById('virtual-cursor').style.display = 'none';
+
     closeHangar(); 
     closeOtherProjects();
 };
 
-// Projects Page Logic
+// --- BIONIC MOUSE JAVASCRIPT LOGIC (AIR TOUCH EDITION) ---
+let bionicCamera = null;
+let bionicHands = null;
+
+function bionicTargetClicked() {
+    const btn = document.getElementById('test-target');
+    btn.innerText = "AIR TOUCH DETECTED! SUCCESS.";
+    btn.classList.add("simulated-active");
+    setTimeout(() => {
+        btn.innerText = "Poke the Air Here!";
+        btn.classList.remove("simulated-active");
+    }, 2000);
+}
+
+function initBionicMouse() {
+    if (!bionicHands) {
+        const videoElement = document.querySelector('.input_video');
+        const cursor = document.getElementById('virtual-cursor');
+        
+        let isClicking = false;
+        let lastClickTime = 0;
+        let previousZ = null; // Memory for the Z-Axis (Depth)
+        
+        // SENSITIVITY TWEAK: Lower number (-0.008) = easier to click. Higher number (-0.020) = harder poke required.
+        const pokeSensitivity = -0.012; 
+
+        bionicHands = new Hands({locateFile: (file) => {
+            return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+        }});
+
+        bionicHands.setOptions({
+            maxNumHands: 1,
+            modelComplexity: 1,
+            minDetectionConfidence: 0.7,
+            minTrackingConfidence: 0.7
+        });
+
+        bionicHands.onResults((results) => {
+            // Safety check: Don't track if they clicked 'Orbit' to leave the app
+            if(document.getElementById('appContainer_bionicmouse').style.display === 'none') return;
+
+            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                cursor.style.display = 'block';
+                const landmarks = results.multiHandLandmarks[0];
+                const indexTip = landmarks[8]; // Index Finger Tip
+
+                // 1. Map Coordinates (X and Y Axis)
+                const cursorX = (1 - indexTip.x) * window.innerWidth;
+                const cursorY = indexTip.y * window.innerHeight;
+
+                cursor.style.left = cursorX + 'px';
+                cursor.style.top = cursorY + 'px';
+
+                // 2. The "Air Touch" Poke Logic (Z Axis)
+                const currentZ = indexTip.z;
+                const currentTime = new Date().getTime();
+
+                if (previousZ !== null) {
+                    // Calculate velocity: How fast is the finger moving forward?
+                    const zVelocity = currentZ - previousZ;
+
+                    // If the finger jabs forward past our sensitivity threshold...
+                    if (zVelocity < pokeSensitivity) {
+                        if (!isClicking && (currentTime - lastClickTime > 500)) {
+                            isClicking = true;
+                            
+                            // Visual feedback for the click
+                            cursor.style.backgroundColor = '#ff007f';
+                            cursor.style.transform = 'translate(-50%, -50%) scale(0.6)';
+                            cursor.style.boxShadow = '0 0 30px #ff007f';
+                            lastClickTime = currentTime;
+                            
+                            // Fire the click at the cursor's location
+                            const elementUnderCursor = document.elementFromPoint(cursorX, cursorY);
+                            if (elementUnderCursor && elementUnderCursor.id === "test-target") {
+                                elementUnderCursor.click();
+                            }
+                        }
+                    } else if (zVelocity > 0.005) {
+                        // If the finger pulls backward, release the click state
+                        if (isClicking) {
+                            isClicking = false;
+                            cursor.style.backgroundColor = '#00ffcc';
+                            cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+                            cursor.style.boxShadow = '0 0 15px #00ffcc';
+                        }
+                    }
+                }
+                
+                // Save the current depth for the next frame's math
+                previousZ = currentZ;
+
+            } else {
+                cursor.style.display = 'none'; 
+                previousZ = null; // Clear memory if hand leaves the camera
+            }
+        });
+
+        bionicCamera = new Camera(videoElement, {
+            onFrame: async () => {
+                await bionicHands.send({image: videoElement});
+            },
+            width: 480,
+            height: 360
+        });
+    }
+    
+    bionicCamera.start();
+}
+
+// --- PROJECTS PAGE LOGIC ---
 function showProjects(){
   history.pushState({view: 'projects'}, "", "/projects");
   document.getElementById('centerContent').innerHTML = `<h1 id="ccTitle" style="font-size:2.5rem">ACADEMIC PROJECTS</h1><div id="ccText" style="text-align:left; font-size:0.9rem;"><ul style="list-style-type:none; padding:0;"><li style="margin-bottom:10px;"><b>📈 Tech Sector Volatility Prediction</b> Comparative study of Machine Learning models (Random Forest vs. Linear Regression) using MATLAB for stock price forecasting.</li><li style="margin-bottom:10px;"><b>💳 Fraud Detection Optimization</b> Implemented hybrid anomaly detection architectures using Python to identify outliers in high-volume, imbalanced datasets.</li><li><b>🛍️ iOutlet Revenue Analysis</b> Analyzed 32,000+ sales transactions to identify margin-improvement strategies using Python data visualizations.</li></ul><div style="text-align:center; margin-top:10px; font-size:0.8rem; color:#f8fafc;">(Click Earth to return)</div></div>`;
 }
 
-// Home Page Logic
 function showHome(){
   history.pushState({view: 'home'}, "", "/");
   document.getElementById('centerContent').innerHTML = `<h1 id="ccTitle">KHWAJA AI</h1><p id="ccText"><b>Data Scientist & AI Developer</b><br>Blending an MSc in Business Analytics & Finance with practical Python development and operational leadership. I transition complex theoretical models into functional, end-to-end applications. From designing real-time anomaly detection systems to automating reporting workflows, I specialize in translating data into resilient, actionable strategies. My core technical stack includes Python, Scikit-Learn, TensorFlow, SQL, and React integration.</p>`;
