@@ -247,7 +247,7 @@
       <div class="sat-label">PREDICTIVE AI</div>
     </div>
 
-    <!-- NEW MODULAR ADDITION: AI STOCK PREDICTOR SATELLITE TILE -->
+    <!-- MODULAR SYSTEM: MAPPED TO ACTIVE STREAMLIT REPO -->
     <div class="satellite-unit" style="--neon-color: #00bfff; --glow-color: rgba(0, 191, 255, 0.4);" onclick="openApp('stockpredictor')">
       <div class="sat-wing left"></div>
       <div class="sat-body"><i class="fas fa-money-check-alt"></i></div>
@@ -316,7 +316,7 @@
   </div>
 </div>
 
-<!-- NEW MODULAR ADDITION: AI STOCK PREDICTOR IFRAME CONTAINER -->
+<!-- PRODUCTION APPLICATION CONTAINER: AI STOCK PREDICTOR -->
 <div id="appContainer_stockpredictor" class="app-frame">
   <button class="close-hangar" onclick="closeApp('stockpredictor')">
     <i class="fas fa-chevron-left"></i> Orbit
@@ -324,7 +324,7 @@
   <div class="iframe-wrapper">
     <div class="iframe-loader"></div>
     <div class="loading-text">Querying Market Matrices...</div>
-    <iframe src="https://ai-stock-predictor.streamlit.app/?embed=true" 
+    <iframe src="https://ai-stock-predictor-qwqxrrjxloljpzz8m3wbql.streamlit.app/?embed=true" 
             style="width:100%; height:100%; border:none; position:relative; z-index:20;" 
             allow="clipboard-read; clipboard-write; fullscreen;"
             onload="this.previousElementSibling.style.display='none'; this.previousElementSibling.previousElementSibling.style.display='none';"></iframe>
@@ -462,7 +462,7 @@ function closeApp(appName) {
 window.onpopstate = function(event) {
     document.getElementById('appContainer_spreadsheet').style.display = 'none';
     document.getElementById('appContainer_anomaly').style.display = 'none'; 
-    document.getElementById('appContainer_stockpredictor').style.display = 'none'; // Clear new container on back
+    document.getElementById('appContainer_stockpredictor').style.display = 'none'; 
     document.getElementById('appContainer_nutrition').style.display = 'none'; 
     document.getElementById('appContainer_bionicmouse').style.display = 'none';
     
