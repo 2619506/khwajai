@@ -114,7 +114,6 @@
       font-family: 'Outfit', sans-serif;
   }
 
-  /* Test 1: Air Touch */
   #test-target {
       padding: 12px 0;
       width: 85%;
@@ -136,7 +135,6 @@
       transform: scale(0.95);
   }
 
-  /* Test 2: Right Click */
   #rc-zone {
       width: 85%;
       background: rgba(255, 153, 0, 0.05);
@@ -150,7 +148,6 @@
       user-select: none;
   }
 
-  /* Test 3: Drag & Drop */
   #drag-container {
       width: 90%;
       height: 75px;
@@ -181,7 +178,6 @@
       transition: transform 0.1s;
   }
 
-  /* Test 4: Scroll */
   #scroll-zone {
       width: 90%;
       height: 75px;
@@ -365,30 +361,29 @@
   <h2 class="hangar-title">SELECT TOOL MODULE</h2>
   
   <div class="satellite-belt">
-    <!-- CHANGED FROM openApp('spreadsheet') TO openProjectInfo() -->
-    <div class="satellite-unit" style="--neon-color: #0aff68; --glow-color: rgba(10, 255, 104, 0.4);" onclick="openProjectInfo()">
+    <!-- ALL CLICKS NOW ROUTE THROUGH openProjectInfo() -->
+    <div class="satellite-unit" style="--neon-color: #0aff68; --glow-color: rgba(10, 255, 104, 0.4);" onclick="openProjectInfo('spreadsheet')">
       <div class="sat-wing left"></div>
       <div class="sat-body"><i class="fas fa-table"></i></div>
       <div class="sat-wing right"></div>
       <div class="sat-label">ENTERPRISE OS</div>
     </div>
 
-    <div class="satellite-unit" style="--neon-color: #bc13fe; --glow-color: rgba(188, 19, 254, 0.4);" onclick="openApp('anomaly')">
+    <div class="satellite-unit" style="--neon-color: #bc13fe; --glow-color: rgba(188, 19, 254, 0.4);" onclick="openProjectInfo('anomaly')">
       <div class="sat-wing left"></div>
       <div class="sat-body"><i class="fas fa-chart-line"></i></div>
       <div class="sat-wing right"></div>
       <div class="sat-label">PREDICTIVE AI</div>
     </div>
 
-    <!-- MODULAR SYSTEM: MAPPED TO ACTIVE STREAMLIT REPO -->
-    <div class="satellite-unit" style="--neon-color: #00bfff; --glow-color: rgba(0, 191, 255, 0.4);" onclick="openApp('stockpredictor')">
+    <div class="satellite-unit" style="--neon-color: #00bfff; --glow-color: rgba(0, 191, 255, 0.4);" onclick="openProjectInfo('stockpredictor')">
       <div class="sat-wing left"></div>
       <div class="sat-body"><i class="fas fa-money-check-alt"></i></div>
       <div class="sat-wing right"></div>
       <div class="sat-label">AI STOCK PREDICTOR</div>
     </div>
 
-    <div class="satellite-unit" style="--neon-color: #ff007f; --glow-color: rgba(255, 0, 127, 0.4);" onclick="openApp('bionicmouse')">
+    <div class="satellite-unit" style="--neon-color: #ff007f; --glow-color: rgba(255, 0, 127, 0.4);" onclick="openProjectInfo('bionicmouse')">
       <div class="sat-wing left"></div>
       <div class="sat-body"><i class="fas fa-hand-pointer"></i></div>
       <div class="sat-wing right"></div>
@@ -405,13 +400,14 @@
   <h2 class="hangar-title">OTHER PROJECTS</h2>
   
   <div class="satellite-belt">
-    <div class="satellite-unit" style="--neon-color: #ff9900; --glow-color: rgba(255, 153, 0, 0.4);" onclick="openApp('nutrition')">
+    <div class="satellite-unit" style="--neon-color: #ff9900; --glow-color: rgba(255, 153, 0, 0.4);" onclick="openProjectInfo('nutrition')">
       <div class="sat-wing left"></div>
       <div class="sat-body"><i class="fas fa-carrot"></i></div>
       <div class="sat-wing right"></div>
       <div class="sat-label">NUTRITION AI</div>
     </div>
 
+    <!-- External link keeps standard window.open -->
     <div class="satellite-unit" style="--neon-color: #ffffff; --glow-color: rgba(255, 255, 255, 0.4);" onclick="window.open('https://github.com/khwaja-gh', '_blank')">
       <div class="sat-wing left"></div>
       <div class="sat-body"><i class="fab fa-github"></i></div>
@@ -421,13 +417,13 @@
   </div>
 </div>
 
-<!-- TRANSPARENT PROJECT OVERVIEW MODAL -->
+<!-- DYNAMIC TRANSPARENT PROJECT OVERVIEW MODAL -->
 <div id="project-info-modal" class="modal-overlay hidden">
     <div class="glass-overview-card">
         <div class="glass-card-header">
             <div>
-                <span class="project-badge">SATELLITE BRIEFING</span>
-                <h2 id="modal-project-title">Enterprise Unified Business OS</h2>
+                <span id="modal-project-badge" class="project-badge">SATELLITE BRIEFING</span>
+                <h2 id="modal-project-title">Project Title</h2>
             </div>
             <button class="close-btn" onclick="closeProjectInfo()"><i class="fa-solid fa-xmark"></i></button>
         </div>
@@ -435,36 +431,26 @@
         <div class="glass-card-body">
             <div class="info-section">
                 <h3><i class="fa-solid fa-compass"></i> Why I Created This Project</h3>
-                <p id="modal-project-why">
-                    Modern enterprise analytics is fragmented across disconnected software. This project unifies data prep, visualization, and publishing into a single synchronized engine, removing the friction of context-switching.
-                </p>
+                <p id="modal-project-why">Motivation text goes here...</p>
             </div>
 
             <div class="info-section">
                 <h3><i class="fa-solid fa-bullseye"></i> Project Goal</h3>
-                <p id="modal-project-goal">
-                    Build a web OS that dynamically syncs an Excel-style data engine, an interactive BI presentation slide canvas, and a paginated report publisher—all driven by a real-time AI co-pilot.
-                </p>
+                <p id="modal-project-goal">Goal text goes here...</p>
             </div>
 
             <div class="info-grid">
                 <div class="info-section">
                     <h3><i class="fa-solid fa-screws-gutter"></i> Tools & Stack</h3>
                     <ul id="modal-project-tools">
-                        <li><b>Backend:</b> Python, FastAPI, Pandas, NumPy</li>
-                        <li><b>Frontend:</b> HTML5, CSS Glassmorphism, JS</li>
-                        <li><b>Graphics Engine:</b> Plotly.js, html2canvas, jsPDF</li>
-                        <li><b>AI Engine:</b> Google Gemini API</li>
+                        <!-- Populated via JS -->
                     </ul>
                 </div>
 
                 <div class="info-section">
                     <h3><i class="fa-solid fa-graduation-cap"></i> Academic Topics</h3>
                     <ul id="modal-project-academics">
-                        <li>Human-Computer Interaction (HCI)</li>
-                        <li>Gestalt Principles of Data Visualization</li>
-                        <li>Operations Research & BI Analytics</li>
-                        <li>Generative AI Data Normalization</li>
+                        <!-- Populated via JS -->
                     </ul>
                 </div>
             </div>
@@ -478,6 +464,7 @@
     </div>
 </div>
 
+<!-- APPLICATION CONTAINERS -->
 <div id="appContainer_spreadsheet" class="app-frame">
   <button class="close-hangar" onclick="closeApp('spreadsheet')">
     <i class="fas fa-chevron-left"></i> Orbit
@@ -506,7 +493,6 @@
   </div>
 </div>
 
-<!-- PRODUCTION APPLICATION CONTAINER: AI STOCK PREDICTOR -->
 <div id="appContainer_stockpredictor" class="app-frame">
   <button class="close-hangar" onclick="closeApp('stockpredictor')">
     <i class="fas fa-chevron-left"></i> Orbit
@@ -550,13 +536,11 @@
               <p>Poke Finger Forward (Left Click)</p>
               <button id="test-target" onclick="bionicTargetClicked()">Poke Here!</button>
           </div>
-
           <div class="play-card">
               <h3>2. RIGHT CLICK</h3>
               <p>Pinch Thumb + Middle Finger</p>
               <div id="rc-zone">Right Click Me</div>
           </div>
-
           <div class="play-card">
               <h3>3. DRAG & DROP</h3>
               <p>Hold Pinch Thumb + Index Finger</p>
@@ -564,7 +548,6 @@
                   <div id="draggable-box">Drag</div>
               </div>
           </div>
-
           <div class="play-card">
               <h3>4. SCROLL WHEEL</h3>
               <p>Hold Pinch Thumb + Ring & Move Hand Up/Down</p>
@@ -663,8 +646,71 @@ window.onpopstate = function(event) {
     closeOtherProjects();
 };
 
-// --- PROJECT INFO MODAL LOGIC ---
-function openProjectInfo() {
+// --- DYNAMIC PROJECT INFO MODAL LOGIC ---
+const projectData = {
+    spreadsheet: {
+        title: "Enterprise Unified Business OS",
+        badge: "SATELLITE BRIEFING",
+        why: "Modern enterprise analytics is fragmented across disconnected software. This project unifies data prep, visualization, and publishing into a single synchronized engine, removing the friction of context-switching.",
+        goal: "Build a web OS that dynamically syncs an Excel-style data engine, an interactive BI presentation slide canvas, and a paginated report publisher—all driven by a real-time AI co-pilot.",
+        tools: ["<b>Backend:</b> Python, FastAPI, Pandas, NumPy", "<b>Frontend:</b> HTML5, CSS Glassmorphism, JS", "<b>Graphics Engine:</b> Plotly.js, html2canvas, jsPDF", "<b>AI Engine:</b> Google Gemini API"],
+        academics: ["Human-Computer Interaction (HCI)", "Gestalt Principles of Data Visualization", "Operations Research & BI Analytics", "Generative AI Data Normalization"]
+    },
+    anomaly: {
+        title: "Predictive AI & Fraud Detection",
+        badge: "SECURITY PROTOCOL",
+        why: "Financial institutions and e-commerce platforms lose billions annually due to undetected anomalies and fraudulent transactions. Traditional rule-based systems are too slow and rigid to catch evolving patterns.",
+        goal: "Implement a hybrid anomaly detection architecture to instantly identify outliers in high-volume, imbalanced datasets with precision and computational speed.",
+        tools: ["<b>Core Logic:</b> Python, Scikit-Learn", "<b>Algorithms:</b> Isolation Forests, Autoencoders", "<b>Data Processing:</b> Pandas, NumPy", "<b>Deployment:</b> HuggingFace Spaces"],
+        academics: ["Machine Learning & Predictive Modeling", "Imbalanced Data Classification", "Cybersecurity & Threat Detection", "Statistical Outlier Analysis"]
+    },
+    stockpredictor: {
+        title: "AI Stock Volatility Predictor",
+        badge: "FINANCIAL MATRIX",
+        why: "Market volatility presents both immense risk and opportunity. Accurately forecasting tech sector trends requires moving beyond simple moving averages to incorporate complex machine learning algorithms.",
+        goal: "Conduct a comparative study of Machine Learning models (Random Forest vs. Linear Regression) to provide real-time, actionable stock price forecasting.",
+        tools: ["<b>Engine:</b> Python, Streamlit", "<b>Modeling:</b> Scikit-Learn, TensorFlow", "<b>Data Fetching:</b> yfinance API", "<b>Analytics:</b> MATLAB, Pandas"],
+        academics: ["Quantitative Finance & Algorithmic Trading", "Time-Series Forecasting", "Econometrics", "Comparative Machine Learning"]
+    },
+    bionicmouse: {
+        title: "Bionic Mouse Interface",
+        badge: "HCI EXPERIMENT",
+        why: "Traditional hardware interfaces (mice/keyboards) limit accessibility and spatial interaction in 3D or sterile environments. There is a critical need for touchless, neural-mapped visual controls.",
+        goal: "Develop a real-time, webcam-based hand tracking system that translates 3D spatial hand gestures into precise 2D screen coordinates and interaction events (clicks, drags, scrolls).",
+        tools: ["<b>Vision Engine:</b> Google MediaPipe Hands", "<b>Hardware API:</b> HTML5 WebRTC", "<b>Logic:</b> Vanilla JavaScript (ES6+)", "<b>UI:</b> CSS3 Animations & DOM Manipulation"],
+        academics: ["Human-Computer Interaction (HCI)", "Computer Vision & Edge AI", "Kinematics & Spatial Mapping", "Accessibility Engineering"]
+    },
+    nutrition: {
+        title: "Neural Nutrition Planner",
+        badge: "HEALTH INFORMATICS",
+        why: "Generic diet plans fail because they don't adapt to real-time metabolic needs or specific user preferences. AI can bridge the gap between nutritional science and daily habit formation.",
+        goal: "Deploy an AI-driven planner that synthesizes user inputs into hyper-personalized, medically sound nutritional matrices and optimized daily meal trajectories.",
+        tools: ["<b>Backend:</b> Python, HuggingFace Inference", "<b>Frontend:</b> Streamlit / Gradio UI", "<b>Data Base:</b> Nutritional Fact Matrics", "<b>AI:</b> NLP Prompt Engineering"],
+        academics: ["Health Informatics & Bio-statistics", "Natural Language Processing (NLP)", "Optimization Algorithms", "Behavioral Data Science"]
+    }
+};
+
+let currentPendingApp = '';
+
+function openProjectInfo(appId) {
+    const data = projectData[appId];
+    if (!data) { openApp(appId); return; } // Fallback if no data exists
+
+    currentPendingApp = appId;
+
+    document.getElementById('modal-project-badge').innerText = data.badge;
+    document.getElementById('modal-project-title').innerText = data.title;
+    document.getElementById('modal-project-why').innerHTML = data.why;
+    document.getElementById('modal-project-goal').innerHTML = data.goal;
+
+    const toolsList = document.getElementById('modal-project-tools');
+    toolsList.innerHTML = '';
+    data.tools.forEach(tool => { toolsList.innerHTML += `<li>${tool}</li>`; });
+
+    const academicsList = document.getElementById('modal-project-academics');
+    academicsList.innerHTML = '';
+    data.academics.forEach(topic => { academicsList.innerHTML += `<li>${topic}</li>`; });
+
     document.getElementById('project-info-modal').classList.remove('hidden');
 }
 
@@ -674,7 +720,7 @@ function closeProjectInfo() {
 
 function enterProject() {
     closeProjectInfo();
-    openApp('spreadsheet');
+    if(currentPendingApp) openApp(currentPendingApp);
 }
 
 // --- BIONIC MOUSE LOGIC (PLAYGROUND + GESTURES) ---
@@ -692,7 +738,6 @@ function bionicTargetClicked() {
 }
 
 function initBionicMouse() {
-    // Setup Right-Click Listener
     document.getElementById('rc-zone').addEventListener('contextmenu', function(e) {
         e.preventDefault(); 
         this.style.background = 'rgba(255, 0, 127, 0.2)';
