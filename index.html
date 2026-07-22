@@ -201,6 +201,138 @@
   #scroll-zone::-webkit-scrollbar { width: 8px; }
   #scroll-zone::-webkit-scrollbar-track { background: transparent; }
   #scroll-zone::-webkit-scrollbar-thumb { background: #00ffcc; border-radius: 4px; }
+
+  /* --- PROJECT INFO MODAL STYLES --- */
+  .modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.7);
+      display: flex; justify-content: center; align-items: center;
+      z-index: 100000; backdrop-filter: blur(5px);
+  }
+  .hidden { display: none !important; }
+  
+  .glass-overview-card {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(14, 165, 233, 0.3);
+      border-radius: 16px;
+      width: 680px;
+      max-width: 90vw;
+      max-height: 85vh;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(14, 165, 233, 0.15);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      color: white;
+      animation: fadeInScale 0.3s ease-out;
+  }
+
+  @keyframes fadeInScale {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+  }
+
+  .glass-card-header {
+      padding: 20px 25px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      background: rgba(0, 0, 0, 0.2);
+  }
+
+  .project-badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      color: #0ea5e9;
+      text-transform: uppercase;
+      font-family: 'Outfit', sans-serif;
+  }
+
+  .glass-card-header h2 {
+      margin-top: 4px;
+      margin-bottom: 0;
+      font-size: 20px;
+      font-family: 'Orbitron', sans-serif;
+      color: #ffffff;
+  }
+  
+  .glass-card-header .close-btn {
+      background: transparent; border: none; color: #cbd5e1; font-size: 20px; cursor: pointer; transition: 0.2s;
+  }
+  .glass-card-header .close-btn:hover { color: #ff007f; }
+
+  .glass-card-body {
+      padding: 25px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      font-family: 'Outfit', sans-serif;
+  }
+
+  .info-section h3 {
+      font-size: 13px;
+      color: #0ea5e9;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+      margin-top: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+  }
+
+  .info-section p, .info-section ul {
+      font-size: 13px;
+      line-height: 1.6;
+      color: #cbd5e1;
+      margin: 0;
+  }
+
+  .info-section ul {
+      list-style-type: none;
+      padding-left: 0;
+  }
+
+  .info-section ul li {
+      position: relative;
+      padding-left: 15px;
+      margin-bottom: 5px;
+  }
+
+  .info-section ul li::before {
+      content: "•";
+      color: #0ea5e9;
+      position: absolute;
+      left: 0;
+      font-weight: bold;
+  }
+
+  .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+  }
+
+  .glass-card-footer {
+      padding: 15px 25px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.2);
+      display: flex;
+      justify-content: flex-end;
+  }
+  
+  .enter-btn {
+      background: #0ea5e9; color: white; border: none; padding: 10px 24px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.2s; font-family: 'Outfit', sans-serif;
+  }
+  .enter-btn:hover { background: #0284c7; }
+
+  @media (max-width: 600px) {
+      .info-grid { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
@@ -233,11 +365,12 @@
   <h2 class="hangar-title">SELECT TOOL MODULE</h2>
   
   <div class="satellite-belt">
-    <div class="satellite-unit" style="--neon-color: #0aff68; --glow-color: rgba(10, 255, 104, 0.4);" onclick="openApp('spreadsheet')">
+    <!-- CHANGED FROM openApp('spreadsheet') TO openProjectInfo() -->
+    <div class="satellite-unit" style="--neon-color: #0aff68; --glow-color: rgba(10, 255, 104, 0.4);" onclick="openProjectInfo()">
       <div class="sat-wing left"></div>
       <div class="sat-body"><i class="fas fa-table"></i></div>
       <div class="sat-wing right"></div>
-      <div class="sat-label">AI SPREADSHEET</div>
+      <div class="sat-label">ENTERPRISE OS</div>
     </div>
 
     <div class="satellite-unit" style="--neon-color: #bc13fe; --glow-color: rgba(188, 19, 254, 0.4);" onclick="openApp('anomaly')">
@@ -286,6 +419,63 @@
       <div class="sat-label">GITHUB REPO</div>
     </div>
   </div>
+</div>
+
+<!-- TRANSPARENT PROJECT OVERVIEW MODAL -->
+<div id="project-info-modal" class="modal-overlay hidden">
+    <div class="glass-overview-card">
+        <div class="glass-card-header">
+            <div>
+                <span class="project-badge">SATELLITE BRIEFING</span>
+                <h2 id="modal-project-title">Enterprise Unified Business OS</h2>
+            </div>
+            <button class="close-btn" onclick="closeProjectInfo()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        
+        <div class="glass-card-body">
+            <div class="info-section">
+                <h3><i class="fa-solid fa-compass"></i> Why I Created This Project</h3>
+                <p id="modal-project-why">
+                    Modern enterprise analytics is fragmented across disconnected software. This project unifies data prep, visualization, and publishing into a single synchronized engine, removing the friction of context-switching.
+                </p>
+            </div>
+
+            <div class="info-section">
+                <h3><i class="fa-solid fa-bullseye"></i> Project Goal</h3>
+                <p id="modal-project-goal">
+                    Build a web OS that dynamically syncs an Excel-style data engine, an interactive BI presentation slide canvas, and a paginated report publisher—all driven by a real-time AI co-pilot.
+                </p>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-section">
+                    <h3><i class="fa-solid fa-screws-gutter"></i> Tools & Stack</h3>
+                    <ul id="modal-project-tools">
+                        <li><b>Backend:</b> Python, FastAPI, Pandas, NumPy</li>
+                        <li><b>Frontend:</b> HTML5, CSS Glassmorphism, JS</li>
+                        <li><b>Graphics Engine:</b> Plotly.js, html2canvas, jsPDF</li>
+                        <li><b>AI Engine:</b> Google Gemini API</li>
+                    </ul>
+                </div>
+
+                <div class="info-section">
+                    <h3><i class="fa-solid fa-graduation-cap"></i> Academic Topics</h3>
+                    <ul id="modal-project-academics">
+                        <li>Human-Computer Interaction (HCI)</li>
+                        <li>Gestalt Principles of Data Visualization</li>
+                        <li>Operations Research & BI Analytics</li>
+                        <li>Generative AI Data Normalization</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card-footer">
+            <button class="enter-btn" onclick="enterProject()">
+                Enter Project Workspace <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
 </div>
 
 <div id="appContainer_spreadsheet" class="app-frame">
@@ -472,6 +662,20 @@ window.onpopstate = function(event) {
     closeHangar(); 
     closeOtherProjects();
 };
+
+// --- PROJECT INFO MODAL LOGIC ---
+function openProjectInfo() {
+    document.getElementById('project-info-modal').classList.remove('hidden');
+}
+
+function closeProjectInfo() {
+    document.getElementById('project-info-modal').classList.add('hidden');
+}
+
+function enterProject() {
+    closeProjectInfo();
+    openApp('spreadsheet');
+}
 
 // --- BIONIC MOUSE LOGIC (PLAYGROUND + GESTURES) ---
 let bionicCamera = null;
