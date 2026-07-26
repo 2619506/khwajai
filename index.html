@@ -400,6 +400,13 @@
   <h2 class="hangar-title">OTHER PROJECTS</h2>
   
   <div class="satellite-belt">
+    <div class="satellite-unit" style="--neon-color: #ff3333; --glow-color: rgba(255, 51, 51, 0.4);" onclick="openProjectInfo('retronews')">
+      <div class="sat-wing left"></div>
+      <div class="sat-body"><i class="fas fa-tv"></i></div>
+      <div class="sat-wing right"></div>
+      <div class="sat-label">RETRO TV</div>
+    </div>
+
     <div class="satellite-unit" style="--neon-color: #ff9900; --glow-color: rgba(255, 153, 0, 0.4);" onclick="openProjectInfo('nutrition')">
       <div class="sat-wing left"></div>
       <div class="sat-body"><i class="fas fa-carrot"></i></div>
@@ -569,6 +576,20 @@
   </div>
 </div>
 
+<div id="appContainer_retronews" class="app-frame">
+  <button class="close-hangar" onclick="closeApp('retronews')">
+    <i class="fas fa-chevron-left"></i> Orbit
+  </button>
+  <div class="iframe-wrapper">
+    <div class="iframe-loader"></div>
+    <div class="loading-text">Tuning into Broadcast...</div>
+    <iframe src="https://2619506.github.io/news_reports/" 
+            style="width:100%; height:100%; border:none; position:relative; z-index:20;" 
+            allow="clipboard-read; clipboard-write; fullscreen;"
+            onload="this.previousElementSibling.style.display='none'; this.previousElementSibling.previousElementSibling.style.display='none';"></iframe>
+  </div>
+</div>
+
 <script>
 // --- NAVIGATION LOGIC ---
 let activeHangar = 'hangarOverlay'; 
@@ -638,6 +659,7 @@ window.onpopstate = function(event) {
     document.getElementById('appContainer_stockpredictor').style.display = 'none'; 
     document.getElementById('appContainer_nutrition').style.display = 'none'; 
     document.getElementById('appContainer_bionicmouse').style.display = 'none';
+    document.getElementById('appContainer_retronews').style.display = 'none';
     
     if(bionicCamera) bionicCamera.stop();
     document.getElementById('virtual-cursor').style.display = 'none';
@@ -687,6 +709,14 @@ const projectData = {
         goal: "Deploy an AI-driven planner that synthesizes user inputs into hyper-personalized, medically sound nutritional matrices and optimized daily meal trajectories.",
         tools: ["<b>Backend:</b> Python, HuggingFace Inference", "<b>Frontend:</b> Streamlit / Gradio UI", "<b>Data Base:</b> Nutritional Fact Matrics", "<b>AI:</b> NLP Prompt Engineering"],
         academics: ["Health Informatics & Bio-statistics", "Natural Language Processing (NLP)", "Optimization Algorithms", "Behavioral Data Science"]
+    },
+    retronews: {
+        title: "Retro News Network",
+        badge: "WEB BROADCAST",
+        why: "To create an ambient, always-on data visualization tool that blends modern API data fetching with a nostalgic 2000s CRT television aesthetic.",
+        goal: "Build a static web application that autonomously fetches, parses, and displays live RSS news feeds from major global publishers on a 10-second loop.",
+        tools: ["<b>Frontend:</b> HTML5, CSS3 CRT Effects", "<b>Logic:</b> Vanilla JavaScript", "<b>Data:</b> REST APIs & RSS Feeds", "<b>Hosting:</b> GitHub Pages"],
+        academics: ["Asynchronous API Integration", "CSS Pseudo-elements", "DOM Manipulation", "Automated State Management"]
     }
 };
 
