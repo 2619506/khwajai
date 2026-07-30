@@ -13,10 +13,14 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;600&display=swap');
 
-  /* --- ENHANCED PLANETARY REALISM --- */
+  /* --- ENHANCED PLANETARY REALISM (Deep Areas & High Surfaces) --- */
   .earth-surface {
-      background: radial-gradient(circle at 35% 35%, #4facfe 0%, #34a853 35%, #1b5b97 60%, #0a2e5c 85%, #05162b 100%) !important;
-      box-shadow: inset -25px -25px 45px rgba(0,0,0,0.8), 0 0 50px rgba(79, 172, 254, 0.4) !important;
+      /* Added atmospheric glow, varied landmasses, and deep ocean trenches */
+      background: 
+          radial-gradient(circle at 20% 30%, rgba(255,255,255,0.15) 0%, transparent 20%), /* High cloud/reflection */
+          radial-gradient(circle at 70% 60%, rgba(0,0,0,0.3) 0%, transparent 30%), /* Deep trench */
+          radial-gradient(circle at 35% 35%, #4facfe 0%, #34a853 35%, #1b5b97 60%, #0a2e5c 85%, #05162b 100%) !important;
+      box-shadow: inset -25px -25px 45px rgba(0,0,0,0.9), inset 10px 10px 30px rgba(255,255,255,0.2), 0 0 50px rgba(79, 172, 254, 0.4) !important;
       border: none !important;
   }
   
@@ -29,61 +33,35 @@
   }
 
   .moon-surface {
-      background: radial-gradient(circle at 30% 30%, #e0e0e0, #8a8a8a, #363636) !important;
-      box-shadow: inset -15px -15px 20px rgba(0,0,0,0.9), 0 0 10px rgba(255,255,255,0.1) !important;
+      /* Added craters and bright impact zones */
+      background: 
+          radial-gradient(circle at 20% 30%, rgba(0,0,0,0.5) 0%, transparent 15%), /* Crater */
+          radial-gradient(circle at 70% 50%, rgba(0,0,0,0.4) 0%, transparent 10%), /* Crater */
+          radial-gradient(circle at 40% 70%, rgba(255,255,255,0.3) 0%, transparent 15%), /* High surface */
+          radial-gradient(circle at 30% 30%, #e0e0e0, #8a8a8a, #363636) !important;
+      box-shadow: inset -15px -15px 20px rgba(0,0,0,0.9), inset 5px 5px 10px rgba(255,255,255,0.4), 0 0 10px rgba(255,255,255,0.1) !important;
       border: none !important;
       color: #fff !important;
       text-shadow: 0 2px 4px rgba(0,0,0,0.9) !important;
   }
 
-  /* --- SUN / PORTFOLIO MESSAGE (MOVED DOWN) --- */
   .sun-surface {
-      background: radial-gradient(circle at 30% 30%, #ffffff 0%, #ffde00 20%, #ff7300 60%, #b32400 100%) !important;
-      box-shadow: 0 0 60px #ff7300, 0 0 120px #ffde00, inset -10px -10px 20px rgba(0,0,0,0.2) !important;
+      /* Added turbulent plasma spots */
+      background: 
+          radial-gradient(circle at 40% 40%, rgba(255,255,255,0.4) 0%, transparent 20%),
+          radial-gradient(circle at 70% 30%, rgba(179,36,0,0.5) 0%, transparent 25%),
+          radial-gradient(circle at 30% 30%, #ffffff 0%, #ffde00 20%, #ff7300 60%, #b32400 100%) !important;
+      box-shadow: 0 0 60px #ff7300, 0 0 120px #ffde00, inset -10px -10px 20px rgba(0,0,0,0.2), inset 10px 10px 20px rgba(255,255,255,0.5) !important;
       border: none !important;
       color: #000 !important;
       font-weight: 900 !important;
+      font-size: 13px !important;
   }
 
-  .sun-message {
-      position: fixed;
-      top: 180px; /* Moved down below the Sun */
-      right: 50px; /* Aligned with standard Sun position */
-      background: rgba(30, 15, 0, 0.85);
-      border: 1px solid #ff7300;
-      box-shadow: 0 0 20px rgba(255, 115, 0, 0.6), inset 0 0 15px rgba(255, 222, 0, 0.3);
-      padding: 10px 15px;
-      border-radius: 6px;
-      text-align: center;
-      z-index: 20;
-      backdrop-filter: blur(5px);
-      font-family: 'Orbitron', sans-serif;
-      font-size: 11px;
-      color: #ffde00;
-      letter-spacing: 2px;
-      pointer-events: none;
-      animation: pulseSunMsg 3s infinite alternate;
-  }
-
-  .sun-message span {
-      color: #ffffff;
-      font-weight: bold;
-      font-size: 13px;
-      display: block;
-      margin-bottom: 3px;
-      text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
-  }
-
-  @keyframes pulseSunMsg {
-      from { box-shadow: 0 0 15px rgba(255, 115, 0, 0.5), inset 0 0 10px rgba(255, 222, 0, 0.2); }
-      to { box-shadow: 0 0 30px rgba(255, 115, 0, 0.8), inset 0 0 20px rgba(255, 222, 0, 0.5); }
-  }
-
-
-  /* --- MARS SYSTEM (Interactive Clickable Area) --- */
+  /* --- MARS SYSTEM --- */
   #mars-system {
       position: fixed;
-      top: 32%; /* Balanced perfectly between Sun and Earth's right Moon */
+      top: 32%; 
       right: 22%;
       z-index: 900000;
       display: flex;
@@ -97,8 +75,12 @@
       width: 60px;
       height: 60px;
       border-radius: 50%;
-      background: radial-gradient(circle at 30% 30%, #ff9c7a, #c1440e, #3a0f00);
-      box-shadow: inset -18px -18px 25px rgba(0,0,0,0.9), 0 0 25px rgba(193, 68, 14, 0.4);
+      /* Added Martian craters and valleys */
+      background: 
+          radial-gradient(circle at 25% 35%, rgba(0,0,0,0.4) 0%, transparent 20%),
+          radial-gradient(circle at 60% 70%, rgba(255,255,255,0.2) 0%, transparent 25%),
+          radial-gradient(circle at 30% 30%, #ff9c7a, #c1440e, #3a0f00);
+      box-shadow: inset -18px -18px 25px rgba(0,0,0,0.9), inset 5px 5px 15px rgba(255,156,122,0.4), 0 0 25px rgba(193, 68, 14, 0.4);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -111,9 +93,9 @@
   }
 
   .mars-planet .pulse-icon {
-      background: rgba(15, 23, 42, 0.8);
-      color: #ff9c7a;
-      border: 1px solid #ff9c7a;
+      background: rgba(30, 15, 0, 0.85);
+      color: #ffde00;
+      border: 1px solid #ff7300;
       border-radius: 50%;
       width: 20px; 
       height: 20px;
@@ -123,16 +105,17 @@
       font-weight: 900;
       font-size: 13px;
       font-family: 'Orbitron', sans-serif;
-      box-shadow: 0 0 10px rgba(255, 156, 122, 0.5);
+      box-shadow: 0 0 10px rgba(255, 115, 0, 0.6);
       animation: popMarsAttention 2s infinite;
   }
 
+  /* Visitor Popup styled like the old Sandbox Message */
   .mars-popup-msg {
       position: absolute;
       top: 75px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid #c1440e;
-      color: #cbd5e1;
+      background: rgba(30, 15, 0, 0.85);
+      border: 1px solid #ff7300;
+      color: #ffde00;
       padding: 15px 20px;
       border-radius: 12px;
       font-family: 'Outfit', sans-serif;
@@ -140,7 +123,7 @@
       width: 280px;
       text-align: left;
       backdrop-filter: blur(8px);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 20px rgba(193, 68, 14, 0.3);
+      box-shadow: 0 0 20px rgba(255, 115, 0, 0.6), inset 0 0 15px rgba(255, 222, 0, 0.3);
       /* Hidden state */
       opacity: 0;
       transform: translateY(-15px);
@@ -155,17 +138,18 @@
   }
 
   .mars-popup-msg strong {
-      color: #ff9c7a;
+      color: #ffffff;
       letter-spacing: 1px;
       display: flex;
       align-items: center;
       gap: 8px;
       margin-bottom: 5px;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
   }
 
   @keyframes popMarsAttention {
-      0%, 100% { transform: scale(1); box-shadow: 0 0 5px rgba(255, 156, 122, 0.4); }
-      50% { transform: scale(1.1); box-shadow: 0 0 15px rgba(255, 156, 122, 0.9); }
+      0%, 100% { transform: scale(1); box-shadow: 0 0 5px rgba(255, 115, 0, 0.4); }
+      50% { transform: scale(1.1); box-shadow: 0 0 15px rgba(255, 115, 0, 0.9); }
   }
 
   @keyframes floatMarsNearSun {
@@ -175,7 +159,7 @@
   }
 
 
-  /* --- SATURN SYSTEM (TOP LEFT - CLEAN FACE) --- */
+  /* --- SATURN SYSTEM (Interactive Other Projects) --- */
   #saturn-system {
       position: fixed;
       top: 100px;
@@ -184,6 +168,12 @@
       height: 120px;
       z-index: 1000000;
       perspective: 1000px;
+      cursor: pointer;
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  #saturn-system:hover {
+      transform: scale(1.05);
   }
 
   .saturn-assembly {
@@ -199,8 +189,11 @@
       top: 0; left: 0;
       width: 120px; height: 120px;
       border-radius: 50%;
-      background: radial-gradient(circle at 30% 30%, #ebd39c, #d1a85b, #4a3311);
-      box-shadow: inset -25px -25px 35px rgba(0,0,0,0.9), 0 0 35px rgba(209, 168, 91, 0.4);
+      /* Added atmospheric banding */
+      background: 
+          linear-gradient(to bottom, rgba(255,255,255,0.1) 10%, transparent 20%, rgba(0,0,0,0.2) 50%, transparent 60%),
+          radial-gradient(circle at 30% 30%, #ebd39c, #d1a85b, #4a3311);
+      box-shadow: inset -25px -25px 35px rgba(0,0,0,0.9), inset 10px 10px 20px rgba(255,255,255,0.3), 0 0 35px rgba(209, 168, 91, 0.4);
       transform: rotateX(-72deg); 
       z-index: 2;
   }
@@ -221,35 +214,8 @@
       z-index: 1;
   }
 
-  .saturn-ring-text {
-      position: absolute;
-      top: -115px; left: -115px;
-      width: 350px; height: 350px;
-      transform-style: preserve-3d;
-      z-index: 3;
-  }
 
-  .saturn-ring-text svg {
-      width: 100%; height: 100%;
-      animation: spinRingText 30s linear infinite;
-  }
-
-  .saturn-ring-text text {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 16px;
-      fill: #000000;
-      font-weight: 900;
-      letter-spacing: 4px;
-      opacity: 0.85; 
-  }
-
-  @keyframes spinRingText {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-  }
-
-
-  /* --- JUPITER SECURITY NOTIFICATION (BOTTOM LEFT) --- */
+  /* --- JUPITER SECURITY NOTIFICATION --- */
   #jupiter-security {
       position: fixed;
       bottom: 40px;
@@ -306,8 +272,11 @@
       width: 85px;
       height: 85px;
       border-radius: 50%;
-      background: linear-gradient(160deg, #b8a696 0%, #d3c0a8 15%, #c8977a 30%, #e0c8b0 45%, #a67c5a 60%, #d8c1a6 75%, #b2957b 90%);
-      box-shadow: inset -25px -25px 35px rgba(0,0,0,0.9), 0 0 25px rgba(200, 151, 122, 0.4);
+      /* Added deep gas storm textures */
+      background: 
+          radial-gradient(circle at 60% 40%, rgba(255,255,255,0.15) 0%, transparent 15%),
+          linear-gradient(160deg, #b8a696 0%, #d3c0a8 15%, #c8977a 30%, #e0c8b0 45%, #a67c5a 60%, #d8c1a6 75%, #b2957b 90%);
+      box-shadow: inset -25px -25px 35px rgba(0,0,0,0.9), inset 10px 10px 20px rgba(255,255,255,0.2), 0 0 25px rgba(200, 151, 122, 0.4);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -328,7 +297,6 @@
   @media (max-width: 768px) {
       #saturn-system { transform: scale(0.5); top: 50px; left: 50px; }
       #mars-system { transform: scale(0.6); top: 25%; right: 15%; }
-      .sun-message { top: 25%; right: 5%; transform: scale(0.8); }
       #jupiter-security { transform: scale(0.7); bottom: 20px; left: 20px; }
   }
 
@@ -652,15 +620,10 @@
 </head>
 <body>
 
-<!-- SUN AND SANDBOX MESSAGE (MOVED DOWN) -->
-<div class="portfolio-orbit sun-surface" onclick="window.open('/portfolio/', '_self')">Portfolio</div>
-<div class="sun-message">
-    <span>SECURE SANDBOX</span>
-    READ-ONLY ACADEMIC PORTFOLIO
-</div>
+<!-- SUN / MY PORTFOLIO -->
+<div class="portfolio-orbit sun-surface" onclick="window.open('/portfolio/', '_self')">My Portfolio</div>
 
-<!-- MARS SYSTEM (Interactive Popup) -->
-<!-- Adding a simple inline toggle class script to reveal the message -->
+<!-- MARS SYSTEM (Interactive Popup styled like old sandbox message) -->
 <div id="mars-system" onclick="this.querySelector('.mars-popup-msg').classList.toggle('active')">
     <div class="mars-planet">
         <div class="pulse-icon">!</div>
@@ -671,21 +634,11 @@
     </div>
 </div>
 
-<!-- SATURN SYSTEM (Top Left - Clean Face + Black Ring Text) -->
-<div id="saturn-system">
+<!-- SATURN SYSTEM (Interactive - Opens Other Projects) -->
+<div id="saturn-system" onclick="openOtherProjects()" title="View Other Projects">
     <div class="saturn-assembly">
         <div class="saturn-planet"></div>
         <div class="saturn-visual-rings"></div>
-        <div class="saturn-ring-text">
-            <svg viewBox="0 0 350 350">
-                <path id="ring-path" d="M 175, 175 m -130, 0 a 130,130 0 1,1 260,0 a 130,130 0 1,1 -260,0" fill="none" />
-                <text>
-                    <textPath href="#ring-path" startOffset="0">
-                        KHWAJA AI APPS &nbsp; • &nbsp; KHWAJA AI APPS &nbsp; • &nbsp; KHWAJA AI APPS &nbsp; • &nbsp; KHWAJA AI APPS &nbsp; • &nbsp; 
-                    </textPath>
-                </text>
-            </svg>
-        </div>
     </div>
 </div>
 
@@ -704,9 +657,8 @@
 <div id="virtual-cursor"></div>
 
 <div class="wheel earth-surface" id="wheel" onclick="showHome()">
+  <!-- Main AI & ML Projects Moon -->
   <div class="satellite moon-surface pos-left" onclick="event.stopPropagation(); openHangar()">AI & ML<br>Projects</div>
-  
-  <div class="satellite moon-surface pos-right" onclick="event.stopPropagation(); openOtherProjects()">Other<br>Projects</div>
   
   <div class="center-content" id="centerContent">
     <h1 id="ccTitle">KHWAJA AI APPS</h1>
