@@ -13,7 +13,100 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;600&display=swap');
 
-  /* --- MARS SECURITY PLANET STYLES --- */
+  /* --- JUPITER SECURITY NOTIFICATION (TOP LEFT) --- */
+  #jupiter-security {
+      position: fixed;
+      top: 30px;
+      left: 30px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      z-index: 1000000;
+  }
+
+  .jupiter-planet {
+      width: 75px;
+      height: 75px;
+      border-radius: 50%;
+      /* Inner shadows create the spherical 3D shape independent of the moving belts */
+      box-shadow: inset -15px -15px 25px rgba(0,0,0,0.85), inset 5px 5px 15px rgba(255,255,255,0.2), 0 0 25px rgba(211, 156, 126, 0.4);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      animation: floatJupiter 8s ease-in-out infinite;
+  }
+
+  /* The moving atmospheric belts and red spot */
+  .jupiter-texture {
+      position: absolute;
+      top: 0; 
+      left: 0;
+      width: 200%; /* Double width to allow seamless scrolling */
+      height: 100%;
+      background: 
+          /* Great Red Spots (Placed twice for the seamless loop) */
+          radial-gradient(ellipse 12px 6px at 25% 65%, #9e4324 0%, transparent 100%),
+          radial-gradient(ellipse 12px 6px at 75% 65%, #9e4324 0%, transparent 100%),
+          /* Horizontal Atmospheric Bands */
+          linear-gradient(to bottom,
+              #b09581 0%,
+              #d3bfae 15%,
+              #855438 30%,
+              #e8d3c1 45%,
+              #6e3a1f 60%,
+              #cfb5a1 75%,
+              #916143 85%,
+              #b09581 100%
+          );
+      animation: rotateJupiter 20s linear infinite;
+      z-index: -1; /* Keeps it under the inner box-shadow of the parent */
+  }
+
+  @keyframes floatJupiter {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+      100% { transform: translateY(0px); }
+  }
+
+  @keyframes rotateJupiter {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+  }
+
+  .jupiter-message {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid #d3bfae;
+      color: #cbd5e1;
+      padding: 15px 20px;
+      border-radius: 12px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.85rem;
+      max-width: 350px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 15px rgba(211, 156, 126, 0.2);
+      /* Hidden state */
+      opacity: 0;
+      transform: translateX(-30px);
+      pointer-events: none;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .jupiter-message strong {
+      color: #e8d3c1;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 5px;
+  }
+
+  #jupiter-security:hover .jupiter-message {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: all;
+  }
+
+  /* --- MARS SECURITY PLANET STYLES (BOTTOM LEFT) --- */
   #mars-security {
       position: fixed;
       bottom: 30px;
@@ -28,21 +121,35 @@
       width: 70px;
       height: 70px;
       border-radius: 50%;
-      /* Mars colors and 3D shadow effect */
-      background: radial-gradient(circle at 30% 30%, #ff9c7a, #c1440e, #5a1800);
-      box-shadow: inset -10px -10px 20px rgba(0,0,0,0.6), 0 0 25px rgba(193, 68, 14, 0.5);
+      /* Upgraded Mars colors and deep 3D shadow effect */
+      background: radial-gradient(circle at 35% 35%, #f1784b 0%, #b8431e 45%, #4a1300 85%);
+      box-shadow: inset -12px -12px 20px rgba(0,0,0,0.85), inset 3px 3px 10px rgba(255,255,255,0.1), 0 0 25px rgba(193, 68, 14, 0.4);
       display: flex;
       justify-content: center;
       align-items: center;
       cursor: pointer;
       animation: floatMars 6s ease-in-out infinite;
       position: relative;
+      overflow: hidden;
+  }
+
+  /* Adding craters and surface texture to Mars */
+  .mars-texture {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: 
+          radial-gradient(circle at 60% 40%, rgba(50, 10, 0, 0.3) 0%, transparent 15%),
+          radial-gradient(circle at 20% 70%, rgba(50, 10, 0, 0.4) 0%, transparent 20%),
+          radial-gradient(circle at 70% 80%, rgba(50, 10, 0, 0.25) 0%, transparent 10%);
+      mix-blend-mode: multiply;
+      z-index: 1;
   }
   
   .mars-planet i {
-      color: rgba(255, 255, 255, 0.8);
+      color: rgba(255, 255, 255, 0.85);
       font-size: 24px;
-      text-shadow: 0 0 10px rgba(255,255,255,0.5);
+      text-shadow: 0 0 10px rgba(0,0,0,0.8);
+      z-index: 2;
   }
 
   @keyframes floatMars {
@@ -92,7 +199,13 @@
           align-items: flex-start;
           gap: 10px;
       }
-      .mars-message { max-width: calc(100vw - 40px); }
+      #jupiter-security {
+          top: 15px; left: 15px;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+      }
+      .mars-message, .jupiter-message { max-width: calc(100vw - 40px); }
   }
 
   /* --- BIONIC MOUSE BASE STYLES --- */
@@ -415,9 +528,21 @@
 </head>
 <body>
 
-<!-- NEW FLOATING MARS SECURITY NOTIFICATION -->
+<!-- NEW JUPITER NOTIFICATION (TOP LEFT) -->
+<div id="jupiter-security">
+    <div class="jupiter-planet">
+        <div class="jupiter-texture"></div>
+    </div>
+    <div class="jupiter-message">
+        <strong><i class="fas fa-user-astronaut"></i> PORTFOLIO STATUS:</strong> 
+        Note to visitors: This environment is a secure, sandbox portfolio designed solely for showcasing academic and development projects.
+    </div>
+</div>
+
+<!-- FLOATING MARS SECURITY NOTIFICATION (BOTTOM LEFT) -->
 <div id="mars-security">
     <div class="mars-planet">
+        <div class="mars-texture"></div>
         <i class="fas fa-shield-halved"></i>
     </div>
     <div class="mars-message">
@@ -439,8 +564,7 @@
     <h1 id="ccTitle">KHWAJA AI APPS</h1>
     <p id="ccText">
       <b>Individual Data Scientist & Ethical AI App Developer</b><br>
-      Blending an MSc in Business Analytics & Finance knowledge with practical Python development and operational leadership. I transition complex theoretical models into functional, end-to-end applications. From designing real-time anomaly detection systems to automating reporting workflows, I specialize in translating data into resilient, actionable strategies. My core technical stack includes Python, MATLAB, Scikit-Learn, TensorFlow, SQL, and React integration.<br><br>
-      <span style="font-size: 0.75rem; color: #0ea5e9; font-style: italic;">Note to visitors: This environment is a secure, sandbox portfolio designed solely for showcasing academic and development projects.</span>
+      Blending an MSc in Business Analytics & Finance knowledge with practical Python development and operational leadership. I transition complex theoretical models into functional, end-to-end applications. From designing real-time anomaly detection systems to automating reporting workflows, I specialize in translating data into resilient, actionable strategies. My core technical stack includes Python, MATLAB, Scikit-Learn, TensorFlow, SQL, and React integration.
     </p>
   </div>
 </div>
@@ -1054,8 +1178,7 @@ function showHome(){
     <h1 id="ccTitle">KHWAJA AI</h1>
     <p id="ccText">
       <b>Data Scientist & AI Developer</b><br>
-      Blending an MSc in Business Analytics & Finance with practical Python development and operational leadership. I transition complex theoretical models into functional, end-to-end applications. From designing real-time anomaly detection systems to automating reporting workflows, I specialize in translating data into resilient, actionable strategies. My core technical stack includes Python, Scikit-Learn, TensorFlow, SQL, and React integration.<br><br>
-      <span style="font-size: 0.75rem; color: #0ea5e9; font-style: italic;">Note to visitors: This environment is a secure, sandbox portfolio designed solely for showcasing academic and development projects.</span>
+      Blending an MSc in Business Analytics & Finance with practical Python development and operational leadership. I transition complex theoretical models into functional, end-to-end applications. From designing real-time anomaly detection systems to automating reporting workflows, I specialize in translating data into resilient, actionable strategies. My core technical stack includes Python, Scikit-Learn, TensorFlow, SQL, and React integration.
     </p>`;
 }
 
