@@ -13,26 +13,86 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;600&display=swap');
 
-  /* --- SECURITY BANNER STYLES --- */
-  #security-banner {
+  /* --- MARS SECURITY PLANET STYLES --- */
+  #mars-security {
       position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background-color: rgba(15, 23, 42, 0.95);
+      bottom: 30px;
+      left: 30px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      z-index: 1000000;
+  }
+
+  .mars-planet {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      /* Mars colors and 3D shadow effect */
+      background: radial-gradient(circle at 30% 30%, #ff9c7a, #c1440e, #5a1800);
+      box-shadow: inset -10px -10px 20px rgba(0,0,0,0.6), 0 0 25px rgba(193, 68, 14, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      animation: floatMars 6s ease-in-out infinite;
+      position: relative;
+  }
+  
+  .mars-planet i {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 24px;
+      text-shadow: 0 0 10px rgba(255,255,255,0.5);
+  }
+
+  @keyframes floatMars {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+  }
+
+  .mars-message {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid #c1440e;
       color: #cbd5e1;
-      text-align: center;
-      padding: 10px 20px;
+      padding: 15px 20px;
+      border-radius: 12px;
       font-family: 'Outfit', sans-serif;
       font-size: 0.85rem;
-      border-top: 1px solid #0ea5e9;
-      z-index: 1000000;
-      box-sizing: border-box;
-      backdrop-filter: blur(5px);
+      max-width: 400px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 15px rgba(193, 68, 14, 0.2);
+      /* Hidden state */
+      opacity: 0;
+      transform: translateX(-30px);
+      pointer-events: none;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
-  #security-banner strong {
-      color: #0ea5e9;
+
+  .mars-message strong {
+      color: #ff9c7a;
       letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 5px;
+  }
+
+  /* Show message on hover */
+  #mars-security:hover .mars-message {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: all;
+  }
+
+  @media (max-width: 768px) {
+      #mars-security {
+          bottom: 15px; left: 15px;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+      }
+      .mars-message { max-width: calc(100vw - 40px); }
   }
 
   /* --- BIONIC MOUSE BASE STYLES --- */
@@ -52,7 +112,7 @@
 
   .video-container {
       position: absolute;
-      bottom: 60px; /* Adjusted slightly to avoid overlapping the security banner */
+      bottom: 20px;
       right: 20px;
       width: 240px;
       border: 2px solid #ff007f;
@@ -355,8 +415,15 @@
 </head>
 <body>
 
-<div id="security-banner">
-    <strong>🔒 SECURITY & PRIVACY NOTICE:</strong> This is a static, read-only academic portfolio. No corporate data is collected, stored, or transmitted. All AI demonstrations run purely in your local browser sandbox or via secure, isolated public cloud APIs.
+<!-- NEW FLOATING MARS SECURITY NOTIFICATION -->
+<div id="mars-security">
+    <div class="mars-planet">
+        <i class="fas fa-shield-halved"></i>
+    </div>
+    <div class="mars-message">
+        <strong><i class="fas fa-satellite-dish"></i> INCOMING TRANSMISSION:</strong> 
+        This is a static, read-only academic portfolio. No corporate data is collected, stored, or transmitted. All AI demonstrations run purely in your local browser sandbox or via secure, isolated public cloud APIs.
+    </div>
 </div>
 
 <canvas id="stars"></canvas>
