@@ -13,6 +13,28 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;600&display=swap');
 
+  /* --- SECURITY BANNER STYLES --- */
+  #security-banner {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: rgba(15, 23, 42, 0.95);
+      color: #cbd5e1;
+      text-align: center;
+      padding: 10px 20px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.85rem;
+      border-top: 1px solid #0ea5e9;
+      z-index: 1000000;
+      box-sizing: border-box;
+      backdrop-filter: blur(5px);
+  }
+  #security-banner strong {
+      color: #0ea5e9;
+      letter-spacing: 1px;
+  }
+
   /* --- BIONIC MOUSE BASE STYLES --- */
   #virtual-cursor {
       position: fixed;
@@ -30,7 +52,7 @@
 
   .video-container {
       position: absolute;
-      bottom: 20px;
+      bottom: 60px; /* Adjusted slightly to avoid overlapping the security banner */
       right: 20px;
       width: 240px;
       border: 2px solid #ff007f;
@@ -333,6 +355,10 @@
 </head>
 <body>
 
+<div id="security-banner">
+    <strong>🔒 SECURITY & PRIVACY NOTICE:</strong> This is a static, read-only academic portfolio. No corporate data is collected, stored, or transmitted. All AI demonstrations run purely in your local browser sandbox or via secure, isolated public cloud APIs.
+</div>
+
 <canvas id="stars"></canvas>
 
 <div id="virtual-cursor"></div>
@@ -345,8 +371,9 @@
   <div class="center-content" id="centerContent">
     <h1 id="ccTitle">KHWAJA AI APPS</h1>
     <p id="ccText">
-      <b>Indvidual Data Scientist & Ethical AI App Developer</b><br>
-      Blending an MSc in Business Analytics & Finance knowledge with practical Python development and operational leadership. I transition complex theoretical models into functional, end-to-end applications. From designing real-time anomaly detection systems to automating reporting workflows, I specialize in translating data into resilient, actionable strategies. My core technical stack includes Python, MATLAB, Scikit-Learn, TensorFlow, SQL, and React integration.
+      <b>Individual Data Scientist & Ethical AI App Developer</b><br>
+      Blending an MSc in Business Analytics & Finance knowledge with practical Python development and operational leadership. I transition complex theoretical models into functional, end-to-end applications. From designing real-time anomaly detection systems to automating reporting workflows, I specialize in translating data into resilient, actionable strategies. My core technical stack includes Python, MATLAB, Scikit-Learn, TensorFlow, SQL, and React integration.<br><br>
+      <span style="font-size: 0.75rem; color: #0ea5e9; font-style: italic;">Note to visitors: This environment is a secure, sandbox portfolio designed solely for showcasing academic and development projects.</span>
     </p>
   </div>
 </div>
@@ -478,7 +505,7 @@
   </button>
   <div class="iframe-wrapper">
     <div class="iframe-loader"></div>
-    <div class="loading-text">Establishing Link...</div>
+    <div class="loading-text">Loading Dashboard Interface...</div>
     <iframe src="https://khwajai-spreadsheet.hf.space/?embed=true" 
             style="width:100%; height:100%; border:none; position:relative; z-index:20;" 
             allow="clipboard-read; clipboard-write; fullscreen;"
@@ -492,7 +519,7 @@
   </button>
   <div class="iframe-wrapper">
     <div class="iframe-loader"></div>
-    <div class="loading-text">Initializing AI Model...</div>
+    <div class="loading-text">Loading Read-Only Sandbox...</div>
     <iframe src="https://khwajai-anomaly-detection.hf.space/?embed=true" 
             style="width:100%; height:100%; border:none; position:relative; z-index:20;" 
             allow="clipboard-read; clipboard-write; fullscreen;"
@@ -506,7 +533,7 @@
   </button>
   <div class="iframe-wrapper">
     <div class="iframe-loader"></div>
-    <div class="loading-text">Querying Market Matrices...</div>
+    <div class="loading-text">Connecting to Public Finance API...</div>
     <iframe src="https://ai-stock-predictor-qwqxrrjxloljpzz8m3wbql.streamlit.app/?embed=true" 
             style="width:100%; height:100%; border:none; position:relative; z-index:20;" 
             allow="clipboard-read; clipboard-write; fullscreen;"
@@ -520,7 +547,7 @@
   </button>
   <div class="iframe-wrapper">
     <div class="iframe-loader"></div>
-    <div class="loading-text">Syncing Neural Data...</div>
+    <div class="loading-text">Loading User Interface...</div>
     <iframe src="https://khwajai-nutrition-planner.hf.space/?embed=true" 
             style="width:100%; height:100%; border:none; position:relative; z-index:20;" 
             allow="clipboard-read; clipboard-write; fullscreen;"
@@ -535,7 +562,12 @@
   
   <div class="bionic-test-area" style="top: 48%;">
       <h2 class="bionic-title">BIONIC MOUSE PLAYGROUND</h2>
-      <p style="font-family: 'Outfit', sans-serif; font-size: 1rem; margin-bottom: 10px; color: #e2e8f0;">Allow camera access. Point your index finger to move the cursor.</p>
+      <p style="font-family: 'Outfit', sans-serif; font-size: 1rem; margin-bottom: 10px; color: #e2e8f0;">
+          Allow camera access to test the MediaPipe hand-tracking API. <br>
+          <span style="color: #00ffcc; font-size: 0.85rem; display: block; margin-top: 8px; border: 1px dashed #00ffcc; padding: 5px; border-radius: 4px;">
+              <i class="fas fa-shield-alt"></i> <b>100% Local Processing:</b> Video data is processed entirely locally within your browser's memory. No images or video feeds are ever recorded, saved, or transmitted to any external server.
+          </span>
+      </p>
       
       <div class="playground-grid">
           <div class="play-card">
@@ -951,7 +983,13 @@ function showProjects(){
 
 function showHome(){
   history.pushState({view: 'home'}, "", "/");
-  document.getElementById('centerContent').innerHTML = `<h1 id="ccTitle">KHWAJA AI</h1><p id="ccText"><b>Data Scientist & AI Developer</b><br>Blending an MSc in Business Analytics & Finance with practical Python development and operational leadership. I transition complex theoretical models into functional, end-to-end applications. From designing real-time anomaly detection systems to automating reporting workflows, I specialize in translating data into resilient, actionable strategies. My core technical stack includes Python, Scikit-Learn, TensorFlow, SQL, and React integration.</p>`;
+  document.getElementById('centerContent').innerHTML = `
+    <h1 id="ccTitle">KHWAJA AI</h1>
+    <p id="ccText">
+      <b>Data Scientist & AI Developer</b><br>
+      Blending an MSc in Business Analytics & Finance with practical Python development and operational leadership. I transition complex theoretical models into functional, end-to-end applications. From designing real-time anomaly detection systems to automating reporting workflows, I specialize in translating data into resilient, actionable strategies. My core technical stack includes Python, Scikit-Learn, TensorFlow, SQL, and React integration.<br><br>
+      <span style="font-size: 0.75rem; color: #0ea5e9; font-style: italic;">Note to visitors: This environment is a secure, sandbox portfolio designed solely for showcasing academic and development projects.</span>
+    </p>`;
 }
 
 // --- STARFIELD ---
