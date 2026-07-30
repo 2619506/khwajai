@@ -13,15 +13,76 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;600&display=swap');
 
+  /* --- MARS (NEAR SUN) --- */
+  .mars-near-sun {
+      position: fixed;
+      top: 130px;
+      right: 280px;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #ff9c7a, #c1440e, #5a1800);
+      box-shadow: inset -5px -5px 10px rgba(0,0,0,0.6), 0 0 15px rgba(193, 68, 14, 0.4);
+      z-index: 900000;
+      animation: floatMarsNearSun 8s ease-in-out infinite;
+  }
+
+  @keyframes floatMarsNearSun {
+      0% { transform: translateY(0px) translateX(0px); }
+      50% { transform: translateY(-15px) translateX(-10px); }
+      100% { transform: translateY(0px) translateX(0px); }
+  }
+
   /* --- SATURN SYSTEM (TOP LEFT) --- */
   #saturn-system {
       position: fixed;
-      top: 90px;
-      left: 100px;
+      top: 100px;
+      left: 140px;
       width: 70px;
       height: 70px;
       z-index: 1000000;
       perspective: 1000px;
+  }
+
+  /* Pulsing Attention Badge */
+  .saturn-attention {
+      position: absolute;
+      top: -65px;
+      left: -20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(14, 165, 233, 0.15);
+      border: 1px solid #0ea5e9;
+      padding: 6px 12px;
+      border-radius: 20px;
+      color: #ffffff;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 10px;
+      letter-spacing: 1px;
+      backdrop-filter: blur(4px);
+      animation: popAttention 2s infinite;
+      pointer-events: none;
+      white-space: nowrap;
+      z-index: 10;
+  }
+
+  .saturn-attention .pulse-icon {
+      background: #0ea5e9;
+      color: #000;
+      border-radius: 50%;
+      width: 16px; 
+      height: 16px;
+      display: flex; 
+      justify-content: center; 
+      align-items: center;
+      font-weight: 900;
+      font-size: 11px;
+  }
+
+  @keyframes popAttention {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(14, 165, 233, 0.4); }
+      50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(14, 165, 233, 0.8); }
   }
 
   .saturn-assembly {
@@ -29,7 +90,7 @@
       height: 100%;
       position: relative;
       transform-style: preserve-3d;
-      transform: rotate(-25deg) rotateX(72deg); /* Tilts the entire 3D system */
+      transform: rotate(-25deg) rotateX(72deg);
   }
 
   .saturn-planet {
@@ -37,32 +98,49 @@
       top: 0; left: 0;
       width: 70px; height: 70px;
       border-radius: 50%;
-      /* Saturn colors */
       background: radial-gradient(circle at 30% 30%, #ebd39c, #d1a85b, #7d5921);
       box-shadow: inset -10px -10px 20px rgba(0,0,0,0.7), 0 0 25px rgba(209, 168, 91, 0.3);
-      /* Counter-rotate the sphere so it faces the camera despite the assembly tilt */
       transform: rotateX(-72deg); 
+      z-index: 2;
   }
 
-  .saturn-ring {
+  /* Realistic Physical Rings */
+  .saturn-visual-rings {
       position: absolute;
-      top: -115px; left: -115px;
-      width: 300px; height: 300px;
+      top: 50%; left: 50%;
+      width: 150px; height: 150px;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      border: 12px solid rgba(209, 168, 91, 0.4);
+      border-top-color: rgba(220, 185, 120, 0.7);
+      border-left-color: rgba(180, 140, 70, 0.5);
+      box-shadow: 
+          0 0 0 4px rgba(150, 110, 50, 0.3),
+          0 0 15px rgba(209, 168, 91, 0.5),
+          inset 0 0 10px rgba(209, 168, 91, 0.4);
+      z-index: 1;
+  }
+
+  .saturn-ring-text {
+      position: absolute;
+      top: -140px; left: -140px;
+      width: 350px; height: 350px;
       transform-style: preserve-3d;
+      z-index: 3;
   }
 
-  .saturn-ring svg {
+  .saturn-ring-text svg {
       width: 100%; height: 100%;
-      animation: spinRing 25s linear infinite;
-      filter: drop-shadow(0 0 5px rgba(14, 165, 233, 0.4));
+      animation: spinRing 30s linear infinite; /* Slowed down for readability */
+      filter: drop-shadow(0 0 8px rgba(14, 165, 233, 0.8));
   }
 
-  .saturn-ring text {
+  .saturn-ring-text text {
       font-family: 'Outfit', sans-serif;
-      font-size: 11px;
-      fill: #0ea5e9;
+      font-size: 14px; /* Made text larger */
+      fill: #ffffff; /* Bright white for contrast */
       font-weight: 600;
-      letter-spacing: 2px;
+      letter-spacing: 3px;
   }
 
   @keyframes spinRing {
@@ -86,7 +164,6 @@
       width: 70px;
       height: 70px;
       border-radius: 50%;
-      /* Jupiter Gas Giant Stripes */
       background: linear-gradient(160deg, #b8a696 0%, #d3c0a8 15%, #c8977a 30%, #e0c8b0 45%, #a67c5a 60%, #d8c1a6 75%, #b2957b 90%);
       box-shadow: inset -10px -10px 20px rgba(0,0,0,0.6), 0 0 25px rgba(200, 151, 122, 0.3);
       display: flex;
@@ -142,7 +219,8 @@
   }
 
   @media (max-width: 768px) {
-      #saturn-system { transform: scale(0.6); top: 30px; left: 30px; }
+      #saturn-system { transform: scale(0.6); top: 50px; left: 50px; }
+      .mars-near-sun { transform: scale(0.6); top: 80px; right: 50px; }
       #jupiter-security {
           bottom: 15px; left: 15px;
           flex-direction: column;
@@ -472,17 +550,24 @@
 </head>
 <body>
 
+<!-- MARS (Near Sun) -->
+<div class="mars-near-sun"></div>
+
 <!-- SATURN SYSTEM (Top Left) -->
 <div id="saturn-system">
+    <div class="saturn-attention">
+        <span class="pulse-icon">!</span> CHECK DISCLAIMER
+    </div>
     <div class="saturn-assembly">
         <div class="saturn-planet"></div>
-        <div class="saturn-ring">
-            <svg viewBox="0 0 300 300">
-                <path id="ring-path" d="M 150, 150 m -140, 0 a 140,140 0 1,1 280,0 a 140,140 0 1,1 -280,0" fill="none" />
+        <div class="saturn-visual-rings"></div>
+        <div class="saturn-ring-text">
+            <svg viewBox="0 0 350 350">
+                <path id="ring-path" d="M 175, 175 m -130, 0 a 130,130 0 1,1 260,0 a 130,130 0 1,1 -260,0" fill="none" />
                 <text>
                     <textPath href="#ring-path" startOffset="0">
-                        NOTE TO VISITORS: THIS IS A SECURE, READ-ONLY SANDBOX PORTFOLIO DESIGNED SOLELY FOR SHOWCASING PROJECTS. &nbsp; • &nbsp; 
-                        NOTE TO VISITORS: THIS IS A SECURE, READ-ONLY SANDBOX PORTFOLIO DESIGNED SOLELY FOR SHOWCASING PROJECTS. &nbsp; • &nbsp; 
+                        NOTE TO VISITORS: SECURE, READ-ONLY SANDBOX PORTFOLIO DESIGNED SOLELY FOR SHOWCASING &nbsp; • &nbsp; 
+                        NOTE TO VISITORS: SECURE, READ-ONLY SANDBOX PORTFOLIO DESIGNED SOLELY FOR SHOWCASING &nbsp; • &nbsp; 
                     </textPath>
                 </text>
             </svg>
@@ -507,7 +592,7 @@
 
 <div class="wheel earth-surface" id="wheel" onclick="showHome()">
   <div class="satellite moon-surface pos-left" onclick="event.stopPropagation(); openHangar()">AI & ML<br>Projects</div>
-  <div class="satellite moon-surface pos-right" onclick="event.stopPropagation(); showProjects()">Academic<br>Projects</div>
+  <!-- ACADEMIC PROJECTS MOON REMOVED -->
   <div class="satellite moon-surface pos-bottom" onclick="event.stopPropagation(); openOtherProjects()">Other<br>Projects</div>
   
   <div class="center-content" id="centerContent">
@@ -1117,11 +1202,6 @@ function initBionicMouse() {
 }
 
 // --- PROJECTS PAGE LOGIC ---
-function showProjects(){
-  history.pushState({view: 'projects'}, "", "/projects");
-  document.getElementById('centerContent').innerHTML = `<h1 id="ccTitle" style="font-size:2.5rem">ACADEMIC PROJECTS</h1><div id="ccText" style="text-align:left; font-size:0.9rem;"><ul style="list-style-type:none; padding:0;"><li style="margin-bottom:10px;"><b>📈 Tech Sector Volatility Prediction</b> Comparative study of Machine Learning models (Random Forest vs. Linear Regression) using MATLAB for stock price forecasting.</li><li style="margin-bottom:10px;"><b>💳 Fraud Detection Optimization</b> Implemented hybrid anomaly detection architectures using Python to identify outliers in high-volume, imbalanced datasets.</li><li><b>🛍️ iOutlet Revenue Analysis</b> Analyzed 32,000+ sales transactions to identify margin-improvement strategies using Python data visualizations.</li></ul><div style="text-align:center; margin-top:10px; font-size:0.8rem; color:#f8fafc;">(Click Earth to return)</div></div>`;
-}
-
 function showHome(){
   history.pushState({view: 'home'}, "", "/");
   document.getElementById('centerContent').innerHTML = `
