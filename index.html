@@ -13,16 +13,39 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;600&display=swap');
 
-  /* --- MARS (NEAR SUN) --- */
+  /* --- ENHANCED PLANETARY REALISM (Overrides for base CSS) --- */
+  .earth-surface {
+      background: radial-gradient(circle at 30% 30%, #4facfe, #1b5b97, #0a2e5c, #021124) !important;
+      box-shadow: inset -30px -30px 50px rgba(0,0,0,0.9), 0 0 50px rgba(79, 172, 254, 0.4) !important;
+      border: none !important;
+  }
+  
+  .moon-surface {
+      background: radial-gradient(circle at 30% 30%, #e0e0e0, #8a8a8a, #363636) !important;
+      box-shadow: inset -10px -10px 15px rgba(0,0,0,0.9), 0 0 10px rgba(255,255,255,0.1) !important;
+      border: none !important;
+      color: #fff !important;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.9) !important;
+  }
+
+  .sun-surface {
+      background: radial-gradient(circle at 30% 30%, #ffffff 0%, #ffde00 20%, #ff7300 60%, #b32400 100%) !important;
+      box-shadow: 0 0 60px #ff7300, 0 0 120px #ffde00, inset -10px -10px 20px rgba(0,0,0,0.2) !important;
+      border: none !important;
+      color: #000 !important;
+      font-weight: 900 !important;
+  }
+
+  /* --- MARS (Centered between Earth and Sun) --- */
   .mars-near-sun {
       position: fixed;
-      top: 130px;
-      right: 280px;
-      width: 45px;
-      height: 45px;
+      top: 25%;
+      right: 25%;
+      width: 55px;
+      height: 55px;
       border-radius: 50%;
       background: radial-gradient(circle at 30% 30%, #ff9c7a, #c1440e, #5a1800);
-      box-shadow: inset -5px -5px 10px rgba(0,0,0,0.6), 0 0 15px rgba(193, 68, 14, 0.4);
+      box-shadow: inset -15px -15px 20px rgba(0,0,0,0.8), 0 0 20px rgba(193, 68, 14, 0.4);
       z-index: 900000;
       animation: floatMarsNearSun 8s ease-in-out infinite;
   }
@@ -33,13 +56,13 @@
       100% { transform: translateY(0px) translateX(0px); }
   }
 
-  /* --- SATURN SYSTEM (TOP LEFT) --- */
+  /* --- SATURN SYSTEM (TOP LEFT - ENLARGED) --- */
   #saturn-system {
       position: fixed;
-      top: 100px;
-      left: 140px;
-      width: 70px;
-      height: 70px;
+      top: 120px;
+      left: 150px;
+      width: 120px;
+      height: 120px;
       z-index: 1000000;
       perspective: 1000px;
   }
@@ -47,8 +70,9 @@
   /* Pulsing Attention Badge */
   .saturn-attention {
       position: absolute;
-      top: -65px;
-      left: -20px;
+      top: -80px;
+      left: 50%;
+      transform: translateX(-50%);
       display: flex;
       align-items: center;
       gap: 8px;
@@ -58,7 +82,7 @@
       border-radius: 20px;
       color: #ffffff;
       font-family: 'Orbitron', sans-serif;
-      font-size: 10px;
+      font-size: 11px;
       letter-spacing: 1px;
       backdrop-filter: blur(4px);
       animation: popAttention 2s infinite;
@@ -81,8 +105,8 @@
   }
 
   @keyframes popAttention {
-      0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(14, 165, 233, 0.4); }
-      50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(14, 165, 233, 0.8); }
+      0%, 100% { transform: translateX(-50%) scale(1); box-shadow: 0 0 10px rgba(14, 165, 233, 0.4); }
+      50% { transform: translateX(-50%) scale(1.05); box-shadow: 0 0 20px rgba(14, 165, 233, 0.8); }
   }
 
   .saturn-assembly {
@@ -96,10 +120,10 @@
   .saturn-planet {
       position: absolute;
       top: 0; left: 0;
-      width: 70px; height: 70px;
+      width: 120px; height: 120px;
       border-radius: 50%;
-      background: radial-gradient(circle at 30% 30%, #ebd39c, #d1a85b, #7d5921);
-      box-shadow: inset -10px -10px 20px rgba(0,0,0,0.7), 0 0 25px rgba(209, 168, 91, 0.3);
+      background: radial-gradient(circle at 30% 30%, #ebd39c, #d1a85b, #5c4015);
+      box-shadow: inset -20px -20px 30px rgba(0,0,0,0.8), 0 0 35px rgba(209, 168, 91, 0.4);
       transform: rotateX(-72deg); 
       z-index: 2;
   }
@@ -108,46 +132,54 @@
   .saturn-visual-rings {
       position: absolute;
       top: 50%; left: 50%;
-      width: 150px; height: 150px;
+      width: 260px; height: 260px;
       border-radius: 50%;
       transform: translate(-50%, -50%);
-      border: 12px solid rgba(209, 168, 91, 0.4);
+      border: 18px solid rgba(209, 168, 91, 0.4);
       border-top-color: rgba(220, 185, 120, 0.7);
       border-left-color: rgba(180, 140, 70, 0.5);
       box-shadow: 
-          0 0 0 4px rgba(150, 110, 50, 0.3),
-          0 0 15px rgba(209, 168, 91, 0.5),
-          inset 0 0 10px rgba(209, 168, 91, 0.4);
+          0 0 0 6px rgba(150, 110, 50, 0.3),
+          0 0 25px rgba(209, 168, 91, 0.5),
+          inset 0 0 15px rgba(209, 168, 91, 0.4);
       z-index: 1;
-  }
-
-  .saturn-ring-text {
-      position: absolute;
-      top: -140px; left: -140px;
-      width: 350px; height: 350px;
-      transform-style: preserve-3d;
-      z-index: 3;
-  }
-
-  .saturn-ring-text svg {
-      width: 100%; height: 100%;
-      animation: spinRing 30s linear infinite; /* Slowed down for readability */
-      filter: drop-shadow(0 0 8px rgba(14, 165, 233, 0.8));
-  }
-
-  .saturn-ring-text text {
-      font-family: 'Outfit', sans-serif;
-      font-size: 14px; /* Made text larger */
-      fill: #ffffff; /* Bright white for contrast */
-      font-weight: 600;
-      letter-spacing: 3px;
+      animation: spinRing 40s linear infinite;
   }
 
   @keyframes spinRing {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
   }
 
+  /* New Central Text Band */
+  .saturn-central-message {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 280px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid #0ea5e9;
+      box-shadow: 0 0 20px rgba(14, 165, 233, 0.5), inset 0 0 10px rgba(14, 165, 233, 0.3);
+      padding: 10px 0;
+      border-radius: 6px;
+      text-align: center;
+      z-index: 20;
+      backdrop-filter: blur(5px);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+      color: #e2e8f0;
+      letter-spacing: 2px;
+      pointer-events: none;
+  }
+
+  .saturn-central-message span {
+      color: #0ea5e9;
+      font-weight: bold;
+      font-size: 13px;
+      display: block;
+      margin-bottom: 3px;
+  }
 
   /* --- JUPITER SECURITY PLANET (BOTTOM LEFT) --- */
   #jupiter-security {
@@ -161,11 +193,11 @@
   }
 
   .jupiter-planet {
-      width: 70px;
-      height: 70px;
+      width: 75px;
+      height: 75px;
       border-radius: 50%;
       background: linear-gradient(160deg, #b8a696 0%, #d3c0a8 15%, #c8977a 30%, #e0c8b0 45%, #a67c5a 60%, #d8c1a6 75%, #b2957b 90%);
-      box-shadow: inset -10px -10px 20px rgba(0,0,0,0.6), 0 0 25px rgba(200, 151, 122, 0.3);
+      box-shadow: inset -15px -15px 25px rgba(0,0,0,0.8), 0 0 25px rgba(200, 151, 122, 0.4);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -219,8 +251,8 @@
   }
 
   @media (max-width: 768px) {
-      #saturn-system { transform: scale(0.6); top: 50px; left: 50px; }
-      .mars-near-sun { transform: scale(0.6); top: 80px; right: 50px; }
+      #saturn-system { transform: scale(0.5); top: 50px; left: 50px; }
+      .mars-near-sun { transform: scale(0.6); top: 20%; right: 15%; }
       #jupiter-security {
           bottom: 15px; left: 15px;
           flex-direction: column;
@@ -550,10 +582,10 @@
 </head>
 <body>
 
-<!-- MARS (Near Sun) -->
+<!-- MARS (Centered between Earth and Sun) -->
 <div class="mars-near-sun"></div>
 
-<!-- SATURN SYSTEM (Top Left) -->
+<!-- SATURN SYSTEM (Top Left - Enlarged) -->
 <div id="saturn-system">
     <div class="saturn-attention">
         <span class="pulse-icon">!</span> CHECK DISCLAIMER
@@ -561,17 +593,12 @@
     <div class="saturn-assembly">
         <div class="saturn-planet"></div>
         <div class="saturn-visual-rings"></div>
-        <div class="saturn-ring-text">
-            <svg viewBox="0 0 350 350">
-                <path id="ring-path" d="M 175, 175 m -130, 0 a 130,130 0 1,1 260,0 a 130,130 0 1,1 -260,0" fill="none" />
-                <text>
-                    <textPath href="#ring-path" startOffset="0">
-                        NOTE TO VISITORS: SECURE, READ-ONLY SANDBOX PORTFOLIO DESIGNED SOLELY FOR SHOWCASING &nbsp; • &nbsp; 
-                        NOTE TO VISITORS: SECURE, READ-ONLY SANDBOX PORTFOLIO DESIGNED SOLELY FOR SHOWCASING &nbsp; • &nbsp; 
-                    </textPath>
-                </text>
-            </svg>
-        </div>
+    </div>
+    
+    <!-- Central text separated from rotation for perfect readability -->
+    <div class="saturn-central-message">
+        <span>SECURE SANDBOX</span>
+        READ-ONLY ACADEMIC PORTFOLIO
     </div>
 </div>
 
@@ -592,8 +619,9 @@
 
 <div class="wheel earth-surface" id="wheel" onclick="showHome()">
   <div class="satellite moon-surface pos-left" onclick="event.stopPropagation(); openHangar()">AI & ML<br>Projects</div>
-  <!-- ACADEMIC PROJECTS MOON REMOVED -->
-  <div class="satellite moon-surface pos-bottom" onclick="event.stopPropagation(); openOtherProjects()">Other<br>Projects</div>
+  
+  <!-- OTHER PROJECTS MOON MOVED TO RIGHT -->
+  <div class="satellite moon-surface pos-right" onclick="event.stopPropagation(); openOtherProjects()">Other<br>Projects</div>
   
   <div class="center-content" id="centerContent">
     <h1 id="ccTitle">KHWAJA AI APPS</h1>
