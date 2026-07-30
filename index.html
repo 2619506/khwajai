@@ -1374,7 +1374,7 @@ function showHome(){
     </p>`;
 }
 
-// --- VIBRANT STARFIELD, ROCKS, & METEORS (UFOs) ---
+// --- VIBRANT STARFIELD, SPACE ROCKS & UFOS (METEORS) ---
 const canvas = document.getElementById('stars'); 
 const ctx = canvas.getContext('2d'); 
 let stars = [], rocks = [], meteors = [];
@@ -1388,13 +1388,14 @@ addEventListener('resize', resizeCanvas);
 
 function createStars(count){ 
     stars = []; 
+    // Vibrant colors based on the asteroid belt reference image
     const starColors = ['#ffffff', '#ffffff', '#ffe9c4', '#d4fbff', '#ffb199', '#ffddaa', '#a3c2ff', '#ffd2a3'];
     for(let i=0; i<count; i++){ 
         stars.push({ 
             x: Math.random() * canvas.width, 
             y: Math.random() * canvas.height, 
             speed: Math.random() * 0.2 + 0.05, 
-            size: Math.random() * 2.5 + 0.2, // Increased size variation
+            size: Math.random() * 1.5,
             color: starColors[Math.floor(Math.random() * starColors.length)]
         }); 
     } 
@@ -1415,26 +1416,25 @@ function createRocks(count){
     }
 }
 
-function createMeteors(count){
-    meteors = [];
-    for(let i=0; i<count; i++){
-        meteors.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            speedX: -(Math.random() * 4 + 3), 
-            speedY: Math.random() * 2 + 1,
-            length: Math.random() * 60 + 30
-        });
-    }
+// Added the fast-moving UFOs (Shooting Stars / Meteors) back
+function createMeteors(count){ 
+    meteors = []; 
+    for(let i=0; i<count; i++){ 
+        meteors.push({ 
+            x: Math.random() * canvas.width, 
+            y: Math.random() * canvas.height, 
+            speedX: -(Math.random() * 4 + 2), 
+            speedY: Math.random() * 2 + 1, 
+            length: Math.random() * 50 + 30 
+        }); 
+    } 
 }
 
-function drawStars(){ 
+function drawSpace(){ 
     ctx.clearRect(0, 0, canvas.width, canvas.height); 
     
-    // Draw Glowing Stars
+    // Draw Stars
     for(const s of stars){ 
-        ctx.shadowBlur = s.size * 4; // Adds the glow/shine based on star size
-        ctx.shadowColor = s.color;
         ctx.fillStyle = s.color;
         ctx.beginPath(); 
         ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); 
@@ -1447,13 +1447,11 @@ function drawStars(){
         } 
     } 
     
-    // Reset shadow blur to prevent glowing rocks/streaks from blurring incorrectly
-    ctx.shadowBlur = 0;
-
     // Draw Space Rocks/Asteroids
     for(const r of rocks){
         ctx.fillStyle = r.color;
         ctx.beginPath();
+        // Give them a slightly jagged/irregular shape compared to perfectly round stars
         ctx.arc(r.x, r.y, r.size, 0, Math.PI*2);
         ctx.fill();
         
@@ -1465,36 +1463,32 @@ function drawStars(){
             r.x = Math.random() * canvas.width;
         }
     }
-
-    // Draw Meteors (Fast moving UFOs)
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
-    ctx.lineWidth = 1.2;
-    ctx.lineCap = 'round';
-    for(const m of meteors){
-        ctx.beginPath();
-        ctx.moveTo(m.x, m.y);
-        ctx.shadowBlur = 6;
-        ctx.shadowColor = '#00ffcc'; // Subtle cyan glow to the tail
-        ctx.lineTo(m.x + m.length * (m.speedX / 10), m.y + m.length * (m.speedY / 10));
-        ctx.stroke();
+    
+    // Draw Fast-Moving UFOs (Meteors)
+    ctx.strokeStyle = '#ffffff'; 
+    ctx.lineWidth = 0.8;
+    for(const m of meteors){ 
+        ctx.beginPath(); 
+        ctx.moveTo(m.x, m.y); 
+        ctx.lineTo(m.x + m.length * m.speedX / 10, m.y + m.length * m.speedY / 10); 
+        ctx.stroke(); 
         
-        m.x += m.speedX;
-        m.y += m.speedY;
+        m.x += m.speedX; 
+        m.y += m.speedY; 
         
         if(m.x < -100 || m.y > canvas.height + 100){
             m.x = canvas.width + Math.random() * 200;
             m.y = Math.random() * canvas.height / 2;
-        }
+        } 
     }
-    ctx.shadowBlur = 0;
 }
 
 createStars(350); 
 createRocks(35); 
-createMeteors(4); // Add 4 meteors back into the scene
+createMeteors(3); // Re-initializing the fast meteors/UFOs
 
 (function animate(){ 
-    drawStars(); 
+    drawSpace(); 
     requestAnimationFrame(animate); 
 })();
 
