@@ -13,10 +13,68 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;600&display=swap');
 
-  /* --- JUPITER SECURITY NOTIFICATION (TOP LEFT) --- */
+  /* --- SATURN SYSTEM (TOP LEFT) --- */
+  #saturn-system {
+      position: fixed;
+      top: 90px;
+      left: 100px;
+      width: 70px;
+      height: 70px;
+      z-index: 1000000;
+      perspective: 1000px;
+  }
+
+  .saturn-assembly {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: rotate(-25deg) rotateX(72deg); /* Tilts the entire 3D system */
+  }
+
+  .saturn-planet {
+      position: absolute;
+      top: 0; left: 0;
+      width: 70px; height: 70px;
+      border-radius: 50%;
+      /* Saturn colors */
+      background: radial-gradient(circle at 30% 30%, #ebd39c, #d1a85b, #7d5921);
+      box-shadow: inset -10px -10px 20px rgba(0,0,0,0.7), 0 0 25px rgba(209, 168, 91, 0.3);
+      /* Counter-rotate the sphere so it faces the camera despite the assembly tilt */
+      transform: rotateX(-72deg); 
+  }
+
+  .saturn-ring {
+      position: absolute;
+      top: -115px; left: -115px;
+      width: 300px; height: 300px;
+      transform-style: preserve-3d;
+  }
+
+  .saturn-ring svg {
+      width: 100%; height: 100%;
+      animation: spinRing 25s linear infinite;
+      filter: drop-shadow(0 0 5px rgba(14, 165, 233, 0.4));
+  }
+
+  .saturn-ring text {
+      font-family: 'Outfit', sans-serif;
+      font-size: 11px;
+      fill: #0ea5e9;
+      font-weight: 600;
+      letter-spacing: 2px;
+  }
+
+  @keyframes spinRing {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+  }
+
+
+  /* --- JUPITER SECURITY PLANET (BOTTOM LEFT) --- */
   #jupiter-security {
       position: fixed;
-      top: 30px;
+      bottom: 30px;
       left: 30px;
       display: flex;
       align-items: center;
@@ -25,66 +83,43 @@
   }
 
   .jupiter-planet {
-      width: 75px;
-      height: 75px;
+      width: 70px;
+      height: 70px;
       border-radius: 50%;
-      /* Inner shadows create the spherical 3D shape independent of the moving belts */
-      box-shadow: inset -15px -15px 25px rgba(0,0,0,0.85), inset 5px 5px 15px rgba(255,255,255,0.2), 0 0 25px rgba(211, 156, 126, 0.4);
-      position: relative;
-      overflow: hidden;
+      /* Jupiter Gas Giant Stripes */
+      background: linear-gradient(160deg, #b8a696 0%, #d3c0a8 15%, #c8977a 30%, #e0c8b0 45%, #a67c5a 60%, #d8c1a6 75%, #b2957b 90%);
+      box-shadow: inset -10px -10px 20px rgba(0,0,0,0.6), 0 0 25px rgba(200, 151, 122, 0.3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
       cursor: pointer;
-      animation: floatJupiter 8s ease-in-out infinite;
+      animation: floatJupiter 6s ease-in-out infinite;
+      position: relative;
   }
-
-  /* The moving atmospheric belts and red spot */
-  .jupiter-texture {
-      position: absolute;
-      top: 0; 
-      left: 0;
-      width: 200%; /* Double width to allow seamless scrolling */
-      height: 100%;
-      background: 
-          /* Great Red Spots (Placed twice for the seamless loop) */
-          radial-gradient(ellipse 12px 6px at 25% 65%, #9e4324 0%, transparent 100%),
-          radial-gradient(ellipse 12px 6px at 75% 65%, #9e4324 0%, transparent 100%),
-          /* Horizontal Atmospheric Bands */
-          linear-gradient(to bottom,
-              #b09581 0%,
-              #d3bfae 15%,
-              #855438 30%,
-              #e8d3c1 45%,
-              #6e3a1f 60%,
-              #cfb5a1 75%,
-              #916143 85%,
-              #b09581 100%
-          );
-      animation: rotateJupiter 20s linear infinite;
-      z-index: -1; /* Keeps it under the inner box-shadow of the parent */
+  
+  .jupiter-planet i {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 24px;
+      text-shadow: 0 0 10px rgba(255,255,255,0.5);
   }
 
   @keyframes floatJupiter {
       0% { transform: translateY(0px); }
-      50% { transform: translateY(-8px); }
+      50% { transform: translateY(-10px); }
       100% { transform: translateY(0px); }
-  }
-
-  @keyframes rotateJupiter {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
   }
 
   .jupiter-message {
       background: rgba(15, 23, 42, 0.85);
-      border: 1px solid #d3bfae;
+      border: 1px solid #c8977a;
       color: #cbd5e1;
       padding: 15px 20px;
       border-radius: 12px;
       font-family: 'Outfit', sans-serif;
       font-size: 0.85rem;
-      max-width: 350px;
+      max-width: 400px;
       backdrop-filter: blur(8px);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 15px rgba(211, 156, 126, 0.2);
-      /* Hidden state */
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 15px rgba(200, 151, 122, 0.15);
       opacity: 0;
       transform: translateX(-30px);
       pointer-events: none;
@@ -92,7 +127,7 @@
   }
 
   .jupiter-message strong {
-      color: #e8d3c1;
+      color: #e0c8b0;
       letter-spacing: 1px;
       display: flex;
       align-items: center;
@@ -106,106 +141,15 @@
       pointer-events: all;
   }
 
-  /* --- MARS SECURITY PLANET STYLES (BOTTOM LEFT) --- */
-  #mars-security {
-      position: fixed;
-      bottom: 30px;
-      left: 30px;
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      z-index: 1000000;
-  }
-
-  .mars-planet {
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      /* Upgraded Mars colors and deep 3D shadow effect */
-      background: radial-gradient(circle at 35% 35%, #f1784b 0%, #b8431e 45%, #4a1300 85%);
-      box-shadow: inset -12px -12px 20px rgba(0,0,0,0.85), inset 3px 3px 10px rgba(255,255,255,0.1), 0 0 25px rgba(193, 68, 14, 0.4);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      animation: floatMars 6s ease-in-out infinite;
-      position: relative;
-      overflow: hidden;
-  }
-
-  /* Adding craters and surface texture to Mars */
-  .mars-texture {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: 
-          radial-gradient(circle at 60% 40%, rgba(50, 10, 0, 0.3) 0%, transparent 15%),
-          radial-gradient(circle at 20% 70%, rgba(50, 10, 0, 0.4) 0%, transparent 20%),
-          radial-gradient(circle at 70% 80%, rgba(50, 10, 0, 0.25) 0%, transparent 10%);
-      mix-blend-mode: multiply;
-      z-index: 1;
-  }
-  
-  .mars-planet i {
-      color: rgba(255, 255, 255, 0.85);
-      font-size: 24px;
-      text-shadow: 0 0 10px rgba(0,0,0,0.8);
-      z-index: 2;
-  }
-
-  @keyframes floatMars {
-      0% { transform: translateY(0px); }
-      50% { transform: translateY(-10px); }
-      100% { transform: translateY(0px); }
-  }
-
-  .mars-message {
-      background: rgba(15, 23, 42, 0.85);
-      border: 1px solid #c1440e;
-      color: #cbd5e1;
-      padding: 15px 20px;
-      border-radius: 12px;
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.85rem;
-      max-width: 400px;
-      backdrop-filter: blur(8px);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 15px rgba(193, 68, 14, 0.2);
-      /* Hidden state */
-      opacity: 0;
-      transform: translateX(-30px);
-      pointer-events: none;
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  }
-
-  .mars-message strong {
-      color: #ff9c7a;
-      letter-spacing: 1px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 5px;
-  }
-
-  /* Show message on hover */
-  #mars-security:hover .mars-message {
-      opacity: 1;
-      transform: translateX(0);
-      pointer-events: all;
-  }
-
   @media (max-width: 768px) {
-      #mars-security {
+      #saturn-system { transform: scale(0.6); top: 30px; left: 30px; }
+      #jupiter-security {
           bottom: 15px; left: 15px;
           flex-direction: column;
           align-items: flex-start;
           gap: 10px;
       }
-      #jupiter-security {
-          top: 15px; left: 15px;
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 10px;
-      }
-      .mars-message, .jupiter-message { max-width: calc(100vw - 40px); }
+      .jupiter-message { max-width: calc(100vw - 40px); }
   }
 
   /* --- BIONIC MOUSE BASE STYLES --- */
@@ -528,24 +472,30 @@
 </head>
 <body>
 
-<!-- NEW JUPITER NOTIFICATION (TOP LEFT) -->
-<div id="jupiter-security">
-    <div class="jupiter-planet">
-        <div class="jupiter-texture"></div>
-    </div>
-    <div class="jupiter-message">
-        <strong><i class="fas fa-user-astronaut"></i> PORTFOLIO STATUS:</strong> 
-        Note to visitors: This environment is a secure, sandbox portfolio designed solely for showcasing academic and development projects.
+<!-- SATURN SYSTEM (Top Left) -->
+<div id="saturn-system">
+    <div class="saturn-assembly">
+        <div class="saturn-planet"></div>
+        <div class="saturn-ring">
+            <svg viewBox="0 0 300 300">
+                <path id="ring-path" d="M 150, 150 m -140, 0 a 140,140 0 1,1 280,0 a 140,140 0 1,1 -280,0" fill="none" />
+                <text>
+                    <textPath href="#ring-path" startOffset="0">
+                        NOTE TO VISITORS: THIS IS A SECURE, READ-ONLY SANDBOX PORTFOLIO DESIGNED SOLELY FOR SHOWCASING PROJECTS. &nbsp; • &nbsp; 
+                        NOTE TO VISITORS: THIS IS A SECURE, READ-ONLY SANDBOX PORTFOLIO DESIGNED SOLELY FOR SHOWCASING PROJECTS. &nbsp; • &nbsp; 
+                    </textPath>
+                </text>
+            </svg>
+        </div>
     </div>
 </div>
 
-<!-- FLOATING MARS SECURITY NOTIFICATION (BOTTOM LEFT) -->
-<div id="mars-security">
-    <div class="mars-planet">
-        <div class="mars-texture"></div>
+<!-- JUPITER SECURITY NOTIFICATION (Bottom Left) -->
+<div id="jupiter-security">
+    <div class="jupiter-planet">
         <i class="fas fa-shield-halved"></i>
     </div>
-    <div class="mars-message">
+    <div class="jupiter-message">
         <strong><i class="fas fa-satellite-dish"></i> INCOMING TRANSMISSION:</strong> 
         This is a static, read-only academic portfolio. No corporate data is collected, stored, or transmitted. All AI demonstrations run purely in your local browser sandbox or via secure, isolated public cloud APIs.
     </div>
