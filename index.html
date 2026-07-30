@@ -61,8 +61,8 @@
           radial-gradient(circle at 30% 30%, #e0e0e0, #8a8a8a, #363636) !important;
       box-shadow: inset -15px -15px 20px rgba(0,0,0,0.9), inset 5px 5px 10px rgba(255,255,255,0.4), 0 0 10px rgba(255,255,255,0.1) !important;
       border: none !important;
-      color: #333333 !important; /* Dark Grey Text */
-      text-shadow: 0 1px 2px rgba(255,255,255,0.6) !important; /* Subtle white highlight */
+      color: #333333 !important; 
+      text-shadow: 0 1px 2px rgba(255,255,255,0.6) !important; 
       font-weight: 800 !important;
   }
 
@@ -127,11 +127,11 @@
   }
 
 
-  /* --- MARS SYSTEM --- */
+  /* --- MARS SYSTEM (Shifted to 45 Degree Lower-Right Angle) --- */
   #mars-system {
       position: fixed;
-      top: 32%; 
-      right: 22%;
+      top: 42%; 
+      right: 14%;
       z-index: 900000;
       display: flex;
       flex-direction: column;
@@ -304,7 +304,7 @@
   }
 
 
-  /* --- JUPITER SECURITY NOTIFICATION & NEW POPUP --- */
+  /* --- JUPITER SECURITY NOTIFICATION (Hover Popup Only) --- */
   #jupiter-security {
       position: fixed;
       bottom: 40px;
@@ -315,42 +315,6 @@
       z-index: 1000000;
       cursor: help;
       animation: floatJupiter 6s ease-in-out infinite;
-  }
-
-  .jupiter-attention {
-      position: absolute;
-      top: -45px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(14, 165, 233, 0.15);
-      border: 1px solid #0ea5e9;
-      padding: 6px 12px;
-      border-radius: 20px;
-      color: #ffffff;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 11px;
-      letter-spacing: 1px;
-      backdrop-filter: blur(4px);
-      animation: popJupiterAttention 2s infinite;
-      pointer-events: none;
-      white-space: nowrap;
-      z-index: 10;
-  }
-
-  .jupiter-attention .pulse-icon {
-      background: #0ea5e9;
-      color: #000;
-      border-radius: 50%;
-      width: 18px; 
-      height: 18px;
-      display: flex; 
-      justify-content: center; 
-      align-items: center;
-      font-weight: 900;
-      font-size: 10px;
   }
 
   .jupiter-planet {
@@ -377,7 +341,6 @@
       text-shadow: 0 0 10px rgba(255,255,255,0.5);
   }
 
-  /* New Jupiter Hover Popup */
   .jupiter-popup-msg {
       position: absolute;
       left: 110px;
@@ -416,11 +379,6 @@
       text-shadow: 0 0 8px rgba(14, 165, 233, 0.6);
   }
 
-  @keyframes popJupiterAttention {
-      0%, 100% { transform: translateX(-50%) scale(1); box-shadow: 0 0 10px rgba(14, 165, 233, 0.4); }
-      50% { transform: translateX(-50%) scale(1.05); box-shadow: 0 0 20px rgba(14, 165, 233, 0.8); }
-  }
-
   @keyframes floatJupiter {
       0% { transform: translateY(0px); }
       50% { transform: translateY(-10px); }
@@ -429,7 +387,7 @@
 
   @media (max-width: 768px) {
       #saturn-system { transform: scale(0.5); top: 50px; left: 50px; }
-      #mars-system { transform: scale(0.6); top: 25%; right: 15%; }
+      #mars-system { transform: scale(0.6); top: 35%; right: 10%; }
       #jupiter-security { transform: scale(0.7); bottom: 20px; left: 20px; }
       .jupiter-popup-msg { left: 0; bottom: 80px; transform: translateY(15px); }
       #jupiter-security:hover .jupiter-popup-msg { transform: translateY(0); }
@@ -783,11 +741,8 @@
     <div class="saturn-text">OTHER PROJECTS</div>
 </div>
 
-<!-- JUPITER SECURITY NOTIFICATION (With New Hover Popup) -->
+<!-- JUPITER SECURITY NOTIFICATION (With Hover Popup) -->
 <div id="jupiter-security">
-    <div class="jupiter-attention">
-        <span class="pulse-icon"><i class="fas fa-shield-alt"></i></span> SECURITY & PRIVACY
-    </div>
     <div class="jupiter-planet">
         <i class="fas fa-shield-halved"></i>
     </div>
@@ -1419,19 +1374,98 @@ function showHome(){
     </p>`;
 }
 
-// --- STARFIELD ---
-const canvas = document.getElementById('stars'); const ctx = canvas.getContext('2d'); let stars = [], meteors = [];
-function resizeCanvas(){ canvas.width = innerWidth; canvas.height = innerHeight; } resizeCanvas(); addEventListener('resize', resizeCanvas);
-function createStars(count){ stars=[]; for(let i=0;i<count;i++){ stars.push({ x:Math.random()*canvas.width, y:Math.random()*canvas.height, speed:Math.random()*0.2+0.05, size:Math.random()*1.5 }); } }
-function createMeteors(count){ meteors=[]; for(let i=0;i<count;i++){ meteors.push({ x:Math.random()*canvas.width, y:Math.random()*canvas.height, speedX:-(Math.random()*4+2), speedY:Math.random()*2+1, length:Math.random()*50+30 }); } }
-function drawStars(){ 
-  ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = '#ffffff'; 
-  for(const s of stars){ ctx.beginPath(); ctx.arc(s.x,s.y,s.size,0,Math.PI*2); ctx.fill(); s.y+=s.speed; if(s.y>canvas.height){s.y=0;s.x=Math.random()*canvas.width;} } 
-  ctx.strokeStyle = '#ffffff'; ctx.lineWidth=0.8;
-  for(const m of meteors){ ctx.beginPath(); ctx.moveTo(m.x,m.y); ctx.lineTo(m.x+m.length*m.speedX/10, m.y+m.length*m.speedY/10); ctx.stroke(); m.x+=m.speedX; m.y+=m.speedY; if(m.x<-100||m.y>canvas.height+100){m.x=canvas.width+Math.random()*200;m.y=Math.random()*canvas.height/2;} } 
+// --- VIBRANT STARFIELD & SPACE ROCKS ---
+const canvas = document.getElementById('stars'); 
+const ctx = canvas.getContext('2d'); 
+let stars = [], rocks = [];
+
+function resizeCanvas(){ 
+    canvas.width = innerWidth; 
+    canvas.height = innerHeight; 
+} 
+resizeCanvas(); 
+addEventListener('resize', resizeCanvas);
+
+function createStars(count){ 
+    stars = []; 
+    // Vibrant colors based on the asteroid belt reference image
+    const starColors = ['#ffffff', '#ffffff', '#ffe9c4', '#d4fbff', '#ffb199', '#ffddaa', '#a3c2ff', '#ffd2a3'];
+    for(let i=0; i<count; i++){ 
+        stars.push({ 
+            x: Math.random() * canvas.width, 
+            y: Math.random() * canvas.height, 
+            speed: Math.random() * 0.2 + 0.05, 
+            size: Math.random() * 1.5,
+            color: starColors[Math.floor(Math.random() * starColors.length)]
+        }); 
+    } 
 }
-createStars(300); createMeteors(3); (function animate(){ drawStars(); requestAnimationFrame(animate); })();
-const wheel = document.getElementById('wheel'); document.addEventListener('mousemove', e=>{ const centerX = innerWidth/2; const offsetX = e.clientX - centerX; const rotation = offsetX/40; wheel.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`; });
+
+function createRocks(count){
+    rocks = [];
+    const rockColors = ['#8b7355', '#a0522d', '#cd853f', '#696969', '#5c4033', '#8b4513', '#a87850'];
+    for(let i=0; i<count; i++){
+        rocks.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            speedY: Math.random() * 0.3 + 0.1,
+            speedX: (Math.random() - 0.5) * 0.2,
+            size: Math.random() * 2.5 + 0.5,
+            color: rockColors[Math.floor(Math.random() * rockColors.length)]
+        });
+    }
+}
+
+function drawStars(){ 
+    ctx.clearRect(0, 0, canvas.width, canvas.height); 
+    
+    // Draw Stars
+    for(const s of stars){ 
+        ctx.fillStyle = s.color;
+        ctx.beginPath(); 
+        ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); 
+        ctx.fill(); 
+        
+        s.y += s.speed; 
+        if(s.y > canvas.height){
+            s.y = 0; 
+            s.x = Math.random() * canvas.width;
+        } 
+    } 
+    
+    // Draw Space Rocks/Asteroids
+    for(const r of rocks){
+        ctx.fillStyle = r.color;
+        ctx.beginPath();
+        // Give them a slightly jagged/irregular shape compared to perfectly round stars
+        ctx.arc(r.x, r.y, r.size, 0, Math.PI*2);
+        ctx.fill();
+        
+        r.x += r.speedX;
+        r.y += r.speedY;
+        
+        if(r.y > canvas.height + 10 || r.x < -10 || r.x > canvas.width + 10){
+            r.y = -10;
+            r.x = Math.random() * canvas.width;
+        }
+    }
+}
+
+createStars(350); 
+createRocks(35); 
+
+(function animate(){ 
+    drawStars(); 
+    requestAnimationFrame(animate); 
+})();
+
+const wheel = document.getElementById('wheel'); 
+document.addEventListener('mousemove', e => { 
+    const centerX = innerWidth / 2; 
+    const offsetX = e.clientX - centerX; 
+    const rotation = offsetX / 40; 
+    wheel.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`; 
+});
 </script>
 
 </body>
