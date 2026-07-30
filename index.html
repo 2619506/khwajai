@@ -15,13 +15,11 @@
 
   /* --- ENHANCED PLANETARY REALISM --- */
   .earth-surface {
-      /* Mixed green and blue gradients with softened shadow so text is visible */
       background: radial-gradient(circle at 35% 35%, #4facfe 0%, #34a853 35%, #1b5b97 60%, #0a2e5c 85%, #05162b 100%) !important;
-      box-shadow: inset -15px -15px 35px rgba(0,0,0,0.6), 0 0 50px rgba(79, 172, 254, 0.4) !important;
+      box-shadow: inset -25px -25px 45px rgba(0,0,0,0.8), 0 0 50px rgba(79, 172, 254, 0.4) !important;
       border: none !important;
   }
   
-  /* Text legibility boosts for Earth */
   #centerContent h1 {
       text-shadow: 2px 2px 8px rgba(0,0,0,1), 0 0 15px rgba(0,0,0,0.8);
   }
@@ -32,12 +30,13 @@
 
   .moon-surface {
       background: radial-gradient(circle at 30% 30%, #e0e0e0, #8a8a8a, #363636) !important;
-      box-shadow: inset -10px -10px 15px rgba(0,0,0,0.9), 0 0 10px rgba(255,255,255,0.1) !important;
+      box-shadow: inset -15px -15px 20px rgba(0,0,0,0.9), 0 0 10px rgba(255,255,255,0.1) !important;
       border: none !important;
       color: #fff !important;
       text-shadow: 0 2px 4px rgba(0,0,0,0.9) !important;
   }
 
+  /* --- SUN / PORTFOLIO MESSAGE (MOVED DOWN) --- */
   .sun-surface {
       background: radial-gradient(circle at 30% 30%, #ffffff 0%, #ffde00 20%, #ff7300 60%, #b32400 100%) !important;
       box-shadow: 0 0 60px #ff7300, 0 0 120px #ffde00, inset -10px -10px 20px rgba(0,0,0,0.2) !important;
@@ -46,11 +45,10 @@
       font-weight: 900 !important;
   }
 
-  /* --- SUN / PORTFOLIO MESSAGE --- */
   .sun-message {
       position: fixed;
-      top: 22%;
-      right: 7%;
+      top: 180px; /* Moved down below the Sun */
+      right: 50px; /* Aligned with standard Sun position */
       background: rgba(30, 15, 0, 0.85);
       border: 1px solid #ff7300;
       box-shadow: 0 0 20px rgba(255, 115, 0, 0.6), inset 0 0 15px rgba(255, 222, 0, 0.3);
@@ -82,66 +80,97 @@
   }
 
 
-  /* --- MARS SYSTEM (Centered between Earth and Sun) --- */
+  /* --- MARS SYSTEM (Interactive Clickable Area) --- */
   #mars-system {
       position: fixed;
-      top: 25%;
-      right: 25%;
+      top: 32%; /* Balanced perfectly between Sun and Earth's right Moon */
+      right: 22%;
       z-index: 900000;
       display: flex;
       flex-direction: column;
       align-items: center;
+      cursor: pointer;
       animation: floatMarsNearSun 8s ease-in-out infinite;
   }
 
-  .mars-near-sun {
-      width: 55px;
-      height: 55px;
+  .mars-planet {
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
-      background: radial-gradient(circle at 30% 30%, #ff9c7a, #c1440e, #5a1800);
-      box-shadow: inset -15px -15px 20px rgba(0,0,0,0.8), 0 0 20px rgba(193, 68, 14, 0.4);
-  }
-
-  .mars-attention {
-      margin-bottom: 15px;
+      background: radial-gradient(circle at 30% 30%, #ff9c7a, #c1440e, #3a0f00);
+      box-shadow: inset -18px -18px 25px rgba(0,0,0,0.9), 0 0 25px rgba(193, 68, 14, 0.4);
       display: flex;
+      justify-content: center;
       align-items: center;
-      gap: 8px;
-      background: rgba(193, 68, 14, 0.15);
-      border: 1px solid #c1440e;
-      padding: 6px 12px;
-      border-radius: 20px;
-      color: #ffffff;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 11px;
-      letter-spacing: 1px;
-      backdrop-filter: blur(4px);
-      animation: popMarsAttention 2s infinite;
-      pointer-events: none;
-      white-space: nowrap;
+      position: relative;
+      transition: transform 0.2s;
   }
 
-  .mars-attention .pulse-icon {
-      background: #c1440e;
-      color: #fff;
+  .mars-planet:hover {
+      transform: scale(1.05);
+  }
+
+  .mars-planet .pulse-icon {
+      background: rgba(15, 23, 42, 0.8);
+      color: #ff9c7a;
+      border: 1px solid #ff9c7a;
       border-radius: 50%;
-      width: 16px; 
-      height: 16px;
+      width: 20px; 
+      height: 20px;
       display: flex; 
       justify-content: center; 
       align-items: center;
       font-weight: 900;
-      font-size: 11px;
+      font-size: 13px;
+      font-family: 'Orbitron', sans-serif;
+      box-shadow: 0 0 10px rgba(255, 156, 122, 0.5);
+      animation: popMarsAttention 2s infinite;
+  }
+
+  .mars-popup-msg {
+      position: absolute;
+      top: 75px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid #c1440e;
+      color: #cbd5e1;
+      padding: 15px 20px;
+      border-radius: 12px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.85rem;
+      width: 280px;
+      text-align: left;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 20px rgba(193, 68, 14, 0.3);
+      /* Hidden state */
+      opacity: 0;
+      transform: translateY(-15px);
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .mars-popup-msg.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: all;
+  }
+
+  .mars-popup-msg strong {
+      color: #ff9c7a;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 5px;
   }
 
   @keyframes popMarsAttention {
-      0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(193, 68, 14, 0.4); }
-      50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(193, 68, 14, 0.8); }
+      0%, 100% { transform: scale(1); box-shadow: 0 0 5px rgba(255, 156, 122, 0.4); }
+      50% { transform: scale(1.1); box-shadow: 0 0 15px rgba(255, 156, 122, 0.9); }
   }
 
   @keyframes floatMarsNearSun {
       0% { transform: translateY(0px) translateX(0px); }
-      50% { transform: translateY(-15px) translateX(-10px); }
+      50% { transform: translateY(-10px) translateX(-5px); }
       100% { transform: translateY(0px) translateX(0px); }
   }
 
@@ -149,8 +178,8 @@
   /* --- SATURN SYSTEM (TOP LEFT - CLEAN FACE) --- */
   #saturn-system {
       position: fixed;
-      top: 120px;
-      left: 150px;
+      top: 100px;
+      left: 140px;
       width: 120px;
       height: 120px;
       z-index: 1000000;
@@ -170,8 +199,8 @@
       top: 0; left: 0;
       width: 120px; height: 120px;
       border-radius: 50%;
-      background: radial-gradient(circle at 30% 30%, #ebd39c, #d1a85b, #5c4015);
-      box-shadow: inset -20px -20px 30px rgba(0,0,0,0.8), 0 0 35px rgba(209, 168, 91, 0.4);
+      background: radial-gradient(circle at 30% 30%, #ebd39c, #d1a85b, #4a3311);
+      box-shadow: inset -25px -25px 35px rgba(0,0,0,0.9), 0 0 35px rgba(209, 168, 91, 0.4);
       transform: rotateX(-72deg); 
       z-index: 2;
   }
@@ -211,7 +240,7 @@
       fill: #000000;
       font-weight: 900;
       letter-spacing: 4px;
-      opacity: 0.85; /* Soften the pure black slightly */
+      opacity: 0.85; 
   }
 
   @keyframes spinRingText {
@@ -220,34 +249,73 @@
   }
 
 
-  /* --- JUPITER SECURITY PLANET (BOTTOM LEFT) --- */
+  /* --- JUPITER SECURITY NOTIFICATION (BOTTOM LEFT) --- */
   #jupiter-security {
       position: fixed;
-      bottom: 30px;
-      left: 30px;
+      bottom: 40px;
+      left: 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 1000000;
+      animation: floatJupiter 6s ease-in-out infinite;
+  }
+
+  .jupiter-attention {
+      position: absolute;
+      top: -45px;
+      left: 50%;
+      transform: translateX(-50%);
       display: flex;
       align-items: center;
-      gap: 20px;
-      z-index: 1000000;
+      gap: 8px;
+      background: rgba(14, 165, 233, 0.15);
+      border: 1px solid #0ea5e9;
+      padding: 6px 12px;
+      border-radius: 20px;
+      color: #ffffff;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+      letter-spacing: 1px;
+      backdrop-filter: blur(4px);
+      animation: popJupiterAttention 2s infinite;
+      pointer-events: none;
+      white-space: nowrap;
+      z-index: 10;
+  }
+
+  .jupiter-attention .pulse-icon {
+      background: #0ea5e9;
+      color: #000;
+      border-radius: 50%;
+      width: 16px; 
+      height: 16px;
+      display: flex; 
+      justify-content: center; 
+      align-items: center;
+      font-weight: 900;
+      font-size: 11px;
+  }
+
+  @keyframes popJupiterAttention {
+      0%, 100% { transform: translateX(-50%) scale(1); box-shadow: 0 0 10px rgba(14, 165, 233, 0.4); }
+      50% { transform: translateX(-50%) scale(1.05); box-shadow: 0 0 20px rgba(14, 165, 233, 0.8); }
   }
 
   .jupiter-planet {
-      width: 75px;
-      height: 75px;
+      width: 85px;
+      height: 85px;
       border-radius: 50%;
       background: linear-gradient(160deg, #b8a696 0%, #d3c0a8 15%, #c8977a 30%, #e0c8b0 45%, #a67c5a 60%, #d8c1a6 75%, #b2957b 90%);
-      box-shadow: inset -15px -15px 25px rgba(0,0,0,0.8), 0 0 25px rgba(200, 151, 122, 0.4);
+      box-shadow: inset -25px -25px 35px rgba(0,0,0,0.9), 0 0 25px rgba(200, 151, 122, 0.4);
       display: flex;
       justify-content: center;
       align-items: center;
-      cursor: pointer;
-      animation: floatJupiter 6s ease-in-out infinite;
-      position: relative;
   }
   
   .jupiter-planet i {
-      color: rgba(255, 255, 255, 0.9);
-      font-size: 24px;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 28px;
       text-shadow: 0 0 10px rgba(255,255,255,0.5);
   }
 
@@ -257,49 +325,11 @@
       100% { transform: translateY(0px); }
   }
 
-  .jupiter-message {
-      background: rgba(15, 23, 42, 0.85);
-      border: 1px solid #c8977a;
-      color: #cbd5e1;
-      padding: 15px 20px;
-      border-radius: 12px;
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.85rem;
-      max-width: 400px;
-      backdrop-filter: blur(8px);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 15px rgba(200, 151, 122, 0.15);
-      opacity: 0;
-      transform: translateX(-30px);
-      pointer-events: none;
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  }
-
-  .jupiter-message strong {
-      color: #e0c8b0;
-      letter-spacing: 1px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 5px;
-  }
-
-  #jupiter-security:hover .jupiter-message {
-      opacity: 1;
-      transform: translateX(0);
-      pointer-events: all;
-  }
-
   @media (max-width: 768px) {
       #saturn-system { transform: scale(0.5); top: 50px; left: 50px; }
-      #mars-system { transform: scale(0.6); top: 20%; right: 15%; }
+      #mars-system { transform: scale(0.6); top: 25%; right: 15%; }
       .sun-message { top: 25%; right: 5%; transform: scale(0.8); }
-      #jupiter-security {
-          bottom: 15px; left: 15px;
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 10px;
-      }
-      .jupiter-message { max-width: calc(100vw - 40px); }
+      #jupiter-security { transform: scale(0.7); bottom: 20px; left: 20px; }
   }
 
   /* --- BIONIC MOUSE BASE STYLES --- */
@@ -622,19 +652,23 @@
 </head>
 <body>
 
-<!-- SUN AND SANDBOX MESSAGE -->
+<!-- SUN AND SANDBOX MESSAGE (MOVED DOWN) -->
 <div class="portfolio-orbit sun-surface" onclick="window.open('/portfolio/', '_self')">Portfolio</div>
 <div class="sun-message">
     <span>SECURE SANDBOX</span>
     READ-ONLY ACADEMIC PORTFOLIO
 </div>
 
-<!-- MARS SYSTEM (With Check Disclaimer) -->
-<div id="mars-system">
-    <div class="mars-attention">
-        <span class="pulse-icon">!</span> CHECK DISCLAIMER
+<!-- MARS SYSTEM (Interactive Popup) -->
+<!-- Adding a simple inline toggle class script to reveal the message -->
+<div id="mars-system" onclick="this.querySelector('.mars-popup-msg').classList.toggle('active')">
+    <div class="mars-planet">
+        <div class="pulse-icon">!</div>
     </div>
-    <div class="mars-near-sun"></div>
+    <div class="mars-popup-msg">
+        <strong><i class="fas fa-satellite-dish"></i> VISITOR LOG:</strong> 
+        This is a static, read-only academic portfolio. No corporate data is collected, stored, or transmitted. All AI demonstrations run purely in your local browser sandbox or via secure, isolated public cloud APIs.
+    </div>
 </div>
 
 <!-- SATURN SYSTEM (Top Left - Clean Face + Black Ring Text) -->
@@ -655,14 +689,13 @@
     </div>
 </div>
 
-<!-- JUPITER SECURITY NOTIFICATION (Bottom Left) -->
+<!-- JUPITER SECURITY NOTIFICATION (Bottom Left with Badge) -->
 <div id="jupiter-security">
+    <div class="jupiter-attention">
+        <span class="pulse-icon">!</span> CHECK DISCLAIMER
+    </div>
     <div class="jupiter-planet">
         <i class="fas fa-shield-halved"></i>
-    </div>
-    <div class="jupiter-message">
-        <strong><i class="fas fa-satellite-dish"></i> INCOMING TRANSMISSION:</strong> 
-        This is a static, read-only academic portfolio. No corporate data is collected, stored, or transmitted. All AI demonstrations run purely in your local browser sandbox or via secure, isolated public cloud APIs.
     </div>
 </div>
 
