@@ -32,10 +32,10 @@
   }
 
   body.hangar-open #stars {
-      opacity: 0.2; 
+      opacity: 0.15; 
   }
 
-  /* --- ENHANCED PLANETARY REALISM --- */
+  /* --- ENHANCED PLANETARY REALISM (Deep Areas & High Surfaces) --- */
   .earth-surface {
       background: 
           radial-gradient(circle at 20% 30%, rgba(255,255,255,0.15) 0%, transparent 20%), 
@@ -54,18 +54,24 @@
   }
 
   .moon-surface {
-      width: 95px !important;  /* Increased Moon Size */
-      height: 95px !important; /* Increased Moon Size */
+      width: 80px !important; /* Increased Moon Size */
+      height: 80px !important; /* Increased Moon Size */
+      display: flex !important;
+      justify-content: center !important;
+      align-items: center !important;
+      text-align: center !important;
       background: 
           radial-gradient(circle at 20% 30%, rgba(0,0,0,0.5) 0%, transparent 15%), 
           radial-gradient(circle at 70% 50%, rgba(0,0,0,0.4) 0%, transparent 10%), 
           radial-gradient(circle at 40% 70%, rgba(255,255,255,0.3) 0%, transparent 15%), 
           radial-gradient(circle at 30% 30%, #e0e0e0, #8a8a8a, #363636) !important;
-      box-shadow: inset -15px -15px 20px rgba(0,0,0,0.9), inset 5px 5px 10px rgba(255,255,255,0.4), 0 0 10px rgba(255,255,255,0.1) !important;
+      box-shadow: inset -15px -15px 20px rgba(0,0,0,0.9), inset 5px 5px 10px rgba(255,255,255,0.4), 0 0 15px rgba(255,255,255,0.15) !important;
       border: none !important;
       color: #333333 !important; 
       text-shadow: 0 1px 2px rgba(255,255,255,0.6) !important; 
-      font-weight: 800 !important;
+      font-weight: 900 !important;
+      font-size: 11px !important;
+      line-height: 1.2 !important;
   }
 
   .sun-surface {
@@ -128,7 +134,8 @@
       to { box-shadow: 0 0 30px rgba(255, 115, 0, 0.8), inset 0 0 20px rgba(255, 222, 0, 0.5); }
   }
 
-  /* --- MARS SYSTEM --- */
+
+  /* --- MARS SYSTEM (Shifted to 45 Degree Lower-Right Angle) --- */
   #mars-system {
       position: fixed;
       top: 42%; 
@@ -226,7 +233,8 @@
       100% { transform: translateY(0px) translateX(0px); }
   }
 
-  /* --- SATURN SYSTEM --- */
+
+  /* --- SATURN SYSTEM (Interactive Other Projects) --- */
   #saturn-system {
       position: fixed;
       top: 100px;
@@ -302,6 +310,7 @@
       0% { transform: translate(-50%, -50%) rotate(0deg); }
       100% { transform: translate(-50%, -50%) rotate(360deg); }
   }
+
 
   /* --- JUPITER SECURITY NOTIFICATION --- */
   #jupiter-security {
@@ -720,7 +729,7 @@
 <!-- SUN / MY PORTFOLIO -->
 <div class="portfolio-orbit sun-surface" onclick="window.open('/portfolio/', '_self')">My Portfolio</div>
 
-<!-- MARS SYSTEM -->
+<!-- MARS SYSTEM (Instantly Shows Message on Hover) -->
 <div id="mars-system">
     <div class="mars-planet">
         <div class="pulse-icon">!</div>
@@ -731,7 +740,7 @@
     </div>
 </div>
 
-<!-- SATURN SYSTEM -->
+<!-- SATURN SYSTEM (Interactive - Opens Other Projects) -->
 <div id="saturn-system" onclick="openOtherProjects()" title="View Other Projects">
     <div class="saturn-assembly">
         <div class="saturn-planet"></div>
@@ -740,7 +749,7 @@
     <div class="saturn-text">OTHER PROJECTS</div>
 </div>
 
-<!-- JUPITER SECURITY NOTIFICATION -->
+<!-- JUPITER SECURITY NOTIFICATION (With Hover Popup) -->
 <div id="jupiter-security">
     <div class="jupiter-planet">
         <i class="fas fa-shield-halved"></i>
@@ -757,7 +766,7 @@
 
 <!-- EARTH & SINGLE MOON -->
 <div class="wheel earth-surface" id="wheel" onclick="showHome()">
-  <!-- Main AI & ML Projects Moon -->
+  <!-- Main AI & ML Projects Moon (Dark Grey Text & Larger) -->
   <div class="satellite moon-surface pos-left" onclick="event.stopPropagation(); openHangar()">AI & ML<br>Projects</div>
   
   <div class="center-content" id="centerContent">
@@ -1373,7 +1382,7 @@ function showHome(){
     </p>`;
 }
 
-// --- VIBRANT STARFIELD, SPACE ROCKS, UFOS & JWST-STYLE TWINKLING ---
+// --- REALISTIC TWINKLING STARFIELD, SPACE ROCKS & UFOS ---
 const canvas = document.getElementById('stars'); 
 const ctx = canvas.getContext('2d'); 
 let stars = [], rocks = [], meteors = [];
@@ -1387,19 +1396,17 @@ addEventListener('resize', resizeCanvas);
 
 function createStars(count){ 
     stars = []; 
-    // Vibrant colors matching deep space telescope imagery
+    // Vibrant colors matching deep space telescopes
     const starColors = ['#ffffff', '#ffffff', '#ffe9c4', '#d4fbff', '#ffb199', '#ffddaa', '#a3c2ff', '#ffd2a3'];
     for(let i=0; i<count; i++){ 
         stars.push({ 
             x: Math.random() * canvas.width, 
             y: Math.random() * canvas.height, 
-            speed: Math.random() * 0.15 + 0.02, 
-            size: Math.random() * 1.5 + 0.5,
+            speed: Math.random() * 0.15 + 0.02, // slightly slower drift to emphasize the twinkle
+            size: Math.random() * 1.5,
             color: starColors[Math.floor(Math.random() * starColors.length)],
-            phase: Math.random() * Math.PI * 2, // Used for the twinkling math
-            twinkleSpeed: Math.random() * 0.03 + 0.01,
-            isMajor: Math.random() > 0.96, // 4% of stars get the JWST cross/spike effect
-            spikeSize: Math.random() * 15 + 8 // Size of the light flare
+            alpha: Math.random(), // Starting opacity
+            alphaChange: (Math.random() * 0.02 + 0.005) * (Math.random() > 0.5 ? 1 : -1) // Speed of glowing up and hiding
         }); 
     } 
 }
@@ -1435,55 +1442,54 @@ function createMeteors(count){
 function drawSpace(){ 
     ctx.clearRect(0, 0, canvas.width, canvas.height); 
     
-    // Draw Twinkling Stars & Diffraction Spikes
+    // Draw Dynamic Twinkling Stars
     for(const s of stars){ 
-        // Twinkle Logic: Oscillation between 0.3 (dim) and 1.0 (bright)
-        s.phase += s.twinkleSpeed;
-        const currentAlpha = Math.abs(Math.sin(s.phase)) * 0.7 + 0.3; 
-        
-        ctx.globalAlpha = currentAlpha;
-        
-        // Solid Core
+        // Update opacity for the "glow up and hide" effect
+        s.alpha += s.alphaChange;
+        if(s.alpha <= 0.05) { s.alpha = 0.05; s.alphaChange *= -1; }
+        if(s.alpha >= 1) { s.alpha = 1; s.alphaChange *= -1; }
+
+        // Set current alpha state
+        ctx.globalAlpha = s.alpha;
         ctx.fillStyle = s.color;
+        
+        // Draw the core star point
         ctx.beginPath(); 
         ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); 
         ctx.fill(); 
         
-        // Soft Glow Halo (pulsing with alpha)
-        ctx.globalAlpha = currentAlpha * 0.3;
-        ctx.beginPath(); 
-        ctx.arc(s.x, s.y, s.size * 3.5, 0, Math.PI*2); 
-        ctx.fill(); 
-
-        // James Webb style light flares (spikes) for major stars
-        if(s.isMajor) {
-            ctx.globalAlpha = currentAlpha * 0.6;
-            ctx.strokeStyle = s.color;
-            ctx.lineWidth = 0.6;
+        // Add a realistic soft shine/halo to larger stars
+        if (s.size > 1.0) {
+            ctx.globalAlpha = s.alpha * 0.4; // Fainter halo
             ctx.beginPath();
-            // Vertical / Horizontal cross
-            ctx.moveTo(s.x - s.spikeSize, s.y);
-            ctx.lineTo(s.x + s.spikeSize, s.y);
-            ctx.moveTo(s.x, s.y - s.spikeSize);
-            ctx.lineTo(s.x, s.y + s.spikeSize);
-            // Diagonal subtle cross
-            ctx.moveTo(s.x - s.spikeSize*0.5, s.y - s.spikeSize*0.5);
-            ctx.lineTo(s.x + s.spikeSize*0.5, s.y + s.spikeSize*0.5);
-            ctx.moveTo(s.x - s.spikeSize*0.5, s.y + s.spikeSize*0.5);
-            ctx.lineTo(s.x + s.spikeSize*0.5, s.y - s.spikeSize*0.5);
-            ctx.stroke();
+            ctx.arc(s.x, s.y, s.size * 3, 0, Math.PI*2);
+            ctx.fill();
+            
+            // Add a very subtle cross-flare (James Webb effect) to the brightest stars
+            if (s.size > 1.35) {
+                ctx.globalAlpha = s.alpha * 0.5;
+                ctx.beginPath();
+                ctx.moveTo(s.x - s.size * 5, s.y);
+                ctx.lineTo(s.x + s.size * 5, s.y);
+                ctx.moveTo(s.x, s.y - s.size * 5);
+                ctx.lineTo(s.x, s.y + s.size * 5);
+                ctx.strokeStyle = s.color;
+                ctx.lineWidth = 0.5;
+                ctx.stroke();
+            }
         }
-        
-        // Reset Alpha and move star
-        ctx.globalAlpha = 1.0;
+
+        // Slowly drift stars downward
         s.y += s.speed; 
-        
         if(s.y > canvas.height){
             s.y = 0; 
             s.x = Math.random() * canvas.width;
         } 
     } 
     
+    // Reset global alpha for remaining solid objects
+    ctx.globalAlpha = 1.0;
+
     // Draw Space Rocks/Asteroids
     for(const r of rocks){
         ctx.fillStyle = r.color;
