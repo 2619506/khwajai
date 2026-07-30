@@ -14,7 +14,7 @@
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;600&display=swap');
 
   /* --- HANGAR BACKGROUND BLUR EFFECT --- */
-  #saturn-system, #mars-system, #jupiter-security, #wheel, .portfolio-orbit, .sun-message, #stars {
+  #saturn-system, #mars-system, #jupiter-security, #wheel, .portfolio-orbit, .sun-message, #stars, #copyright-footer {
       transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
@@ -23,7 +23,8 @@
   body.hangar-open #jupiter-security,
   body.hangar-open #wheel,
   body.hangar-open .portfolio-orbit,
-  body.hangar-open .sun-message {
+  body.hangar-open .sun-message,
+  body.hangar-open #copyright-footer {
       filter: blur(20px);
       opacity: 0;
       pointer-events: none;
@@ -31,7 +32,7 @@
   }
 
   body.hangar-open #stars {
-      opacity: 0.2; /* Dims stars slightly to keep the space vibe without distraction */
+      opacity: 0.2; 
   }
 
   /* --- ENHANCED PLANETARY REALISM (Deep Areas & High Surfaces) --- */
@@ -60,8 +61,9 @@
           radial-gradient(circle at 30% 30%, #e0e0e0, #8a8a8a, #363636) !important;
       box-shadow: inset -15px -15px 20px rgba(0,0,0,0.9), inset 5px 5px 10px rgba(255,255,255,0.4), 0 0 10px rgba(255,255,255,0.1) !important;
       border: none !important;
-      color: #fff !important;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.9) !important;
+      color: #333333 !important; /* Dark Grey Text */
+      text-shadow: 0 1px 2px rgba(255,255,255,0.6) !important; /* Subtle white highlight */
+      font-weight: 800 !important;
   }
 
   .sun-surface {
@@ -74,6 +76,19 @@
       color: #000 !important;
       font-weight: 900 !important;
       font-size: 13px !important;
+  }
+
+  /* --- COPYRIGHT FOOTER --- */
+  #copyright-footer {
+      position: fixed;
+      bottom: 15px;
+      right: 25px;
+      color: rgba(255, 255, 255, 0.3);
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.75rem;
+      z-index: 500000;
+      pointer-events: none;
+      letter-spacing: 1px;
   }
 
   /* --- SUN / PORTFOLIO MESSAGE --- */
@@ -177,14 +192,12 @@
       backdrop-filter: blur(8px);
       box-shadow: 0 0 20px rgba(255, 115, 0, 0.6), inset 0 0 15px rgba(255, 222, 0, 0.3);
       
-      /* Hidden state by default */
       opacity: 0;
       transform: translateY(-15px);
       pointer-events: none;
       transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
 
-  /* Automatically show when hovering over Mars */
   #mars-system:hover .mars-popup-msg {
       opacity: 1;
       transform: translateY(0);
@@ -256,7 +269,7 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      color: #3e1b07; /* Deep Chocolate Brown */
+      color: #3e1b07; 
       font-family: 'Orbitron', sans-serif;
       font-size: 13px;
       font-weight: 900;
@@ -282,7 +295,6 @@
           0 0 25px rgba(209, 168, 91, 0.5),
           inset 0 0 15px rgba(209, 168, 91, 0.4);
       z-index: 1;
-      /* Restored Belt Animation */
       animation: spinRing 25s linear infinite;
   }
 
@@ -292,7 +304,7 @@
   }
 
 
-  /* --- JUPITER SECURITY NOTIFICATION --- */
+  /* --- JUPITER SECURITY NOTIFICATION & NEW POPUP --- */
   #jupiter-security {
       position: fixed;
       bottom: 40px;
@@ -301,6 +313,7 @@
       flex-direction: column;
       align-items: center;
       z-index: 1000000;
+      cursor: help;
       animation: floatJupiter 6s ease-in-out infinite;
   }
 
@@ -340,11 +353,6 @@
       font-size: 10px;
   }
 
-  @keyframes popJupiterAttention {
-      0%, 100% { transform: translateX(-50%) scale(1); box-shadow: 0 0 10px rgba(14, 165, 233, 0.4); }
-      50% { transform: translateX(-50%) scale(1.05); box-shadow: 0 0 20px rgba(14, 165, 233, 0.8); }
-  }
-
   .jupiter-planet {
       width: 85px;
       height: 85px;
@@ -356,12 +364,61 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      transition: transform 0.2s;
+  }
+
+  #jupiter-security:hover .jupiter-planet {
+      transform: scale(1.05);
   }
   
   .jupiter-planet i {
       color: rgba(255, 255, 255, 0.8);
       font-size: 28px;
       text-shadow: 0 0 10px rgba(255,255,255,0.5);
+  }
+
+  /* New Jupiter Hover Popup */
+  .jupiter-popup-msg {
+      position: absolute;
+      left: 110px;
+      bottom: 0px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid #0ea5e9;
+      color: #cbd5e1;
+      padding: 15px 20px;
+      border-radius: 12px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.85rem;
+      width: 280px;
+      text-align: left;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 0 20px rgba(14, 165, 233, 0.4), inset 0 0 15px rgba(14, 165, 233, 0.2);
+      
+      opacity: 0;
+      transform: translateX(-15px);
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  #jupiter-security:hover .jupiter-popup-msg {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: all;
+  }
+
+  .jupiter-popup-msg strong {
+      color: #0ea5e9;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 5px;
+      text-shadow: 0 0 8px rgba(14, 165, 233, 0.6);
+  }
+
+  @keyframes popJupiterAttention {
+      0%, 100% { transform: translateX(-50%) scale(1); box-shadow: 0 0 10px rgba(14, 165, 233, 0.4); }
+      50% { transform: translateX(-50%) scale(1.05); box-shadow: 0 0 20px rgba(14, 165, 233, 0.8); }
   }
 
   @keyframes floatJupiter {
@@ -374,6 +431,8 @@
       #saturn-system { transform: scale(0.5); top: 50px; left: 50px; }
       #mars-system { transform: scale(0.6); top: 25%; right: 15%; }
       #jupiter-security { transform: scale(0.7); bottom: 20px; left: 20px; }
+      .jupiter-popup-msg { left: 0; bottom: 80px; transform: translateY(15px); }
+      #jupiter-security:hover .jupiter-popup-msg { transform: translateY(0); }
   }
 
   /* --- BIONIC MOUSE BASE STYLES --- */
@@ -696,6 +755,11 @@
 </head>
 <body>
 
+<!-- COPYRIGHT FOOTER -->
+<div id="copyright-footer">
+    &copy; <span id="current-year"></span> Khwaja AI. All Rights Reserved.
+</div>
+
 <!-- SUN / MY PORTFOLIO -->
 <div class="portfolio-orbit sun-surface" onclick="window.open('/portfolio/', '_self')">My Portfolio</div>
 
@@ -710,7 +774,7 @@
     </div>
 </div>
 
-<!-- SATURN SYSTEM (Interactive - Opens Other Projects, Animated Belts, Chocolate Text) -->
+<!-- SATURN SYSTEM (Interactive - Opens Other Projects) -->
 <div id="saturn-system" onclick="openOtherProjects()" title="View Other Projects">
     <div class="saturn-assembly">
         <div class="saturn-planet"></div>
@@ -719,7 +783,7 @@
     <div class="saturn-text">OTHER PROJECTS</div>
 </div>
 
-<!-- JUPITER SECURITY NOTIFICATION (Bottom Left with Badge) -->
+<!-- JUPITER SECURITY NOTIFICATION (With New Hover Popup) -->
 <div id="jupiter-security">
     <div class="jupiter-attention">
         <span class="pulse-icon"><i class="fas fa-shield-alt"></i></span> SECURITY & PRIVACY
@@ -727,15 +791,19 @@
     <div class="jupiter-planet">
         <i class="fas fa-shield-halved"></i>
     </div>
+    <div class="jupiter-popup-msg">
+        <strong><i class="fas fa-lock"></i> SECURE ENVIRONMENT:</strong> 
+        This platform utilizes strict local sandboxing. All video tracking and data processing are handled purely client-side within your browser. No personal data is harvested, recorded, or routed to external servers.
+    </div>
 </div>
 
 <canvas id="stars"></canvas>
 
 <div id="virtual-cursor"></div>
 
-<!-- EARTH -->
+<!-- EARTH & SINGLE MOON -->
 <div class="wheel earth-surface" id="wheel" onclick="showHome()">
-  <!-- Main AI & ML Projects Moon -->
+  <!-- Main AI & ML Projects Moon (Dark Grey Text) -->
   <div class="satellite moon-surface pos-left" onclick="event.stopPropagation(); openHangar()">AI & ML<br>Projects</div>
   
   <div class="center-content" id="centerContent">
@@ -989,6 +1057,9 @@
 </div>
 
 <script>
+// --- SET COPYRIGHT YEAR DYNAMICALLY ---
+document.getElementById('current-year').innerText = new Date().getFullYear();
+
 // --- NAVIGATION LOGIC ---
 let activeHangar = 'hangarOverlay'; 
 
