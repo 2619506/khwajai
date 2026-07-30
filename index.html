@@ -13,13 +13,23 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;600&display=swap');
 
-  /* --- ENHANCED PLANETARY REALISM (Overrides for base CSS) --- */
+  /* --- ENHANCED PLANETARY REALISM --- */
   .earth-surface {
-      background: radial-gradient(circle at 30% 30%, #4facfe, #1b5b97, #0a2e5c, #021124) !important;
-      box-shadow: inset -30px -30px 50px rgba(0,0,0,0.9), 0 0 50px rgba(79, 172, 254, 0.4) !important;
+      /* Mixed green and blue gradients with softened shadow so text is visible */
+      background: radial-gradient(circle at 35% 35%, #4facfe 0%, #34a853 35%, #1b5b97 60%, #0a2e5c 85%, #05162b 100%) !important;
+      box-shadow: inset -15px -15px 35px rgba(0,0,0,0.6), 0 0 50px rgba(79, 172, 254, 0.4) !important;
       border: none !important;
   }
   
+  /* Text legibility boosts for Earth */
+  #centerContent h1 {
+      text-shadow: 2px 2px 8px rgba(0,0,0,1), 0 0 15px rgba(0,0,0,0.8);
+  }
+  #centerContent p {
+      text-shadow: 1px 1px 3px rgba(0,0,0,1), -1px -1px 3px rgba(0,0,0,0.8), 0 0 10px rgba(0,0,0,0.9);
+      font-weight: 400;
+  }
+
   .moon-surface {
       background: radial-gradient(circle at 30% 30%, #e0e0e0, #8a8a8a, #363636) !important;
       box-shadow: inset -10px -10px 15px rgba(0,0,0,0.9), 0 0 10px rgba(255,255,255,0.1) !important;
@@ -36,48 +46,69 @@
       font-weight: 900 !important;
   }
 
-  /* --- MARS (Centered between Earth and Sun) --- */
-  .mars-near-sun {
+  /* --- SUN / PORTFOLIO MESSAGE --- */
+  .sun-message {
+      position: fixed;
+      top: 22%;
+      right: 7%;
+      background: rgba(30, 15, 0, 0.85);
+      border: 1px solid #ff7300;
+      box-shadow: 0 0 20px rgba(255, 115, 0, 0.6), inset 0 0 15px rgba(255, 222, 0, 0.3);
+      padding: 10px 15px;
+      border-radius: 6px;
+      text-align: center;
+      z-index: 20;
+      backdrop-filter: blur(5px);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+      color: #ffde00;
+      letter-spacing: 2px;
+      pointer-events: none;
+      animation: pulseSunMsg 3s infinite alternate;
+  }
+
+  .sun-message span {
+      color: #ffffff;
+      font-weight: bold;
+      font-size: 13px;
+      display: block;
+      margin-bottom: 3px;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+  }
+
+  @keyframes pulseSunMsg {
+      from { box-shadow: 0 0 15px rgba(255, 115, 0, 0.5), inset 0 0 10px rgba(255, 222, 0, 0.2); }
+      to { box-shadow: 0 0 30px rgba(255, 115, 0, 0.8), inset 0 0 20px rgba(255, 222, 0, 0.5); }
+  }
+
+
+  /* --- MARS SYSTEM (Centered between Earth and Sun) --- */
+  #mars-system {
       position: fixed;
       top: 25%;
       right: 25%;
+      z-index: 900000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: floatMarsNearSun 8s ease-in-out infinite;
+  }
+
+  .mars-near-sun {
       width: 55px;
       height: 55px;
       border-radius: 50%;
       background: radial-gradient(circle at 30% 30%, #ff9c7a, #c1440e, #5a1800);
       box-shadow: inset -15px -15px 20px rgba(0,0,0,0.8), 0 0 20px rgba(193, 68, 14, 0.4);
-      z-index: 900000;
-      animation: floatMarsNearSun 8s ease-in-out infinite;
   }
 
-  @keyframes floatMarsNearSun {
-      0% { transform: translateY(0px) translateX(0px); }
-      50% { transform: translateY(-15px) translateX(-10px); }
-      100% { transform: translateY(0px) translateX(0px); }
-  }
-
-  /* --- SATURN SYSTEM (TOP LEFT - ENLARGED) --- */
-  #saturn-system {
-      position: fixed;
-      top: 120px;
-      left: 150px;
-      width: 120px;
-      height: 120px;
-      z-index: 1000000;
-      perspective: 1000px;
-  }
-
-  /* Pulsing Attention Badge */
-  .saturn-attention {
-      position: absolute;
-      top: -80px;
-      left: 50%;
-      transform: translateX(-50%);
+  .mars-attention {
+      margin-bottom: 15px;
       display: flex;
       align-items: center;
       gap: 8px;
-      background: rgba(14, 165, 233, 0.15);
-      border: 1px solid #0ea5e9;
+      background: rgba(193, 68, 14, 0.15);
+      border: 1px solid #c1440e;
       padding: 6px 12px;
       border-radius: 20px;
       color: #ffffff;
@@ -85,15 +116,14 @@
       font-size: 11px;
       letter-spacing: 1px;
       backdrop-filter: blur(4px);
-      animation: popAttention 2s infinite;
+      animation: popMarsAttention 2s infinite;
       pointer-events: none;
       white-space: nowrap;
-      z-index: 10;
   }
 
-  .saturn-attention .pulse-icon {
-      background: #0ea5e9;
-      color: #000;
+  .mars-attention .pulse-icon {
+      background: #c1440e;
+      color: #fff;
       border-radius: 50%;
       width: 16px; 
       height: 16px;
@@ -104,9 +134,27 @@
       font-size: 11px;
   }
 
-  @keyframes popAttention {
-      0%, 100% { transform: translateX(-50%) scale(1); box-shadow: 0 0 10px rgba(14, 165, 233, 0.4); }
-      50% { transform: translateX(-50%) scale(1.05); box-shadow: 0 0 20px rgba(14, 165, 233, 0.8); }
+  @keyframes popMarsAttention {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(193, 68, 14, 0.4); }
+      50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(193, 68, 14, 0.8); }
+  }
+
+  @keyframes floatMarsNearSun {
+      0% { transform: translateY(0px) translateX(0px); }
+      50% { transform: translateY(-15px) translateX(-10px); }
+      100% { transform: translateY(0px) translateX(0px); }
+  }
+
+
+  /* --- SATURN SYSTEM (TOP LEFT - CLEAN FACE) --- */
+  #saturn-system {
+      position: fixed;
+      top: 120px;
+      left: 150px;
+      width: 120px;
+      height: 120px;
+      z-index: 1000000;
+      perspective: 1000px;
   }
 
   .saturn-assembly {
@@ -128,7 +176,6 @@
       z-index: 2;
   }
 
-  /* Realistic Physical Rings */
   .saturn-visual-rings {
       position: absolute;
       top: 50%; left: 50%;
@@ -143,43 +190,35 @@
           0 0 25px rgba(209, 168, 91, 0.5),
           inset 0 0 15px rgba(209, 168, 91, 0.4);
       z-index: 1;
-      animation: spinRing 40s linear infinite;
   }
 
-  @keyframes spinRing {
-      0% { transform: translate(-50%, -50%) rotate(0deg); }
-      100% { transform: translate(-50%, -50%) rotate(360deg); }
-  }
-
-  /* New Central Text Band */
-  .saturn-central-message {
+  .saturn-ring-text {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 280px;
-      background: rgba(15, 23, 42, 0.85);
-      border: 1px solid #0ea5e9;
-      box-shadow: 0 0 20px rgba(14, 165, 233, 0.5), inset 0 0 10px rgba(14, 165, 233, 0.3);
-      padding: 10px 0;
-      border-radius: 6px;
-      text-align: center;
-      z-index: 20;
-      backdrop-filter: blur(5px);
-      font-family: 'Orbitron', sans-serif;
-      font-size: 11px;
-      color: #e2e8f0;
-      letter-spacing: 2px;
-      pointer-events: none;
+      top: -115px; left: -115px;
+      width: 350px; height: 350px;
+      transform-style: preserve-3d;
+      z-index: 3;
   }
 
-  .saturn-central-message span {
-      color: #0ea5e9;
-      font-weight: bold;
-      font-size: 13px;
-      display: block;
-      margin-bottom: 3px;
+  .saturn-ring-text svg {
+      width: 100%; height: 100%;
+      animation: spinRingText 30s linear infinite;
   }
+
+  .saturn-ring-text text {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 16px;
+      fill: #000000;
+      font-weight: 900;
+      letter-spacing: 4px;
+      opacity: 0.85; /* Soften the pure black slightly */
+  }
+
+  @keyframes spinRingText {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+  }
+
 
   /* --- JUPITER SECURITY PLANET (BOTTOM LEFT) --- */
   #jupiter-security {
@@ -252,7 +291,8 @@
 
   @media (max-width: 768px) {
       #saturn-system { transform: scale(0.5); top: 50px; left: 50px; }
-      .mars-near-sun { transform: scale(0.6); top: 20%; right: 15%; }
+      #mars-system { transform: scale(0.6); top: 20%; right: 15%; }
+      .sun-message { top: 25%; right: 5%; transform: scale(0.8); }
       #jupiter-security {
           bottom: 15px; left: 15px;
           flex-direction: column;
@@ -582,23 +622,36 @@
 </head>
 <body>
 
-<!-- MARS (Centered between Earth and Sun) -->
-<div class="mars-near-sun"></div>
+<!-- SUN AND SANDBOX MESSAGE -->
+<div class="portfolio-orbit sun-surface" onclick="window.open('/portfolio/', '_self')">Portfolio</div>
+<div class="sun-message">
+    <span>SECURE SANDBOX</span>
+    READ-ONLY ACADEMIC PORTFOLIO
+</div>
 
-<!-- SATURN SYSTEM (Top Left - Enlarged) -->
-<div id="saturn-system">
-    <div class="saturn-attention">
+<!-- MARS SYSTEM (With Check Disclaimer) -->
+<div id="mars-system">
+    <div class="mars-attention">
         <span class="pulse-icon">!</span> CHECK DISCLAIMER
     </div>
+    <div class="mars-near-sun"></div>
+</div>
+
+<!-- SATURN SYSTEM (Top Left - Clean Face + Black Ring Text) -->
+<div id="saturn-system">
     <div class="saturn-assembly">
         <div class="saturn-planet"></div>
         <div class="saturn-visual-rings"></div>
-    </div>
-    
-    <!-- Central text separated from rotation for perfect readability -->
-    <div class="saturn-central-message">
-        <span>SECURE SANDBOX</span>
-        READ-ONLY ACADEMIC PORTFOLIO
+        <div class="saturn-ring-text">
+            <svg viewBox="0 0 350 350">
+                <path id="ring-path" d="M 175, 175 m -130, 0 a 130,130 0 1,1 260,0 a 130,130 0 1,1 -260,0" fill="none" />
+                <text>
+                    <textPath href="#ring-path" startOffset="0">
+                        KHWAJA AI APPS &nbsp; • &nbsp; KHWAJA AI APPS &nbsp; • &nbsp; KHWAJA AI APPS &nbsp; • &nbsp; KHWAJA AI APPS &nbsp; • &nbsp; 
+                    </textPath>
+                </text>
+            </svg>
+        </div>
     </div>
 </div>
 
@@ -620,7 +673,6 @@
 <div class="wheel earth-surface" id="wheel" onclick="showHome()">
   <div class="satellite moon-surface pos-left" onclick="event.stopPropagation(); openHangar()">AI & ML<br>Projects</div>
   
-  <!-- OTHER PROJECTS MOON MOVED TO RIGHT -->
   <div class="satellite moon-surface pos-right" onclick="event.stopPropagation(); openOtherProjects()">Other<br>Projects</div>
   
   <div class="center-content" id="centerContent">
@@ -632,7 +684,6 @@
   </div>
 </div>
 
-<div class="portfolio-orbit sun-surface" onclick="window.open('/portfolio/', '_self')">Portfolio</div>
 
 <div id="hangarOverlay" class="hangar-overlay">
   <div class="hangar-grid"></div>
@@ -642,7 +693,6 @@
   <h2 class="hangar-title">SELECT TOOL MODULE</h2>
   
   <div class="satellite-belt">
-    <!-- ALL CLICKS NOW ROUTE THROUGH openProjectInfo() -->
     <div class="satellite-unit" style="--neon-color: #0aff68; --glow-color: rgba(10, 255, 104, 0.4);" onclick="openProjectInfo('spreadsheet')">
       <div class="sat-wing left"></div>
       <div class="sat-body"><i class="fas fa-table"></i></div>
@@ -695,7 +745,6 @@
       <div class="sat-label">NUTRITION AI</div>
     </div>
 
-    <!-- External link keeps standard window.open -->
     <div class="satellite-unit" style="--neon-color: #ffffff; --glow-color: rgba(255, 255, 255, 0.4);" onclick="window.open('https://github.com/khwaja-gh', '_blank')">
       <div class="sat-wing left"></div>
       <div class="sat-body"><i class="fab fa-github"></i></div>
@@ -1010,7 +1059,7 @@ let currentPendingApp = '';
 
 function openProjectInfo(appId) {
     const data = projectData[appId];
-    if (!data) { openApp(appId); return; } // Fallback if no data exists
+    if (!data) { openApp(appId); return; } 
 
     currentPendingApp = appId;
 
@@ -1112,7 +1161,6 @@ function initBionicMouse() {
                 const middleDist = Math.hypot(middleTip.x - thumbTip.x, middleTip.y - thumbTip.y);
                 const ringDist = Math.hypot(ringTip.x - thumbTip.x, ringTip.y - thumbTip.y);
 
-                // 1. DRAG & DROP
                 if (indexDist < 0.05) {
                     if (!isDragging) {
                         const el = document.elementFromPoint(cursorX, cursorY);
@@ -1144,7 +1192,6 @@ function initBionicMouse() {
                     }
                 }
 
-                // 2. RIGHT CLICK
                 if (middleDist < 0.05 && (currentTime - lastRightClickTime > 500)) {
                     lastRightClickTime = currentTime;
                     cursor.style.backgroundColor = '#ff9900';
@@ -1162,7 +1209,6 @@ function initBionicMouse() {
                     }, 300);
                 }
 
-                // 3. SCROLL WHEEL
                 if (ringDist < 0.05) {
                     if (!isScrolling) {
                         isScrolling = true;
@@ -1188,7 +1234,6 @@ function initBionicMouse() {
                     }
                 }
 
-                // 4. AIR TOUCH / POKE
                 const currentZ = indexTip.z;
                 if (previousZ !== null && !isDragging && !isScrolling) {
                     const zVelocity = currentZ - previousZ;
