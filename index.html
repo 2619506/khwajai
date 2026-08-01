@@ -35,22 +35,32 @@
       opacity: 0.15; 
   }
 
-  /* --- ENHANCED PLANETARY REALISM --- */
+  /* --- ENHANCED PLANETARY REALISM (Atmospheric Depth & Light Scattering) --- */
   .earth-surface {
       background: 
-          radial-gradient(circle at 20% 30%, rgba(255,255,255,0.15) 0%, transparent 20%), 
-          radial-gradient(circle at 70% 60%, rgba(0,0,0,0.3) 0%, transparent 30%), 
-          radial-gradient(circle at 35% 35%, #4facfe 0%, #34a853 35%, #1b5b97 60%, #0a2e5c 85%, #05162b 100%) !important;
-      box-shadow: inset -25px -25px 45px rgba(0,0,0,0.9), inset 10px 10px 30px rgba(255,255,255,0.2), 0 0 50px rgba(79, 172, 254, 0.4) !important;
+          radial-gradient(circle at 25% 30%, rgba(255,255,255,0.1) 0%, transparent 30%),
+          radial-gradient(circle at 30% 30%, #144973 0%, #0b2e4f 30%, #041628 60%, #01060e 85%, #000000 100%) !important;
+      box-shadow: 
+          inset -40px -40px 80px rgba(0,0,0,0.95), 
+          inset 10px 10px 30px rgba(255,255,255,0.15), 
+          0 0 50px rgba(0, 255, 204, 0.2),
+          0 0 100px rgba(0, 255, 204, 0.1) !important;
       border: none !important;
   }
   
+  /* --- HOLOGRAPHIC HUD TEXT --- */
   #centerContent h1 {
-      text-shadow: 2px 2px 8px rgba(0,0,0,1), 0 0 15px rgba(0,0,0,0.8);
+      color: #ffffff;
+      -webkit-text-stroke: 0px transparent;
+      text-shadow: 0 0 15px rgba(0, 255, 204, 0.8), 0 0 30px rgba(0, 255, 204, 0.4), 0 0 5px #fff;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
   }
   #centerContent p {
-      text-shadow: 1px 1px 3px rgba(0,0,0,1), -1px -1px 3px rgba(0,0,0,0.8), 0 0 10px rgba(0,0,0,0.9);
-      font-weight: 400;
+      color: rgba(255, 255, 255, 0.85);
+      text-shadow: 0 0 8px rgba(0, 255, 204, 0.4);
+      font-weight: 300;
+      line-height: 1.6;
   }
 
   .moon-surface {
@@ -356,12 +366,6 @@
       letter-spacing: 2px;
       text-shadow: 0 0 10px rgba(200, 151, 122, 0.8);
       pointer-events: none;
-  }
-
-  @keyframes floatJupiter {
-      0% { transform: translateY(0px); }
-      50% { transform: translateY(-10px); }
-      100% { transform: translateY(0px); }
   }
 
   @media (max-width: 768px) {
@@ -1446,17 +1450,17 @@ function initBionicMouse() {
 // --- PROJECTS PAGE LOGIC ---
 function showHome(){
   document.getElementById('centerContent').innerHTML = `
-    <h1 id="ccTitle">KHWAJA AI</h1>
+    <h1 id="ccTitle">KHWAJA AI APPS</h1>
     <p id="ccText">
-      <b>Data Scientist & AI Developer</b><br>
-      Blending an MSc in Business Analytics & Finance with practical Python development and operational leadership. I transition complex theoretical models into functional, end-to-end applications. From designing real-time anomaly detection systems to automating reporting workflows, I specialize in translating data into resilient, actionable strategies. My core technical stack includes Python, Scikit-Learn, TensorFlow, SQL, and React integration.
+      <b>Individual Data Scientist & Ethical AI App Developer</b><br>
+      Blending an MSc in Business Analytics & Finance knowledge with practical Python development and operational leadership. I transition complex theoretical models into functional, end-to-end applications. From designing real-time anomaly detection systems to automating reporting workflows, I specialize in translating data into resilient, actionable strategies. My core technical stack includes Python, MATLAB, Scikit-Learn, TensorFlow, SQL, and React integration.
     </p>`;
 }
 
-// --- STARFIELD & BACKGROUND ---
+// --- CINEMATIC DEEP SPACE BACKGROUND ---
 const canvas = document.getElementById('stars'); 
 const ctx = canvas.getContext('2d'); 
-let stars = [], rocks = [], meteors = [];
+let stars = [], meteors = [];
 
 function resizeCanvas(){ 
     canvas.width = innerWidth; 
@@ -1467,33 +1471,20 @@ addEventListener('resize', resizeCanvas);
 
 function createStars(count){ 
     stars = []; 
-    const starColors = ['#ffffff', '#ffffff', '#ffe9c4', '#d4fbff', '#ffb199', '#ffddaa', '#a3c2ff', '#ffd2a3'];
+    const starColors = ['#ffffff', '#ffffff', '#e0f0ff', '#b3d4ff', '#ffddaa'];
     for(let i=0; i<count; i++){ 
+        // 95% of stars are tiny pinpricks for realistic parallax depth, 5% are slightly larger
+        let size = Math.random() < 0.95 ? Math.random() * 0.8 + 0.2 : Math.random() * 1.5 + 0.8;
         stars.push({ 
             x: Math.random() * canvas.width, 
             y: Math.random() * canvas.height, 
-            speed: Math.random() * 0.15 + 0.02,
-            size: Math.random() * 1.5,
+            speed: Math.random() * 0.05 + 0.01, // Extremely slow drift
+            size: size,
             color: starColors[Math.floor(Math.random() * starColors.length)],
             alpha: Math.random(),
-            alphaChange: (Math.random() * 0.02 + 0.005) * (Math.random() > 0.5 ? 1 : -1)
+            alphaChange: (Math.random() * 0.01 + 0.002) * (Math.random() > 0.5 ? 1 : -1)
         }); 
     } 
-}
-
-function createRocks(count){
-    rocks = [];
-    const rockColors = ['#8b7355', '#a0522d', '#cd853f', '#696969', '#5c4033', '#8b4513', '#a87850'];
-    for(let i=0; i<count; i++){
-        rocks.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            speedY: Math.random() * 0.3 + 0.1,
-            speedX: (Math.random() - 0.5) * 0.2,
-            size: Math.random() * 2.5 + 0.5,
-            color: rockColors[Math.floor(Math.random() * rockColors.length)]
-        });
-    }
 }
 
 function createMeteors(count){ 
@@ -1524,23 +1515,17 @@ function drawSpace(){
         ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); 
         ctx.fill(); 
         
-        if (s.size > 1.0) {
-            ctx.globalAlpha = s.alpha * 0.4;
+        // Only apply diffraction spikes (James Webb style) to the extremely rare, largest stars
+        if (s.size > 1.4) {
+            ctx.globalAlpha = s.alpha * 0.6;
             ctx.beginPath();
-            ctx.arc(s.x, s.y, s.size * 3, 0, Math.PI*2);
-            ctx.fill();
-            
-            if (s.size > 1.35) {
-                ctx.globalAlpha = s.alpha * 0.5;
-                ctx.beginPath();
-                ctx.moveTo(s.x - s.size * 5, s.y);
-                ctx.lineTo(s.x + s.size * 5, s.y);
-                ctx.moveTo(s.x, s.y - s.size * 5);
-                ctx.lineTo(s.x, s.y + s.size * 5);
-                ctx.strokeStyle = s.color;
-                ctx.lineWidth = 0.5;
-                ctx.stroke();
-            }
+            ctx.moveTo(s.x - s.size * 6, s.y);
+            ctx.lineTo(s.x + s.size * 6, s.y);
+            ctx.moveTo(s.x, s.y - s.size * 6);
+            ctx.lineTo(s.x, s.y + s.size * 6);
+            ctx.strokeStyle = s.color;
+            ctx.lineWidth = 0.3; // Very subtle thin line
+            ctx.stroke();
         }
 
         s.y += s.speed; 
@@ -1551,24 +1536,10 @@ function drawSpace(){
     } 
     
     ctx.globalAlpha = 1.0;
-
-    for(const r of rocks){
-        ctx.fillStyle = r.color;
-        ctx.beginPath();
-        ctx.arc(r.x, r.y, r.size, 0, Math.PI*2);
-        ctx.fill();
-        
-        r.x += r.speedX;
-        r.y += r.speedY;
-        
-        if(r.y > canvas.height + 10 || r.x < -10 || r.x > canvas.width + 10){
-            r.y = -10;
-            r.x = Math.random() * canvas.width;
-        }
-    }
     
+    // Draw faint, fast-moving meteors
     ctx.strokeStyle = '#ffffff'; 
-    ctx.lineWidth = 0.8;
+    ctx.lineWidth = 0.5;
     for(const m of meteors){ 
         ctx.beginPath(); 
         ctx.moveTo(m.x, m.y); 
@@ -1585,9 +1556,9 @@ function drawSpace(){
     }
 }
 
-createStars(350); 
-createRocks(35); 
-createMeteors(3); 
+// Increased star count for massive depth, removed the rocks entirely
+createStars(800); 
+createMeteors(2); 
 
 (function animate(){ 
     drawSpace(); 
