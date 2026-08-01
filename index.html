@@ -14,13 +14,13 @@
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700;900&family=Outfit:wght@300;400;600&display=swap');
 
   /* --- HANGAR BACKGROUND BLUR EFFECT --- */
-  #saturn-system, #mars-system, #jupiter-security, #wheel, .portfolio-orbit, .sun-message, #stars, #copyright-footer {
+  #saturn-system, #mars-system, #jupiter-games, #wheel, .portfolio-orbit, .sun-message, #stars, #copyright-footer {
       transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   body.hangar-open #saturn-system,
   body.hangar-open #mars-system,
-  body.hangar-open #jupiter-security,
+  body.hangar-open #jupiter-games,
   body.hangar-open #wheel,
   body.hangar-open .portfolio-orbit,
   body.hangar-open .sun-message,
@@ -312,8 +312,8 @@
   }
 
 
-  /* --- JUPITER SECURITY NOTIFICATION --- */
-  #jupiter-security {
+  /* --- JUPITER GAMES PORTAL --- */
+  #jupiter-games {
       position: fixed;
       bottom: 40px;
       left: 60px;
@@ -321,8 +321,13 @@
       flex-direction: column;
       align-items: center;
       z-index: 1000000;
-      cursor: help;
+      cursor: pointer;
       animation: floatJupiter 6s ease-in-out infinite;
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  #jupiter-games:hover {
+      transform: scale(1.1);
   }
 
   .jupiter-planet {
@@ -339,52 +344,22 @@
       transition: transform 0.2s;
   }
 
-  #jupiter-security:hover .jupiter-planet {
-      transform: scale(1.05);
-  }
-  
   .jupiter-planet i {
       color: rgba(255, 255, 255, 0.8);
-      font-size: 28px;
+      font-size: 32px;
       text-shadow: 0 0 10px rgba(255,255,255,0.5);
   }
 
-  .jupiter-popup-msg {
-      position: absolute;
-      left: 110px;
-      bottom: 0px;
-      background: rgba(15, 23, 42, 0.85);
-      border: 1px solid #0ea5e9;
-      color: #cbd5e1;
-      padding: 15px 20px;
-      border-radius: 12px;
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.85rem;
-      width: 280px;
-      text-align: left;
-      backdrop-filter: blur(8px);
-      box-shadow: 0 0 20px rgba(14, 165, 233, 0.4), inset 0 0 15px rgba(14, 165, 233, 0.2);
-      
-      opacity: 0;
-      transform: translateX(-15px);
+  .jupiter-text {
+      margin-top: 15px;
+      color: #d8c1a6;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 13px;
+      font-weight: 900;
+      text-align: center;
+      letter-spacing: 2px;
+      text-shadow: 0 0 10px rgba(200, 151, 122, 0.8);
       pointer-events: none;
-      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  }
-
-  #jupiter-security:hover .jupiter-popup-msg {
-      opacity: 1;
-      transform: translateX(0);
-      pointer-events: all;
-  }
-
-  .jupiter-popup-msg strong {
-      color: #0ea5e9;
-      letter-spacing: 1px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 5px;
-      text-shadow: 0 0 8px rgba(14, 165, 233, 0.6);
   }
 
   @keyframes floatJupiter {
@@ -396,9 +371,23 @@
   @media (max-width: 768px) {
       #saturn-system { transform: scale(0.5); top: 50px; left: 50px; }
       #mars-system { transform: scale(0.6); top: 35%; right: 10%; }
-      #jupiter-security { transform: scale(0.7); bottom: 20px; left: 20px; }
-      .jupiter-popup-msg { left: 0; bottom: 80px; transform: translateY(15px); }
-      #jupiter-security:hover .jupiter-popup-msg { transform: translateY(0); }
+      #jupiter-games { transform: scale(0.7); bottom: 20px; left: 20px; }
+  }
+
+  /* --- FUNNY SATELLITE ANIMATION --- */
+  .funny-sat {
+      animation: bounceWobble 2.5s ease-in-out infinite !important;
+  }
+  .funny-sat .sat-body {
+      border-radius: 30% !important; /* Make it bubbly and playful */
+  }
+  .funny-sat:nth-child(even) {
+      animation-delay: 0.5s !important;
+  }
+
+  @keyframes bounceWobble {
+      0%, 100% { transform: translateY(0) rotate(-4deg); }
+      50% { transform: translateY(-12px) rotate(4deg); }
   }
 
   /* --- BIONIC MOUSE BASE STYLES --- */
@@ -749,15 +738,12 @@
     <div class="saturn-text">OTHER PROJECTS</div>
 </div>
 
-<!-- JUPITER SECURITY NOTIFICATION (With Hover Popup) -->
-<div id="jupiter-security">
+<!-- JUPITER GAMES PORTAL -->
+<div id="jupiter-games" onclick="openGames()" title="Enter Arcade">
     <div class="jupiter-planet">
-        <i class="fas fa-shield-halved"></i>
+        <i class="fas fa-gamepad"></i>
     </div>
-    <div class="jupiter-popup-msg">
-        <strong><i class="fas fa-lock"></i> SECURE ENVIRONMENT:</strong> 
-        This platform utilizes strict local sandboxing. All video tracking and data processing are handled purely client-side within your browser. No personal data is harvested, recorded, or routed to external servers.
-    </div>
+    <div class="jupiter-text">GAMES</div>
 </div>
 
 <canvas id="stars"></canvas>
@@ -844,6 +830,33 @@
       <div class="sat-body"><i class="fab fa-github"></i></div>
       <div class="sat-wing right"></div>
       <div class="sat-label">GITHUB REPO</div>
+    </div>
+  </div>
+</div>
+
+<!-- GAMES HANGAR -->
+<div id="gamesHangar" class="hangar-overlay">
+  <div class="hangar-grid"></div>
+  <button class="close-hangar" onclick="closeGames()"> 
+    <i class="fas fa-times"></i> Close Hangar
+  </button>
+  <h2 class="hangar-title">ARCADE SECTOR</h2>
+  
+  <div class="satellite-belt">
+    <!-- Playful LifeMath Odyssey Satellite -->
+    <div class="satellite-unit funny-sat" style="--neon-color: #ff00ff; --glow-color: rgba(255, 0, 255, 0.4);" onclick="openProjectInfo('lifemath')">
+      <div class="sat-wing left"></div>
+      <div class="sat-body"><i class="fas fa-rocket"></i></div>
+      <div class="sat-wing right"></div>
+      <div class="sat-label">LIFEMATH ODYSSEY</div>
+    </div>
+
+    <!-- Playful Coming Soon Satellite -->
+    <div class="satellite-unit funny-sat" style="--neon-color: #00ffcc; --glow-color: rgba(0, 255, 204, 0.4);">
+      <div class="sat-wing left"></div>
+      <div class="sat-body"><i class="fas fa-ghost"></i></div>
+      <div class="sat-wing right"></div>
+      <div class="sat-label">COMING SOON...</div>
     </div>
   </div>
 </div>
@@ -949,6 +962,17 @@
             style="width:100%; height:100%; border:none; position:relative; z-index:20;" 
             allow="clipboard-read; clipboard-write; fullscreen;"
             onload="this.previousElementSibling.style.display='none'; this.previousElementSibling.previousElementSibling.style.display='none';"></iframe>
+  </div>
+</div>
+
+<div id="appContainer_lifemath" class="app-frame">
+  <button class="close-hangar" onclick="closeApp('lifemath')">
+    <i class="fas fa-chevron-left"></i> Orbit
+  </button>
+  <div class="iframe-wrapper" style="display: flex; justify-content: center; align-items: center; color: #00ffcc; font-family: 'Orbitron', sans-serif; flex-direction: column; font-size: 2rem;">
+    <i class="fas fa-gamepad" style="font-size: 4rem; margin-bottom: 20px;"></i>
+    <p>LIFEMATH ODYSSEY</p>
+    <p style="font-size: 1rem; color: #cbd5e1; font-family: 'Outfit', sans-serif; margin-top: 10px;">Game engine deploying soon...</p>
   </div>
 </div>
 
@@ -1064,6 +1088,25 @@ function closeOtherProjects() {
     history.pushState({view: 'home'}, "", "/");
 }
 
+function openGames() {
+    activeHangar = 'gamesHangar';
+    document.body.classList.add('hangar-open');
+    const hangar = document.getElementById('gamesHangar');
+    hangar.style.display = 'flex';
+    setTimeout(() => { hangar.style.opacity = '1'; }, 10);
+    document.getElementById('wheel').style.pointerEvents = 'none';
+    history.pushState({view: 'games'}, "", "/games");
+}
+
+function closeGames() {
+    document.body.classList.remove('hangar-open');
+    const hangar = document.getElementById('gamesHangar');
+    hangar.style.opacity = '0';
+    setTimeout(() => { hangar.style.display = 'none'; }, 500);
+    document.getElementById('wheel').style.pointerEvents = 'all';
+    history.pushState({view: 'home'}, "", "/");
+}
+
 function openApp(appName) {
     document.getElementById(activeHangar).style.opacity = '0';
     setTimeout(() => { document.getElementById(activeHangar).style.display = 'none'; }, 500);
@@ -1071,7 +1114,7 @@ function openApp(appName) {
 
     if(appName === 'bionicmouse') { initBionicMouse(); }
 
-    history.pushState({view: appName}, "", `/${activeHangar === 'hangarOverlay' ? 'tools' : 'projects'}/${appName}`);
+    history.pushState({view: appName}, "", `/${activeHangar === 'hangarOverlay' ? 'tools' : (activeHangar === 'gamesHangar' ? 'games' : 'projects')}/${appName}`);
 }
 
 function closeApp(appName) {
@@ -1082,7 +1125,9 @@ function closeApp(appName) {
         document.getElementById('virtual-cursor').style.display = 'none';
     }
 
-    if (activeHangar === 'hangarOverlay') { openHangar(); } else { openOtherProjects(); }
+    if (activeHangar === 'hangarOverlay') { openHangar(); } 
+    else if (activeHangar === 'otherProjectsHangar') { openOtherProjects(); } 
+    else { openGames(); }
 }
 
 window.onpopstate = function(event) {
@@ -1092,12 +1137,14 @@ window.onpopstate = function(event) {
     document.getElementById('appContainer_nutrition').style.display = 'none'; 
     document.getElementById('appContainer_bionicmouse').style.display = 'none';
     document.getElementById('appContainer_retronews').style.display = 'none';
+    document.getElementById('appContainer_lifemath').style.display = 'none';
     
     if(bionicCamera) bionicCamera.stop();
     document.getElementById('virtual-cursor').style.display = 'none';
 
     closeHangar(); 
     closeOtherProjects();
+    closeGames();
 };
 
 // --- DYNAMIC PROJECT INFO MODAL LOGIC ---
@@ -1149,6 +1196,14 @@ const projectData = {
         goal: "Build a static web application that autonomously fetches, parses, and displays live RSS news feeds from major global publishers on a 10-second loop.",
         tools: ["<b>Frontend:</b> HTML5, CSS3 CRT Effects", "<b>Logic:</b> Vanilla JavaScript", "<b>Data:</b> REST APIs & RSS Feeds", "<b>Hosting:</b> GitHub Pages"],
         academics: ["Asynchronous API Integration", "CSS Pseudo-elements", "DOM Manipulation", "Automated State Management"]
+    },
+    lifemath: {
+        title: "LifeMath Odyssey",
+        badge: "EDUCATIONAL ARCADE",
+        why: "Math can feel disconnected from reality. This game bridges the gap by turning real-world scenarios—like budgeting, taxes, and grocery shopping—into an interactive, rewarding experience.",
+        goal: "Create a gamified learning platform that incrementally increases in difficulty, complete with timers, combo multipliers, and an addictive progression system.",
+        tools: ["<b>Engine:</b> Vanilla JS", "<b>Styling:</b> CSS3 Animations", "<b>Design:</b> Playful UI/UX", "<b>Logic:</b> Dynamic Math Generation"],
+        academics: ["Gamification Theory", "Educational Psychology", "Procedural Generation", "Real-World Mathematics"]
     }
 };
 
