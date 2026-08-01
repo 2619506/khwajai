@@ -851,15 +851,13 @@
       <div class="sat-label">LIFEMATH ODYSSEY</div>
     </div>
 
-    <!-- Playful Coming Soon Satellite -->
-    <div class="satellite-unit funny-sat" style="--neon-color: #00ffcc; --glow-color: rgba(0, 255, 204, 0.4);">
+    <!-- Anomaly Purge Satellite -->
+    <div class="satellite-unit funny-sat" style="--neon-color: #00ffcc; --glow-color: rgba(0, 255, 204, 0.4);" onclick="openProjectInfo('anomalypurge')">
       <div class="sat-wing left"></div>
-      <div class="sat-body"><i class="fas fa-ghost"></i></div>
+      <div class="sat-body"><i class="fas fa-shield-virus"></i></div>
       <div class="sat-wing right"></div>
-      <div class="sat-label">COMING SOON...</div>
+      <div class="sat-label">ANOMALY PURGE</div>
     </div>
-  </div>
-</div>
 
 <!-- DYNAMIC TRANSPARENT PROJECT OVERVIEW MODAL -->
 <div id="project-info-modal" class="modal-overlay hidden">
@@ -980,7 +978,20 @@
             onload="this.previousElementSibling.style.display='none'; this.previousElementSibling.previousElementSibling.style.display='none';"></iframe>
   </div>
 </div>
-
+<div id="appContainer_anomalypurge" class="app-frame">
+  <button class="close-hangar" onclick="closeApp('anomalypurge')">
+    <i class="fas fa-chevron-left"></i> Orbit
+  </button>
+  <div class="iframe-wrapper">
+    <div class="iframe-loader"></div>
+    <div class="loading-text">Booting Cyber Defense Grid...</div>
+    
+    <iframe src="https://khwajai.co.uk/games/anomaly_purge.html" 
+            style="width:100%; height:100%; border:none; position:relative; z-index:20;" 
+            allow="clipboard-read; clipboard-write; fullscreen;"
+            onload="this.previousElementSibling.style.display='none'; this.previousElementSibling.previousElementSibling.style.display='none';"></iframe>
+  </div>
+</div>
 <div id="appContainer_bionicmouse" class="app-frame" style="background-color: #12121e;">
   <button class="close-hangar" onclick="closeApp('bionicmouse')" style="z-index: 100;">
     <i class="fas fa-chevron-left"></i> Orbit
@@ -1209,6 +1220,14 @@ const projectData = {
         goal: "Create a gamified learning platform that incrementally increases in difficulty, complete with timers, combo multipliers, and an addictive progression system.",
         tools: ["<b>Engine:</b> Vanilla JS", "<b>Styling:</b> CSS3 Animations", "<b>Design:</b> Playful UI/UX", "<b>Logic:</b> Dynamic Math Generation"],
         academics: ["Gamification Theory", "Educational Psychology", "Procedural Generation", "Real-World Mathematics"]
+    },
+    anomalypurge: {
+        title: "Anomaly Purge",
+        badge: "CYBER DEFENSE ARCADE",
+        why: "To visualize the concept of high-velocity data streaming and real-time outlier detection in a highly addictive, reflex-based arcade format.",
+        goal: "Build a single-file, zero-dependency HTML5 Canvas game featuring particle physics, screen shake juice, and procedurally generated synthesized web audio.",
+        tools: ["<b>Engine:</b> Vanilla JS + Canvas API", "<b>Audio:</b> Web Audio API (Synthesizer)", "<b>Styling:</b> CSS3 Glow Effects", "<b>Logic:</b> Object-Oriented Entity Management"],
+        academics: ["Game Loop Architecture", "Real-time Collision Detection", "Data Stream Visualization", "Audio Synthesis"]
     }
 };
 
