@@ -35,7 +35,7 @@
       opacity: 0.15; 
   }
 
-  /* --- ENHANCED PLANETARY REALISM (Deep Areas & High Surfaces) --- */
+  /* --- ENHANCED PLANETARY REALISM --- */
   .earth-surface {
       background: 
           radial-gradient(circle at 20% 30%, rgba(255,255,255,0.15) 0%, transparent 20%), 
@@ -54,8 +54,8 @@
   }
 
   .moon-surface {
-      width: 80px !important; /* Increased Moon Size */
-      height: 80px !important; /* Increased Moon Size */
+      width: 80px !important;
+      height: 80px !important;
       display: flex !important;
       justify-content: center !important;
       align-items: center !important;
@@ -134,8 +134,7 @@
       to { box-shadow: 0 0 30px rgba(255, 115, 0, 0.8), inset 0 0 20px rgba(255, 222, 0, 0.5); }
   }
 
-
-  /* --- MARS SYSTEM (Shifted to 45 Degree Lower-Right Angle) --- */
+  /* --- MARS SYSTEM --- */
   #mars-system {
       position: fixed;
       top: 42%; 
@@ -199,7 +198,6 @@
       text-align: left;
       backdrop-filter: blur(8px);
       box-shadow: 0 0 20px rgba(255, 115, 0, 0.6), inset 0 0 15px rgba(255, 222, 0, 0.3);
-      
       opacity: 0;
       transform: translateY(-15px);
       pointer-events: none;
@@ -233,8 +231,7 @@
       100% { transform: translateY(0px) translateX(0px); }
   }
 
-
-  /* --- SATURN SYSTEM (Interactive Other Projects) --- */
+  /* --- SATURN SYSTEM --- */
   #saturn-system {
       position: fixed;
       top: 100px;
@@ -311,7 +308,6 @@
       100% { transform: translate(-50%, -50%) rotate(360deg); }
   }
 
-
   /* --- JUPITER GAMES PORTAL --- */
   #jupiter-games {
       position: fixed;
@@ -379,7 +375,7 @@
       animation: bounceWobble 2.5s ease-in-out infinite !important;
   }
   .funny-sat .sat-body {
-      border-radius: 30% !important; /* Make it bubbly and playful */
+      border-radius: 30% !important;
   }
   .funny-sat:nth-child(even) {
       animation-delay: 0.5s !important;
@@ -718,7 +714,7 @@
 <!-- SUN / MY PORTFOLIO -->
 <div class="portfolio-orbit sun-surface" onclick="window.open('/portfolio/', '_self')">My Portfolio</div>
 
-<!-- MARS SYSTEM (Instantly Shows Message on Hover) -->
+<!-- MARS SYSTEM -->
 <div id="mars-system">
     <div class="mars-planet">
         <div class="pulse-icon">!</div>
@@ -729,7 +725,7 @@
     </div>
 </div>
 
-<!-- SATURN SYSTEM (Interactive - Opens Other Projects) -->
+<!-- SATURN SYSTEM -->
 <div id="saturn-system" onclick="openOtherProjects()" title="View Other Projects">
     <div class="saturn-assembly">
         <div class="saturn-planet"></div>
@@ -752,7 +748,6 @@
 
 <!-- EARTH & SINGLE MOON -->
 <div class="wheel earth-surface" id="wheel" onclick="showHome()">
-  <!-- Main AI & ML Projects Moon (Dark Grey Text & Larger) -->
   <div class="satellite moon-surface pos-left" onclick="event.stopPropagation(); openHangar()">AI & ML<br>Projects</div>
   
   <div class="center-content" id="centerContent">
@@ -843,7 +838,7 @@
   <h2 class="hangar-title">ARCADE SECTOR</h2>
   
   <div class="satellite-belt">
-    <!-- Playful LifeMath Odyssey Satellite -->
+    <!-- LifeMath Odyssey -->
     <div class="satellite-unit funny-sat" style="--neon-color: #ff00ff; --glow-color: rgba(255, 0, 255, 0.4);" onclick="openProjectInfo('lifemath')">
       <div class="sat-wing left"></div>
       <div class="sat-body"><i class="fas fa-rocket"></i></div>
@@ -851,7 +846,7 @@
       <div class="sat-label">LIFEMATH ODYSSEY</div>
     </div>
 
-    <!-- Anomaly Purge Satellite -->
+    <!-- Anomaly Purge -->
     <div class="satellite-unit funny-sat" style="--neon-color: #00ffcc; --glow-color: rgba(0, 255, 204, 0.4);" onclick="openProjectInfo('anomalypurge')">
       <div class="sat-wing left"></div>
       <div class="sat-body"><i class="fas fa-shield-virus"></i></div>
@@ -859,7 +854,7 @@
       <div class="sat-label">ANOMALY PURGE</div>
     </div>
 
-    <!-- Playful Coming Soon Satellite (Appended for future scaling) -->
+    <!-- Coming Soon -->
     <div class="satellite-unit funny-sat" style="--neon-color: #ffff00; --glow-color: rgba(255, 255, 0, 0.4);">
       <div class="sat-wing left"></div>
       <div class="sat-body"><i class="fas fa-ghost"></i></div>
@@ -894,16 +889,12 @@
             <div class="info-grid">
                 <div class="info-section">
                     <h3><i class="fa-solid fa-screws-gutter"></i> Tools & Stack</h3>
-                    <ul id="modal-project-tools">
-                        <!-- Populated via JS -->
-                    </ul>
+                    <ul id="modal-project-tools"></ul>
                 </div>
 
                 <div class="info-section">
                     <h3><i class="fa-solid fa-graduation-cap"></i> Academic Topics</h3>
-                    <ul id="modal-project-academics">
-                        <!-- Populated via JS -->
-                    </ul>
+                    <ul id="modal-project-academics"></ul>
                 </div>
             </div>
         </div>
@@ -980,7 +971,7 @@
   <div class="iframe-wrapper">
     <div class="iframe-loader"></div>
     <div class="loading-text">Loading LifeMath Odyssey...</div>
-    <iframe src="https://khwajai.co.uk/games/lifemath.html" 
+    <iframe src="https://2619506.github.io/games/lifemath.html" 
             style="width:100%; height:100%; border:none; position:relative; z-index:20;" 
             allow="clipboard-read; clipboard-write; fullscreen;"
             onload="this.previousElementSibling.style.display='none'; this.previousElementSibling.previousElementSibling.style.display='none';"></iframe>
@@ -994,7 +985,7 @@
   <div class="iframe-wrapper">
     <div class="iframe-loader"></div>
     <div class="loading-text">Booting Cyber Defense Grid...</div>
-    <iframe src="https://khwajai.co.uk/games/anomaly_purge.html" 
+    <iframe src="https://2619506.github.io/games/anomaly_purge.html" 
             style="width:100%; height:100%; border:none; position:relative; z-index:20;" 
             allow="clipboard-read; clipboard-write; fullscreen;"
             onload="this.previousElementSibling.style.display='none'; this.previousElementSibling.previousElementSibling.style.display='none';"></iframe>
@@ -1082,7 +1073,6 @@ function openHangar() {
     hangar.style.display = 'flex';
     setTimeout(() => { hangar.style.opacity = '1'; }, 10);
     document.getElementById('wheel').style.pointerEvents = 'none';
-    history.pushState({view: 'tools'}, "", "/tools");
 }
 
 function closeHangar() {
@@ -1091,7 +1081,6 @@ function closeHangar() {
     hangar.style.opacity = '0';
     setTimeout(() => { hangar.style.display = 'none'; }, 500);
     document.getElementById('wheel').style.pointerEvents = 'all';
-    history.pushState({view: 'home'}, "", "/");
 }
 
 function openOtherProjects() {
@@ -1101,7 +1090,6 @@ function openOtherProjects() {
     hangar.style.display = 'flex';
     setTimeout(() => { hangar.style.opacity = '1'; }, 10);
     document.getElementById('wheel').style.pointerEvents = 'none';
-    history.pushState({view: 'otherProjects'}, "", "/other-projects");
 }
 
 function closeOtherProjects() {
@@ -1110,7 +1098,6 @@ function closeOtherProjects() {
     hangar.style.opacity = '0';
     setTimeout(() => { hangar.style.display = 'none'; }, 500);
     document.getElementById('wheel').style.pointerEvents = 'all';
-    history.pushState({view: 'home'}, "", "/");
 }
 
 function openGames() {
@@ -1120,7 +1107,6 @@ function openGames() {
     hangar.style.display = 'flex';
     setTimeout(() => { hangar.style.opacity = '1'; }, 10);
     document.getElementById('wheel').style.pointerEvents = 'none';
-    history.pushState({view: 'games'}, "", "/games");
 }
 
 function closeGames() {
@@ -1129,7 +1115,6 @@ function closeGames() {
     hangar.style.opacity = '0';
     setTimeout(() => { hangar.style.display = 'none'; }, 500);
     document.getElementById('wheel').style.pointerEvents = 'all';
-    history.pushState({view: 'home'}, "", "/");
 }
 
 function openApp(appName) {
@@ -1138,8 +1123,6 @@ function openApp(appName) {
     document.getElementById(`appContainer_${appName}`).style.display = 'block';
 
     if(appName === 'bionicmouse') { initBionicMouse(); }
-
-    history.pushState({view: appName}, "", `/${activeHangar === 'hangarOverlay' ? 'tools' : (activeHangar === 'gamesHangar' ? 'games' : 'projects')}/${appName}`);
 }
 
 function closeApp(appName) {
@@ -1274,7 +1257,7 @@ function enterProject() {
     if(currentPendingApp) openApp(currentPendingApp);
 }
 
-// --- BIONIC MOUSE LOGIC (PLAYGROUND + GESTURES) ---
+// --- BIONIC MOUSE LOGIC ---
 let bionicCamera = null;
 let bionicHands = null;
 
@@ -1462,7 +1445,6 @@ function initBionicMouse() {
 
 // --- PROJECTS PAGE LOGIC ---
 function showHome(){
-  history.pushState({view: 'home'}, "", "/");
   document.getElementById('centerContent').innerHTML = `
     <h1 id="ccTitle">KHWAJA AI</h1>
     <p id="ccText">
@@ -1471,7 +1453,7 @@ function showHome(){
     </p>`;
 }
 
-// --- REALISTIC TWINKLING STARFIELD, SPACE ROCKS & UFOS ---
+// --- STARFIELD & BACKGROUND ---
 const canvas = document.getElementById('stars'); 
 const ctx = canvas.getContext('2d'); 
 let stars = [], rocks = [], meteors = [];
@@ -1485,17 +1467,16 @@ addEventListener('resize', resizeCanvas);
 
 function createStars(count){ 
     stars = []; 
-    // Vibrant colors matching deep space telescopes
     const starColors = ['#ffffff', '#ffffff', '#ffe9c4', '#d4fbff', '#ffb199', '#ffddaa', '#a3c2ff', '#ffd2a3'];
     for(let i=0; i<count; i++){ 
         stars.push({ 
             x: Math.random() * canvas.width, 
             y: Math.random() * canvas.height, 
-            speed: Math.random() * 0.15 + 0.02, // slightly slower drift to emphasize the twinkle
+            speed: Math.random() * 0.15 + 0.02,
             size: Math.random() * 1.5,
             color: starColors[Math.floor(Math.random() * starColors.length)],
-            alpha: Math.random(), // Starting opacity
-            alphaChange: (Math.random() * 0.02 + 0.005) * (Math.random() > 0.5 ? 1 : -1) // Speed of glowing up and hiding
+            alpha: Math.random(),
+            alphaChange: (Math.random() * 0.02 + 0.005) * (Math.random() > 0.5 ? 1 : -1)
         }); 
     } 
 }
@@ -1531,30 +1512,24 @@ function createMeteors(count){
 function drawSpace(){ 
     ctx.clearRect(0, 0, canvas.width, canvas.height); 
     
-    // Draw Dynamic Twinkling Stars
     for(const s of stars){ 
-        // Update opacity for the "glow up and hide" effect
         s.alpha += s.alphaChange;
         if(s.alpha <= 0.05) { s.alpha = 0.05; s.alphaChange *= -1; }
         if(s.alpha >= 1) { s.alpha = 1; s.alphaChange *= -1; }
 
-        // Set current alpha state
         ctx.globalAlpha = s.alpha;
         ctx.fillStyle = s.color;
         
-        // Draw the core star point
         ctx.beginPath(); 
         ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); 
         ctx.fill(); 
         
-        // Add a realistic soft shine/halo to larger stars
         if (s.size > 1.0) {
-            ctx.globalAlpha = s.alpha * 0.4; // Fainter halo
+            ctx.globalAlpha = s.alpha * 0.4;
             ctx.beginPath();
             ctx.arc(s.x, s.y, s.size * 3, 0, Math.PI*2);
             ctx.fill();
             
-            // Add a very subtle cross-flare (James Webb effect) to the brightest stars
             if (s.size > 1.35) {
                 ctx.globalAlpha = s.alpha * 0.5;
                 ctx.beginPath();
@@ -1568,7 +1543,6 @@ function drawSpace(){
             }
         }
 
-        // Slowly drift stars downward
         s.y += s.speed; 
         if(s.y > canvas.height){
             s.y = 0; 
@@ -1576,10 +1550,8 @@ function drawSpace(){
         } 
     } 
     
-    // Reset global alpha for remaining solid objects
     ctx.globalAlpha = 1.0;
 
-    // Draw Space Rocks/Asteroids
     for(const r of rocks){
         ctx.fillStyle = r.color;
         ctx.beginPath();
@@ -1595,7 +1567,6 @@ function drawSpace(){
         }
     }
     
-    // Draw Fast-Moving UFOs (Meteors)
     ctx.strokeStyle = '#ffffff'; 
     ctx.lineWidth = 0.8;
     for(const m of meteors){ 
