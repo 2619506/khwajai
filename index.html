@@ -819,7 +819,7 @@
     <!-- Interactive Telemetry Chips -->
     <div class="telemetry-chips" onclick="event.stopPropagation();">
       <span class="chip" onclick="openProjectInfo('anomaly')"><i class="fas fa-microchip"></i> TensorFlow / ML</span>
-      <span class="chip" onclick="openProjectInfo('spreadsheet')"><i class="fas fa-chart-line"></i> Business Analytics</span>
+      <span class="chip" onclick="openProjectInfo('RapidocAI')"><i class="fas fa-chart-line"></i> Business Analytics</span>
       <span class="chip" onclick="openHangar()"><i class="fas fa-terminal"></i> Python / FastAPI</span>
     </div>
   </div>
@@ -834,11 +834,11 @@
   <h2 class="hangar-title">SELECT TOOL MODULE</h2>
   
   <div class="satellite-belt">
-    <div class="satellite-unit" style="--neon-color: #0aff68; --glow-color: rgba(10, 255, 104, 0.4);" onclick="openProjectInfo('spreadsheet')">
+    <div class="satellite-unit" style="--neon-color: #0aff68; --glow-color: rgba(10, 255, 104, 0.4);" onclick="openProjectInfo('RapidocAI')">
       <div class="sat-wing left"></div>
       <div class="sat-body"><i class="fas fa-table"></i></div>
       <div class="sat-wing right"></div>
-      <div class="sat-label">ENTERPRISE OS</div>
+      <div class="sat-label">RAPIDOC AI</div>
     </div>
 
     <div class="satellite-unit" style="--neon-color: #bc13fe; --glow-color: rgba(188, 19, 254, 0.4);" onclick="openProjectInfo('anomaly')">
@@ -974,14 +974,14 @@
 </div>
 
 <!-- APPLICATION CONTAINERS -->
-<div id="appContainer_spreadsheet" class="app-frame">
-  <button class="close-hangar" onclick="closeApp('spreadsheet')">
+<div id="appContainer_RapidocAI" class="app-frame">
+  <button class="close-hangar" onclick="closeApp('RapidocAI')">
     <i class="fas fa-chevron-left"></i> Orbit
   </button>
   <div class="iframe-wrapper">
     <div class="iframe-loader"></div>
     <div class="loading-text">Loading Dashboard Interface...</div>
-    <iframe src="https://khwajai-spreadsheet.hf.space/?embed=true" 
+    <iframe src="https://github.com/2619506/khwajai/blob/main/RapidocAI/index.html/?embed=true" 
             style="width:100%; height:100%; border:none; position:relative; z-index:20;" 
             allow="clipboard-read; clipboard-write; fullscreen;"
             onload="this.previousElementSibling.style.display='none'; this.previousElementSibling.previousElementSibling.style.display='none';"></iframe>
@@ -1205,7 +1205,7 @@ function closeApp(appName) {
 }
 
 window.onpopstate = function(event) {
-    document.getElementById('appContainer_spreadsheet').style.display = 'none';
+    document.getElementById('appContainer_RapidocAI').style.display = 'none';
     document.getElementById('appContainer_anomaly').style.display = 'none'; 
     document.getElementById('appContainer_stockpredictor').style.display = 'none'; 
     document.getElementById('appContainer_nutrition').style.display = 'none'; 
@@ -1224,23 +1224,27 @@ window.onpopstate = function(event) {
 
 // --- DYNAMIC PROJECT INFO MODAL LOGIC ---
 const projectData = {
-  spreadsheet: {
-    title: "RapidBI — Unified Business Intelligence & Reporting OS",
-    badge: "SATELLITE BRIEFING · PROTOTYPE",
-    why: "Modern analytics workflows are often split across spreadsheets, charting tools, and reporting apps. RapidBI brings data preparation, visual analytics, and report/slide generation into one connected browser workspace to reduce context-switching.",
-    goal: "Build a unified web workspace that links dataset cleaning and profiling, an interactive dashboard canvas, and report/slide authoring with guided workflow actions.",
+  RapidocAI: {
+      title: "Rapidoc AI — Data to Decisions",
+    badge: "AI BUSINESS ANALYST",
+    why: "Rapidoc AI transforms raw business data into dashboards, reports, presentations and actionable business recommendations. It combines data preparation, analytics and executive reporting into a unified AI workspace.",
+    goal: "Provide businesses with an AI-powered decision platform that cleans data, builds dashboards, generates reports, creates presentation decks and explains insights with full transparency.",
     tools: [
-      "<b>Frontend:</b> HTML5, CSS3, Vanilla JavaScript (ES6+)",
-      "<b>Data & Charts:</b> ECharts, SheetJS (XLSX), PptxGenJS",
-      "<b>Workflow:</b> Multi-stage data prep, dashboard builder, report & slide studio"
+        "<b>Frontend:</b> HTML5, CSS3, Vanilla JavaScript",
+        "<b>Analytics:</b> ECharts, Statistical Analysis, Forecasting",
+        "<b>Data:</b> XLSX, CSV, SheetJS",
+        "<b>Reporting:</b> Executive Reports, PPTX Generation",
+        "<b>AI:</b> Explainable Insights, Recommendations"
     ],
     academics: [
-      "Human-Computer Interaction (HCI)",
-      "Data Visualization & Visual Hierarchy",
-      "Exploratory Data Analysis & Reporting",
-      "Client-Side State & UI Engineering"
+        "Business Intelligence",
+        "Decision Intelligence",
+        "Data Visualisation",
+        "Human Computer Interaction",
+        "AI Explainability",
+        "Executive Reporting Systems"
     ]
-  },
+},
     anomaly: {
         title: "Predictive AI & Fraud Detection",
         badge: "SECURITY PROTOCOL",
@@ -1530,7 +1534,7 @@ function showHome(){
     </div>
     <div class="telemetry-chips" onclick="event.stopPropagation();">
       <span class="chip" onclick="openProjectInfo('anomaly')"><i class="fas fa-microchip"></i> TensorFlow / ML</span>
-      <span class="chip" onclick="openProjectInfo('spreadsheet')"><i class="fas fa-chart-line"></i> Business Analytics</span>
+      <span class="chip" onclick="openProjectInfo('RapidocAI')"><i class="fas fa-chart-line"></i> Business Analytics</span>
       <span class="chip" onclick="openHangar()"><i class="fas fa-terminal"></i> Python / FastAPI</span>
     </div>`;
 }
